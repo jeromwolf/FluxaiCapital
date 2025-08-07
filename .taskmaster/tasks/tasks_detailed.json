@@ -1,0 +1,572 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": "phase1-remaining",
+        "title": "Phase 1: 미완료 기능 세분화",
+        "status": "in_progress",
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": "dash-widgets",
+            "title": "대시보드 위젯 완성",
+            "status": "in_progress",
+            "subtasks": [
+              {
+                "id": "mini-chart-1",
+                "title": "미니 차트 라이브러리 선택 (Recharts vs Chart.js)",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "mini-chart-2", 
+                "title": "자산 가치 트렌드 미니 차트 구현",
+                "status": "pending",
+                "estimatedHours": 4
+              },
+              {
+                "id": "mini-chart-3",
+                "title": "포트폴리오 성과 스파크라인 차트",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "period-tabs-1",
+                "title": "기간별 탭 UI 컴포넌트 생성",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "period-tabs-2",
+                "title": "탭 변경 시 데이터 필터링 로직",
+                "status": "pending", 
+                "estimatedHours": 3
+              },
+              {
+                "id": "period-tabs-3",
+                "title": "각 기간별 수익률 계산 함수",
+                "status": "pending",
+                "estimatedHours": 4
+              }
+            ]
+          },
+          {
+            "id": "chart-integration",
+            "title": "차트 라이브러리 통합",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "chart-lib-1",
+                "title": "Recharts 패키지 설치 및 설정",
+                "status": "pending",
+                "estimatedHours": 1
+              },
+              {
+                "id": "chart-lib-2",
+                "title": "차트 공통 테마 정의 (색상, 폰트, 스타일)",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "chart-wrapper-1",
+                "title": "공통 차트 래퍼 컴포넌트 생성",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "chart-wrapper-2",
+                "title": "반응형 차트 컨테이너 구현",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "pie-chart-1",
+                "title": "자산 배분 파이 차트 컴포넌트",
+                "status": "pending",
+                "estimatedHours": 4
+              },
+              {
+                "id": "pie-chart-2",
+                "title": "파이 차트 인터랙션 (호버, 클릭)",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "line-chart-1",
+                "title": "포트폴리오 성과 라인 차트",
+                "status": "pending",
+                "estimatedHours": 4
+              },
+              {
+                "id": "line-chart-2",
+                "title": "줌/팬 기능 추가",
+                "status": "pending",
+                "estimatedHours": 3
+              }
+            ]
+          },
+          {
+            "id": "portfolio-enhancement",
+            "title": "포트폴리오 기능 개선",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "portfolio-table-1",
+                "title": "보유 자산 테이블 UI 구현",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "portfolio-table-2",
+                "title": "자산 정렬 및 필터 기능",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "portfolio-table-3",
+                "title": "실시간 가격 업데이트 연동",
+                "status": "pending",
+                "estimatedHours": 4
+              },
+              {
+                "id": "transaction-history-1",
+                "title": "거래 내역 섹션 UI",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "transaction-history-2",
+                "title": "페이지네이션 구현",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "portfolio-search-1",
+                "title": "포트폴리오 검색 바 구현",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "portfolio-filter-1",
+                "title": "포트폴리오 필터 드롭다운",
+                "status": "pending",
+                "estimatedHours": 3
+              }
+            ]
+          },
+          {
+            "id": "auth-completion",
+            "title": "인증 시스템 완성",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "oauth-google-1",
+                "title": "Google OAuth 설정 (Console 등록)",
+                "status": "pending",
+                "estimatedHours": 1
+              },
+              {
+                "id": "oauth-google-2",
+                "title": "Google 로그인 버튼 UI",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "oauth-google-3",
+                "title": "Google OAuth 콜백 처리",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "oauth-kakao-1",
+                "title": "Kakao OAuth 설정 (Developer 등록)",
+                "status": "pending",
+                "estimatedHours": 1
+              },
+              {
+                "id": "oauth-kakao-2",
+                "title": "Kakao 로그인 버튼 UI",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "oauth-kakao-3",
+                "title": "Kakao OAuth 콜백 처리",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "profile-page-1",
+                "title": "프로필 페이지 기본 레이아웃",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "profile-page-2",
+                "title": "프로필 정보 편집 폼",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "profile-page-3",
+                "title": "프로필 이미지 업로드",
+                "status": "pending",
+                "estimatedHours": 4
+              }
+            ]
+          },
+          {
+            "id": "layout-completion",
+            "title": "레이아웃 시스템 완성",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "sidebar-1",
+                "title": "사이드바 메뉴 컴포넌트 구조",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "sidebar-2",
+                "title": "메뉴 아이템 및 아이콘 정의",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "sidebar-3",
+                "title": "사이드바 접기/펼치기 기능",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "sidebar-4",
+                "title": "현재 페이지 하이라이팅",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "darkmode-1",
+                "title": "다크/라이트 모드 컨텍스트 설정",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "darkmode-2",
+                "title": "테마 토글 버튼 구현",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "darkmode-3",
+                "title": "다크 모드 CSS 변수 정의",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "darkmode-4",
+                "title": "로컬스토리지에 테마 상태 저장",
+                "status": "pending",
+                "estimatedHours": 1
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "phase2-detailed",
+        "title": "Phase 2: 고급 기능 구현",
+        "status": "pending",
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": "realtime-data",
+            "title": "실시간 데이터 연동",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "websocket-1",
+                "title": "WebSocket 연결 설정 및 관리",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": []
+              },
+              {
+                "id": "websocket-2",
+                "title": "가격 데이터 구독 시스템",
+                "status": "pending",
+                "estimatedHours": 3,
+                "dependencies": ["websocket-1"]
+              },
+              {
+                "id": "websocket-3",
+                "title": "연결 실패 시 재연결 로직",
+                "status": "pending",
+                "estimatedHours": 2,
+                "dependencies": ["websocket-1"]
+              },
+              {
+                "id": "price-update-1",
+                "title": "실시간 가격 업데이트 UI 반영",
+                "status": "pending",
+                "estimatedHours": 3,
+                "dependencies": ["websocket-2"]
+              },
+              {
+                "id": "price-update-2",
+                "title": "가격 변동 애니메이션 효과",
+                "status": "pending",
+                "estimatedHours": 2,
+                "dependencies": ["price-update-1"]
+              }
+            ]
+          },
+          {
+            "id": "market-data-api",
+            "title": "시장 데이터 API 통합",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "upbit-api-1",
+                "title": "Upbit REST API 클라이언트 구현",
+                "status": "pending",
+                "estimatedHours": 4
+              },
+              {
+                "id": "upbit-api-2",
+                "title": "Upbit WebSocket 가격 피드",
+                "status": "pending",
+                "estimatedHours": 3,
+                "dependencies": ["upbit-api-1"]
+              },
+              {
+                "id": "binance-api-1",
+                "title": "Binance REST API 클라이언트",
+                "status": "pending",
+                "estimatedHours": 4
+              },
+              {
+                "id": "binance-api-2", 
+                "title": "Binance WebSocket 가격 피드",
+                "status": "pending",
+                "estimatedHours": 3,
+                "dependencies": ["binance-api-1"]
+              },
+              {
+                "id": "exchange-abstraction-1",
+                "title": "거래소 통합 인터페이스 설계",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "exchange-abstraction-2",
+                "title": "통합 가격 데이터 정규화",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": ["exchange-abstraction-1"]
+              }
+            ]
+          },
+          {
+            "id": "advanced-charts",
+            "title": "고급 차트 기능",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "candlestick-1",
+                "title": "캔들스틱 차트 컴포넌트",
+                "status": "pending",
+                "estimatedHours": 6
+              },
+              {
+                "id": "volume-chart-1",
+                "title": "거래량 차트 연동",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": ["candlestick-1"]
+              },
+              {
+                "id": "technical-indicators-1",
+                "title": "기술적 지표 계산 라이브러리",
+                "status": "pending",
+                "estimatedHours": 8
+              },
+              {
+                "id": "technical-indicators-2",
+                "title": "지표 선택 및 설정 UI",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": ["technical-indicators-1"]
+              },
+              {
+                "id": "chart-tools-1",
+                "title": "차트 도구 (선 그리기, 피보나치)",
+                "status": "pending",
+                "estimatedHours": 12
+              },
+              {
+                "id": "chart-export-1",
+                "title": "차트 이미지 다운로드 기능",
+                "status": "pending",
+                "estimatedHours": 3
+              }
+            ]
+          },
+          {
+            "id": "risk-management",
+            "title": "리스크 관리 시스템",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "var-calculation-1",
+                "title": "VaR 계산 엔진 기본 구조",
+                "status": "pending",
+                "estimatedHours": 6
+              },
+              {
+                "id": "var-calculation-2",
+                "title": "Historical VaR 구현",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": ["var-calculation-1"]
+              },
+              {
+                "id": "var-calculation-3",
+                "title": "Parametric VaR 구현",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": ["var-calculation-1"]
+              },
+              {
+                "id": "var-calculation-4",
+                "title": "Monte Carlo VaR 구현",
+                "status": "pending",
+                "estimatedHours": 6,
+                "dependencies": ["var-calculation-1"]
+              },
+              {
+                "id": "cvar-calculation-1",
+                "title": "CVaR (Expected Shortfall) 구현",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": ["var-calculation-2"]
+              },
+              {
+                "id": "stress-test-1",
+                "title": "스트레스 테스트 시나리오 엔진",
+                "status": "pending",
+                "estimatedHours": 8
+              },
+              {
+                "id": "risk-dashboard-1",
+                "title": "리스크 대시보드 UI",
+                "status": "pending",
+                "estimatedHours": 6,
+                "dependencies": ["var-calculation-1"]
+              },
+              {
+                "id": "risk-alerts-1",
+                "title": "리스크 한도 알림 시스템",
+                "status": "pending",
+                "estimatedHours": 4,
+                "dependencies": ["risk-dashboard-1"]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "immediate-tasks",
+        "title": "즉시 실행 가능한 작업들",
+        "status": "pending",
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": "quick-wins",
+            "title": "빠른 개선 사항",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "responsive-1",
+                "title": "모바일 브레이크포인트 CSS 수정",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "responsive-2",
+                "title": "태블릿 레이아웃 최적화",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "loading-states-1",
+                "title": "로딩 스피너 컴포넌트 추가",
+                "status": "pending",
+                "estimatedHours": 1
+              },
+              {
+                "id": "loading-states-2",
+                "title": "스켈레톤 UI 구현",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "error-handling-1",
+                "title": "에러 바운더리 컴포넌트",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "error-handling-2",
+                "title": "API 에러 토스트 메시지",
+                "status": "pending",
+                "estimatedHours": 2
+              }
+            ]
+          },
+          {
+            "id": "data-improvements",
+            "title": "데이터 처리 개선",
+            "status": "pending",
+            "subtasks": [
+              {
+                "id": "validation-1",
+                "title": "Zod 스키마 정의 (포트폴리오)",
+                "status": "pending",
+                "estimatedHours": 2
+              },
+              {
+                "id": "validation-2",
+                "title": "폼 유효성 검증 통합",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "api-endpoints-1",
+                "title": "포트폴리오 CRUD API 엔드포인트",
+                "status": "pending",
+                "estimatedHours": 4
+              },
+              {
+                "id": "api-endpoints-2",
+                "title": "거래 내역 API 엔드포인트",
+                "status": "pending",
+                "estimatedHours": 3
+              },
+              {
+                "id": "data-fetching-1",
+                "title": "React Query 설정 및 훅",
+                "status": "pending",
+                "estimatedHours": 4
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-08-07T00:30:00.000Z",
+      "updated": "2025-08-07T00:30:00.000Z",
+      "description": "Detailed task breakdown with subtasks and time estimates"
+    }
+  }
+}

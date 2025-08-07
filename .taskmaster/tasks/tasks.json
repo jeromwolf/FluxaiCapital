@@ -1,5 +1,9 @@
 {
   "master": {
+    "currentPhase": "phase1-remaining",
+    "nextMilestone": "phase2-realtime",
+    "totalEstimatedHours": 186,
+    "completedHours": 120,
     "tasks": [
       {
         "id": "phase1-setup",
