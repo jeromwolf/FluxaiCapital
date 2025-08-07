@@ -3,96 +3,106 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
-FluxAI Capital is an AI-powered asset management platform aiming to manage assets from 100M KRW to 1T KRW scale.
 
-## Project Structure
-```
-FluxAIcapital/
-├── backend/         # Python FastAPI backend
-│   ├── src/
-│   │   ├── api/         # API endpoints
-│   │   ├── core/        # Core business logic
-│   │   ├── models/      # Database models
-│   │   ├── services/    # External services
-│   │   ├── portfolio/   # Portfolio management
-│   │   ├── risk/        # Risk management
-│   │   └── data/        # Data pipeline
-│   └── tests/
-├── frontend/        # Next.js frontend
-│   ├── src/
-│   │   ├── app/         # Next.js app router
-│   │   ├── components/  # React components
-│   │   ├── lib/         # Utilities
-│   │   └── hooks/       # Custom hooks
-│   └── public/
-└── database/        # Database schemas and migrations
-```
+**FLUX AI Capital** (https://flux.ai.kr) is an AI-powered strategic asset management platform built with Next.js 14 fullstack architecture. The platform aims to manage assets starting from 100M KRW with strategic growth targets to 1T KRW.
+
+Previously known as "Kailya Arc", the project has been rebranded to FLUX AI Capital to better represent the AI-driven asset flow optimization concept.
+
+## Tech Stack
+
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + CSS Modules
+- **UI Components**: Radix UI, Lucide Icons
+- **Fonts**: Inter + Noto Sans KR
+- **Database**: PostgreSQL + Prisma (planned)
+- **State Management**: Zustand (planned)
+- **Charts**: D3.js, Recharts (planned)
 
 ## Common Commands
 
-### Backend Development
 ```bash
-# Activate virtual environment
-source venv/bin/activate
+# Development
+npm run dev          # Start development server on http://localhost:3000
+npm run build        # Build for production
+npm run start        # Start production server
 
-# Install dependencies
-pip install -r requirements.txt
+# Code Quality
+npm run lint         # Run ESLint
+npm run type-check   # Run TypeScript compiler check
 
-# Run FastAPI development server
-cd backend && uvicorn src.main:app --reload --port 8000
-
-# Run tests
-pytest
-
-# Lint code
-ruff check src/
-black src/
-mypy src/
+# Database (when Prisma is set up)
+npx prisma generate  # Generate Prisma client
+npx prisma db push   # Push schema changes to database
+npx prisma studio    # Open Prisma Studio
 ```
 
-### Frontend Development
-```bash
-# Install dependencies
-cd frontend && npm install
+## Project Structure
 
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run linting
-npm run lint
-
-# Type checking
-npm run type-check
+```
+/
+├── src/
+│   ├── app/                 # Next.js App Router pages
+│   │   ├── api/            # API routes
+│   │   ├── (auth)/         # Auth group routes
+│   │   ├── dashboard/      # Dashboard pages
+│   │   └── layout.tsx      # Root layout
+│   ├── components/         # React components
+│   │   ├── ui/            # Base UI components (Radix UI wrapped)
+│   │   ├── charts/        # Chart components
+│   │   └── dashboard/     # Dashboard-specific components
+│   ├── lib/               # Utility functions
+│   │   ├── api/          # API client functions
+│   │   ├── hooks/        # Custom React hooks
+│   │   └── utils/        # Helper functions
+│   └── styles/           # Global styles and CSS modules
+├── public/               # Static assets
+├── prisma/              # Database schema and migrations
+└── tests/               # Test files
 ```
 
-### Database
-```bash
-# Run PostgreSQL migrations
-alembic upgrade head
+## Key Architecture Decisions
 
-# Create new migration
-alembic revision --autogenerate -m "description"
-```
+1. **Next.js App Router**: Using the latest App Router for better performance and server components
+2. **API Routes**: Leveraging Next.js API routes for backend functionality
+3. **Server Components by Default**: Use client components only when necessary (interactivity, browser APIs)
+4. **TypeScript Strict Mode**: Ensuring type safety across the application
+5. **Tailwind CSS**: Utility-first styling with custom design tokens
 
-## Architecture Overview
+## Development Guidelines
 
-### Backend (FastAPI)
-- **Portfolio Management**: CRUD operations for portfolios, positions, and transactions
-- **Risk Engine**: VaR, CVaR calculations, stress testing
-- **Data Pipeline**: Market data ingestion from yfinance, real-time price updates
-- **API Authentication**: JWT-based authentication
+1. **Component Structure**:
+   - Use server components by default
+   - Add "use client" directive only when needed
+   - Keep components small and focused
 
-### Frontend (Next.js)
-- **Server Components**: For secure data fetching
-- **Client Components**: For interactive dashboards
-- **Real-time Updates**: WebSocket connection for live prices
-- **Charts**: TradingView Lightweight Charts for financial visualizations
+2. **API Design**:
+   - RESTful endpoints under `/api/v1/`
+   - Use proper HTTP methods and status codes
+   - Implement error handling middleware
 
-### Key APIs
-- `/api/v1/portfolios` - Portfolio management
-- `/api/v1/positions` - Position tracking
-- `/api/v1/risk` - Risk metrics
-- `/api/v1/market` - Market data
+3. **State Management**:
+   - Server state: React Query/SWR for API data
+   - Client state: Zustand for global state
+   - Form state: React Hook Form + Zod
+
+4. **Database Queries**:
+   - Use Prisma for type-safe database access
+   - Implement proper error handling
+   - Use transactions for related operations
+
+## Current Development Focus
+
+The project is in early stages focusing on:
+1. Setting up the core infrastructure
+2. Implementing authentication system
+3. Creating the main dashboard layout
+4. Building reusable UI components
+5. Establishing API structure
+
+## Important Files
+
+- `PLANNING.md`: Detailed project planning and feature roadmap
+- `tailwind.config.ts`: Tailwind configuration with custom fonts
+- `src/app/layout.tsx`: Root layout with font configuration
+- `src/app/globals.css`: Global styles and Tailwind imports

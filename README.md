@@ -1,48 +1,214 @@
-# FluxAI Capital - 차세대 자산운용 플랫폼
+# FLUX AI Capital
 
-## 프로젝트 개요
-1조원 규모 자산운용사 구축을 목표로 하는 AI 기반 투자 관리 시스템
+> **AI-powered Strategic Asset Management Platform**  
+> 🌐 **Domain**: [https://flux.ai.kr](https://flux.ai.kr)
 
-## 기술 스택
-- **Backend**: Python 3.11+, FastAPI
-- **Database**: PostgreSQL, Redis
-- **Data Pipeline**: Apache Airflow, Kafka
-- **ML/AI**: PyTorch, scikit-learn
-- **Monitoring**: Prometheus, Grafana
+## 🎯 Overview
 
-## 프로젝트 구조
+FLUX AI Capital is an AI-driven strategic asset management platform built with Next.js 14. Starting with 100M KRW in initial assets, the platform aims for strategic growth targeting 1T KRW through systematic investment approaches.
+
+### Key Features
+
+- **📊 Real-time Dashboard**: Comprehensive portfolio monitoring and analytics
+- **🧠 AI-Powered Strategies**: Machine learning-based investment decision making  
+- **📈 Backtesting Engine**: Historical strategy performance analysis
+- **⚡ Risk Management**: VaR/CVaR calculations and stress testing
+- **📱 Modern UI/UX**: Responsive design with dark/light mode support
+- **🔒 Secure Authentication**: Supabase-based user management
+
+## 🛠️ Tech Stack
+
+**Frontend & Backend**
+- **Framework**: Next.js 14 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS + CSS Modules
+- **UI Components**: Radix UI, Lucide React
+- **Database**: PostgreSQL + Prisma ORM
+- **Authentication**: Supabase Auth
+
+**Development Tools**
+- **Code Quality**: ESLint, Prettier, Husky
+- **Type Safety**: TypeScript strict mode
+- **Git Hooks**: lint-staged for pre-commit checks
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18.17 or later
+- npm or yarn package manager
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/FluxAIcapital.git
+   cd FluxAIcapital
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Environment Setup**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your configuration
+   ```
+
+4. **Database Setup**
+   ```bash
+   # Generate Prisma client
+   npm run db:generate
+   
+   # Push database schema
+   npm run db:push
+   
+   # Optional: Seed initial data
+   npm run db:seed
+   ```
+
+### Development
+
+**Option 1: Using the development script**
+```bash
+chmod +x dev.sh
+./dev.sh
+# Select option 1 to start development server
 ```
-FluxAIcapital/
-├── src/
-│   ├── api/         # FastAPI 엔드포인트
-│   ├── core/        # 핵심 비즈니스 로직
-│   ├── models/      # 데이터베이스 모델
-│   ├── services/    # 외부 서비스 연동
-│   ├── portfolio/   # 포트폴리오 관리
-│   ├── risk/        # 리스크 관리
-│   └── data/        # 데이터 수집/처리
-├── tests/           # 테스트 코드
-├── docs/            # 문서
-└── config/          # 설정 파일
+
+**Option 2: Direct command**
+```bash
+npm run dev
 ```
 
-## 로드맵
-### Phase 1 (1억 → 10억)
-- [ ] MVP 시스템 구축
-- [ ] 기본 포트폴리오 관리
-- [ ] 리스크 모니터링
+Visit [http://localhost:4321](http://localhost:4321) to view the application.
 
-### Phase 2 (10억 → 100억)
-- [ ] AI 기반 자산배분
-- [ ] 자동 리밸런싱
-- [ ] 규제 보고 자동화
+## 📁 Project Structure
 
-### Phase 3 (100억 → 1000억)
-- [ ] 멀티 전략 구현
-- [ ] 기관투자자 대응
-- [ ] 글로벌 시장 확대
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── (app)/             # Main application routes
+│   │   ├── dashboard/     # Dashboard pages
+│   │   ├── portfolio/     # Portfolio management
+│   │   └── backtest/      # Backtesting interface
+│   ├── (auth)/            # Authentication routes
+│   ├── api/               # API routes
+│   └── layout.tsx         # Root layout
+├── components/            # React components
+│   ├── ui/               # Base UI components
+│   ├── dashboard/        # Dashboard components
+│   ├── portfolio/        # Portfolio components
+│   └── backtest/         # Backtesting components
+├── lib/                  # Utility functions
+│   ├── backtest/         # Backtesting engine
+│   ├── db/              # Database operations
+│   └── supabase/        # Supabase clients
+└── types/               # TypeScript definitions
+```
 
-### Phase 4 (1000억 → 1조)
-- [ ] 완전 자동화 운용
-- [ ] AI 예측 모델 고도화
-- [ ] 글로벌 라이선스 확보
+## 💼 Available Scripts
+
+```bash
+npm run dev              # Start development server (port 4321)
+npm run build            # Build for production
+npm run start            # Start production server
+npm run lint             # Run ESLint
+npm run lint:fix         # Fix ESLint issues
+npm run type-check       # TypeScript type checking
+npm run format           # Format code with Prettier
+
+# Database commands
+npm run db:generate      # Generate Prisma client
+npm run db:push          # Push schema to database  
+npm run db:migrate       # Run database migrations
+npm run db:studio        # Open Prisma Studio
+npm run db:seed          # Seed initial data
+```
+
+## 🎨 Key Components
+
+### Dashboard
+- Real-time portfolio performance monitoring
+- Interactive charts and analytics
+- Asset allocation visualization
+
+### Portfolio Management
+- Multi-portfolio creation and management
+- Asset allocation strategies
+- Performance tracking
+
+### Backtesting Engine
+- Strategy performance analysis
+- Historical data simulation
+- Risk metrics calculation
+- Multiple strategy support:
+  - Buy & Hold
+  - Moving Average
+  - Rebalancing
+  - Custom strategies
+
+### Risk Management
+- Value at Risk (VaR) calculations
+- Stress testing scenarios
+- Position sizing controls
+
+## 🔧 Configuration
+
+### Environment Variables
+
+Key environment variables (see `.env.example`):
+
+```env
+# Application
+NEXT_PUBLIC_APP_URL=https://flux.ai.kr
+
+# Supabase Authentication
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# Database
+DATABASE_URL=file:./dev.db  # SQLite for development
+
+# Feature Flags
+NEXT_PUBLIC_ENABLE_TRADING=false
+NEXT_PUBLIC_ENABLE_AI_FEATURES=false
+```
+
+## 🚢 Deployment
+
+The application is optimized for deployment on:
+
+- **Frontend**: Vercel (recommended)
+- **Database**: PostgreSQL (production)
+- **Monitoring**: Sentry integration ready
+
+```bash
+npm run build && npm start
+```
+
+## 🤝 Development Workflow
+
+1. **Code Quality**: Automated linting and formatting
+2. **Type Safety**: TypeScript strict mode enforcement  
+3. **Git Hooks**: Pre-commit checks via Husky
+4. **Testing**: Comprehensive strategy backtesting
+
+## 📊 Current Status
+
+- ✅ **Phase 1**: MVP with core dashboard and portfolio management
+- 🚧 **Phase 2**: Advanced backtesting and risk management (in progress)
+- 📋 **Phase 3**: AI/ML integration and automated strategies
+- 📋 **Phase 4**: Mobile app and API platform
+
+## 📞 Support
+
+For questions and support:
+- Review the [PLANNING.md](./PLANNING.md) for detailed project roadmap
+- Check [CLAUDE.md](./CLAUDE.md) for development guidelines
+
+---
+
+**Built with ❤️ using Next.js 14 and modern web technologies**

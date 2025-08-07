@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "project": "FLUX AI Capital",
+  "tasksPath": ".taskmaster/tasks/tasks.json",
+  "settings": {
+    "autoSave": true,
+    "backupEnabled": true,
+    "maxBackups": 10
+  },
+  "global": {
+    "defaultTag": "master"
+  }
+}

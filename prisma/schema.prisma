@@ -1,0 +1,182 @@
+// FLUX AI Capital Database Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// User management
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  role          UserRole  @default(USER)
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Relations
+  accounts   Account[]
+  sessions   Session[]
+  portfolios Portfolio[]
+  activities Activity[]
+
+  @@map("users")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+// Portfolio management
+model Portfolio {
+  id          String           @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  currency    String           @default("KRW")
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  holdings     Holding[]
+  transactions Transaction[]
+  performances Performance[]
+
+  @@index([userId])
+  @@map("portfolios")
+}
+
+model Holding {
+  id           String   @id @default(cuid())
+  portfolioId  String
+  symbol       String
+  quantity     Decimal
+  averagePrice Decimal
+  currentPrice Decimal
+  marketValue  Decimal
+  realizedPnL  Decimal  @default(0)
+  unrealizedPnL Decimal @default(0)
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@unique([portfolioId, symbol])
+  @@index([portfolioId])
+  @@map("holdings")
+}
+
+model Transaction {
+  id          String          @id @default(cuid())
+  portfolioId String
+  type        TransactionType
+  symbol      String
+  quantity    Decimal
+  price       Decimal
+  amount      Decimal
+  fee         Decimal         @default(0)
+  notes       String?
+  executedAt  DateTime        @default(now())
+  createdAt   DateTime        @default(now())
+
+  // Relations
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@index([portfolioId, executedAt])
+  @@map("transactions")
+}
+
+model Performance {
+  id          String   @id @default(cuid())
+  portfolioId String
+  date        DateTime
+  totalValue  Decimal
+  dailyReturn Decimal
+  cumReturn   Decimal
+  createdAt   DateTime @default(now())
+
+  // Relations
+  portfolio Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+
+  @@unique([portfolioId, date])
+  @@index([portfolioId, date])
+  @@map("performances")
+}
+
+// Activity logging
+model Activity {
+  id         String       @id @default(cuid())
+  userId     String
+  type       ActivityType
+  action     String
+  metadata   Json?
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime     @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("activities")
+}
+
+// Enums
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum TransactionType {
+  BUY
+  SELL
+  DEPOSIT
+  WITHDRAWAL
+  FEE
+  DIVIDEND
+}
+
+enum ActivityType {
+  LOGIN
+  LOGOUT
+  PORTFOLIO_CREATE
+  PORTFOLIO_UPDATE
+  PORTFOLIO_DELETE
+  TRANSACTION_CREATE
+  SETTINGS_UPDATE
+}

@@ -22,7 +22,21 @@
       "Bash(git push:*)",
       "Bash(git rm:*)",
       "Bash(git filter-branch:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npm search:*)",
+      "Bash(chmod:*)",
+      "Bash(./install-mcp-servers.sh:*)",
+      "Bash(cp:*)",
+      "Bash(cat:*)",
+      "Bash(npx husky init:*)",
+      "Bash(npm run type-check:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma db push)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npm run db:seed)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }
