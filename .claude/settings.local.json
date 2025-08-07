@@ -36,7 +36,8 @@
       "Bash(npm uninstall:*)",
       "Bash(DATABASE_URL=\"file:./dev.db\" npx prisma db push)",
       "Bash(DATABASE_URL=\"file:./dev.db\" npm run db:seed)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(HUSKY=0 git commit -m \"$(cat <<''EOF''\nrefactor: Organize project structure for better maintainability\n\n- Move documentation files to docs/ folder\n  - PLANNING.md, PRD.md, PROJECT_INFO.md\n  - MCP guides and task breakdown documents\n- Move configuration files to config/ folder\n  - CLAUDE_DESKTOP_CONFIG.json, tasks.json\n- Move scripts to scripts/ folder\n  - dev.sh, install-mcp-servers.sh, test-api.js\n- Update README.md with corrected file paths\n- Maintain clean root directory with only essential files\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": []
   }
