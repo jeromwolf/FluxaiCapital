@@ -73,8 +73,8 @@ FLUX AI Capital is an AI-driven strategic asset management platform built with N
 
 **Option 1: Using the development script**
 ```bash
-chmod +x dev.sh
-./dev.sh
+chmod +x scripts/dev.sh
+./scripts/dev.sh
 # Select option 1 to start development server
 ```
 
@@ -206,7 +206,7 @@ npm run build && npm start
 ## 📞 Support
 
 For questions and support:
-- Review the [PLANNING.md](./PLANNING.md) for detailed project roadmap
+- Review the [PLANNING.md](./docs/PLANNING.md) for detailed project roadmap
 - Check [CLAUDE.md](./CLAUDE.md) for development guidelines
 
 ---
