@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={`${inter.variable} ${notoSansKR.variable}`}>
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased bg-gray-50 dark:bg-gray-900">
         <div className="relative flex min-h-screen flex-col">
           {children}
         </div>

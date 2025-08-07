@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { ResponsiveContainer } from 'recharts';
-import { getChartTheme } from '@/config/chart-theme';
 import { cn } from '@/lib/utils';
 
 interface ChartContainerProps {
@@ -29,8 +28,7 @@ export function ChartContainer({
   title,
   subtitle,
   loading = false,
-  error,
-  isDark = false
+  error
 }: ChartContainerProps) {
   // const theme = getChartTheme(isDark); // Unused for now
 
@@ -141,7 +139,7 @@ export function ChartContainer({
           minHeight={minHeight}
           aspect={aspect}
         >
-          {children}
+          {children as React.ReactElement}
         </ResponsiveContainer>
       </div>
     </div>
@@ -191,7 +189,7 @@ export class ChartErrorBoundary extends React.Component<
     console.error('Chart Error:', error, errorInfo);
   }
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       return (
         this.props.fallback || (
