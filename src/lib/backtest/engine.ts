@@ -1,360 +1,297 @@
 import {
   BacktestConfig,
   BacktestResult,
-  Trade,
-  EquityPoint,
-  HoldingSnapshot,
-  PerformanceMetrics,
-  MarketData,
-  Signal,
+  BacktestTrade,
+  BacktestPosition,
+  BacktestMetrics,
 } from './types';
+import { calculateMomentumSignal } from './strategies/momentum';
+import { getMeanReversionSignal } from './strategies/meanReversion';
+
+interface PriceData {
+  date: Date;
+  symbol: string;
+  price: number;
+}
 
 export class BacktestEngine {
   private config: BacktestConfig;
-  private marketData: Map<string, MarketData[]>;
-  private trades: Trade[] = [];
-  private equity: EquityPoint[] = [];
-  private holdings: Map<string, number> = new Map();
   private cash: number;
-  private currentDate: Date;
-  private holdingSnapshots: HoldingSnapshot[] = [];
+  private positions: Map<string, BacktestPosition>;
+  private trades: BacktestTrade[];
+  private equityCurve: Array<{ date: Date; value: number; drawdown: number }>;
+  private dailyReturns: Array<{ date: Date; return: number }>;
+  private maxEquity: number;
 
-  constructor(config: BacktestConfig, marketData: Map<string, MarketData[]>) {
+  constructor(config: BacktestConfig) {
     this.config = config;
-    this.marketData = marketData;
     this.cash = config.initialCapital;
-    this.currentDate = config.startDate;
+    this.positions = new Map();
+    this.trades = [];
+    this.equityCurve = [];
+    this.dailyReturns = [];
+    this.maxEquity = config.initialCapital;
   }
 
-  async run(strategy: (data: MarketData[], holdings: Map<string, number>) => Signal[]): Promise<BacktestResult> {
-    // 날짜별로 백테스트 실행
-    const dates = this.getUniqueDates();
+  async run(priceData: PriceData[]): Promise<BacktestResult> {
+    // Group price data by symbol
+    const pricesBySymbol = this.groupPricesBySymbol(priceData);
     
-    for (const date of dates) {
-      if (date < this.config.startDate || date > this.config.endDate) {
-        continue;
+    // Get all unique dates
+    const dates = [...new Set(priceData.map(p => p.date.toISOString()))].sort();
+    
+    let previousValue = this.config.initialCapital;
+
+    for (const dateStr of dates) {
+      const date = new Date(dateStr);
+      
+      // Update current prices
+      this.updatePositionPrices(pricesBySymbol, date);
+      
+      // Generate signals and execute trades
+      for (const symbol of this.config.symbols) {
+        const prices = this.getPriceHistory(pricesBySymbol, symbol, date);
+        if (prices.length > 0) {
+          const signal = this.generateSignal(prices);
+          
+          if (signal === 'BUY' && !this.positions.has(symbol)) {
+            this.executeBuy(symbol, prices[prices.length - 1], date);
+          } else if (signal === 'SELL' && this.positions.has(symbol)) {
+            this.executeSell(symbol, prices[prices.length - 1], date);
+          }
+        }
       }
-
-      this.currentDate = date;
-
-      // 해당 날짜의 시장 데이터 가져오기
-      const dailyData = this.getDataForDate(date);
-      if (dailyData.length === 0) continue;
-
-      // 전략 실행하여 시그널 생성
-      const signals = strategy(dailyData, new Map(this.holdings));
-
-      // 시그널에 따라 거래 실행
-      for (const signal of signals) {
-        await this.executeSignal(signal);
+      
+      // Record equity curve
+      const currentValue = this.getPortfolioValue();
+      const drawdown = this.maxEquity > 0 ? (this.maxEquity - currentValue) / this.maxEquity : 0;
+      
+      this.equityCurve.push({
+        date,
+        value: currentValue,
+        drawdown,
+      });
+      
+      // Record daily returns
+      if (previousValue > 0) {
+        const dailyReturn = (currentValue - previousValue) / previousValue;
+        this.dailyReturns.push({ date, return: dailyReturn });
       }
-
-      // 포트폴리오 가치 계산 및 기록
-      this.recordEquity(date);
-      this.recordHoldings(date);
+      
+      // Update max equity
+      if (currentValue > this.maxEquity) {
+        this.maxEquity = currentValue;
+      }
+      
+      previousValue = currentValue;
     }
 
-    // 성과 지표 계산
-    const performance = this.calculatePerformance();
+    const metrics = this.calculateMetrics();
 
     return {
-      id: `backtest-${Date.now()}`,
       config: this.config,
-      performance,
+      metrics,
       trades: this.trades,
-      equity: this.equity,
-      holdings: this.holdingSnapshots,
-      createdAt: new Date(),
+      equityCurve: this.equityCurve,
+      finalPositions: Array.from(this.positions.values()),
+      dailyReturns: this.dailyReturns,
     };
   }
 
-  private async executeSignal(signal: Signal): Promise<void> {
-    const marketData = this.getLatestPrice(signal.symbol, signal.date);
-    if (!marketData) return;
-
-    const price = marketData.close;
-    let quantity = signal.quantity || 0;
+  private groupPricesBySymbol(priceData: PriceData[]): Map<string, PriceData[]> {
+    const grouped = new Map<string, PriceData[]>();
     
-    if (signal.action === 'buy') {
-      // 구매 가능한 수량 계산
-      if (!quantity) {
-        const availableCash = this.cash * 0.95; // 현금의 95% 사용
-        quantity = Math.floor(availableCash / price);
+    for (const data of priceData) {
+      if (!grouped.has(data.symbol)) {
+        grouped.set(data.symbol, []);
       }
+      grouped.get(data.symbol)!.push(data);
+    }
+    
+    // Sort by date
+    for (const [symbol, prices] of grouped) {
+      prices.sort((a, b) => a.date.getTime() - b.date.getTime());
+    }
+    
+    return grouped;
+  }
 
-      if (quantity > 0) {
-        const amount = quantity * price;
-        const commission = amount * (this.config.transactionCost || 0.001);
-        const slippage = amount * (this.config.slippage || 0.0005);
-        const totalCost = amount + commission + slippage;
+  private getPriceHistory(
+    pricesBySymbol: Map<string, PriceData[]>,
+    symbol: string,
+    currentDate: Date
+  ): number[] {
+    const symbolPrices = pricesBySymbol.get(symbol) || [];
+    return symbolPrices
+      .filter(p => p.date <= currentDate)
+      .map(p => p.price);
+  }
 
-        if (totalCost <= this.cash) {
-          this.cash -= totalCost;
-          const currentHolding = this.holdings.get(signal.symbol) || 0;
-          this.holdings.set(signal.symbol, currentHolding + quantity);
-
-          this.trades.push({
-            id: `trade-${this.trades.length + 1}`,
-            date: signal.date,
-            symbol: signal.symbol,
-            side: 'buy',
-            quantity,
-            price,
-            amount,
-            commission,
-            slippage,
-          });
-        }
-      }
-    } else if (signal.action === 'sell') {
-      const currentHolding = this.holdings.get(signal.symbol) || 0;
+  private updatePositionPrices(pricesBySymbol: Map<string, PriceData[]>, date: Date) {
+    for (const [symbol, position] of this.positions) {
+      const symbolPrices = pricesBySymbol.get(symbol) || [];
+      const currentPriceData = symbolPrices.find(p => 
+        p.date.toDateString() === date.toDateString()
+      );
       
-      if (!quantity || quantity > currentHolding) {
-        quantity = currentHolding;
+      if (currentPriceData) {
+        position.currentPrice = currentPriceData.price;
+        position.marketValue = position.quantity * position.currentPrice;
+        position.unrealizedPnL = position.marketValue - (position.quantity * position.averagePrice);
       }
+    }
+  }
 
-      if (quantity > 0) {
-        const amount = quantity * price;
-        const commission = amount * (this.config.transactionCost || 0.001);
-        const slippage = amount * (this.config.slippage || 0.0005);
-        const netAmount = amount - commission - slippage;
+  private generateSignal(prices: number[]): 'BUY' | 'SELL' | 'HOLD' {
+    // Use momentum strategy by default
+    // TODO: Switch based on strategy type in config
+    return calculateMomentumSignal(prices, 20);
+  }
 
-        this.cash += netAmount;
-        this.holdings.set(signal.symbol, currentHolding - quantity);
+  private executeBuy(symbol: string, price: number, date: Date) {
+    const positionSize = this.config.initialCapital * 0.1; // 10% position size
+    if (this.cash < positionSize) return;
 
-        // PnL 계산 (간단히 평균 매수가 기준)
-        const avgBuyPrice = this.calculateAverageBuyPrice(signal.symbol);
-        const pnl = (price - avgBuyPrice) * quantity - commission - slippage;
-        const pnlPercent = (pnl / (avgBuyPrice * quantity)) * 100;
+    const slippageAmount = price * (this.config.slippage / 100);
+    const executionPrice = price + slippageAmount;
+    const quantity = Math.floor(positionSize / executionPrice);
+    if (quantity === 0) return;
 
-        this.trades.push({
-          id: `trade-${this.trades.length + 1}`,
-          date: signal.date,
-          symbol: signal.symbol,
-          side: 'sell',
-          quantity,
-          price,
-          amount,
-          commission,
-          slippage,
-          pnl,
-          pnlPercent,
-        });
+    const commissionAmount = quantity * executionPrice * (this.config.commission / 100);
+    const totalCost = quantity * executionPrice + commissionAmount;
 
-        if (this.holdings.get(signal.symbol) === 0) {
-          this.holdings.delete(signal.symbol);
+    if (this.cash < totalCost) return;
+
+    this.cash -= totalCost;
+
+    const trade: BacktestTrade = {
+      date,
+      symbol,
+      type: 'BUY',
+      quantity,
+      price: executionPrice,
+      commission: commissionAmount,
+      slippage: slippageAmount * quantity,
+      totalCost,
+    };
+    this.trades.push(trade);
+
+    this.positions.set(symbol, {
+      symbol,
+      quantity,
+      averagePrice: executionPrice,
+      currentPrice: executionPrice,
+      marketValue: quantity * executionPrice,
+      unrealizedPnL: 0,
+      realizedPnL: 0,
+    });
+  }
+
+  private executeSell(symbol: string, price: number, date: Date) {
+    const position = this.positions.get(symbol);
+    if (!position) return;
+
+    const slippageAmount = price * (this.config.slippage / 100);
+    const executionPrice = price - slippageAmount;
+    const quantity = position.quantity;
+
+    const grossProceeds = quantity * executionPrice;
+    const commissionAmount = grossProceeds * (this.config.commission / 100);
+    const netProceeds = grossProceeds - commissionAmount;
+
+    this.cash += netProceeds;
+
+    const realizedPnL = netProceeds - (position.quantity * position.averagePrice);
+
+    const trade: BacktestTrade = {
+      date,
+      symbol,
+      type: 'SELL',
+      quantity,
+      price: executionPrice,
+      commission: commissionAmount,
+      slippage: slippageAmount * quantity,
+      totalCost: -netProceeds,
+    };
+    this.trades.push(trade);
+
+    this.positions.delete(symbol);
+  }
+
+  private getPortfolioValue(): number {
+    let totalValue = this.cash;
+    for (const position of this.positions.values()) {
+      totalValue += position.marketValue;
+    }
+    return totalValue;
+  }
+
+  private calculateMetrics(): BacktestMetrics {
+    const initialCapital = this.config.initialCapital;
+    const finalValue = this.getPortfolioValue();
+    const totalReturn = ((finalValue - initialCapital) / initialCapital) * 100;
+
+    // Calculate annualized return
+    const days = this.equityCurve.length;
+    const years = days / 252; // Trading days
+    const annualizedReturn = years > 0 ? (Math.pow(finalValue / initialCapital, 1 / years) - 1) * 100 : 0;
+
+    // Calculate Sharpe ratio
+    const avgReturn = this.dailyReturns.reduce((sum, r) => sum + r.return, 0) / this.dailyReturns.length;
+    const stdDev = Math.sqrt(
+      this.dailyReturns.reduce((sum, r) => sum + Math.pow(r.return - avgReturn, 2), 0) / this.dailyReturns.length
+    );
+    const sharpeRatio = stdDev > 0 ? (avgReturn * Math.sqrt(252)) / stdDev : 0;
+
+    // Calculate max drawdown
+    const maxDrawdown = Math.max(...this.equityCurve.map(e => e.drawdown)) * 100;
+
+    // Calculate win rate
+    const sellTrades = this.trades.filter(t => t.type === 'SELL');
+    const winningTrades = sellTrades.filter((trade, index) => {
+      const buyIndex = this.trades.findIndex(t => 
+        t.symbol === trade.symbol && t.type === 'BUY' && t.date < trade.date
+      );
+      if (buyIndex >= 0) {
+        const buyTrade = this.trades[buyIndex];
+        return trade.price > buyTrade.price;
+      }
+      return false;
+    }).length;
+
+    const winRate = sellTrades.length > 0 ? (winningTrades / sellTrades.length) * 100 : 0;
+    
+    // Calculate profit factor
+    let grossProfits = 0;
+    let grossLosses = 0;
+    
+    sellTrades.forEach((trade, index) => {
+      const buyIndex = this.trades.findIndex(t => 
+        t.symbol === trade.symbol && t.type === 'BUY' && t.date < trade.date
+      );
+      if (buyIndex >= 0) {
+        const buyTrade = this.trades[buyIndex];
+        const pnl = (trade.price - buyTrade.price) * trade.quantity;
+        if (pnl > 0) {
+          grossProfits += pnl;
+        } else {
+          grossLosses += Math.abs(pnl);
         }
       }
-    }
-  }
-
-  private recordEquity(date: Date): void {
-    const totalValue = this.calculatePortfolioValue(date);
-    const drawdown = this.calculateDrawdown(totalValue);
-
-    this.equity.push({
-      date,
-      value: totalValue,
-      drawdown,
     });
-  }
-
-  private recordHoldings(date: Date): void {
-    const holdingsList = [];
-    let totalValue = this.cash;
-
-    for (const [symbol, quantity] of this.holdings) {
-      const price = this.getLatestPrice(symbol, date)?.close || 0;
-      const value = quantity * price;
-      totalValue += value;
-
-      holdingsList.push({
-        symbol,
-        quantity,
-        price,
-        value,
-        weight: 0, // 나중에 계산
-      });
-    }
-
-    // 가중치 계산
-    holdingsList.forEach(holding => {
-      holding.weight = (holding.value / totalValue) * 100;
-    });
-
-    this.holdingSnapshots.push({
-      date,
-      holdings: holdingsList,
-      cash: this.cash,
-      totalValue,
-    });
-  }
-
-  private calculatePortfolioValue(date: Date): number {
-    let value = this.cash;
-
-    for (const [symbol, quantity] of this.holdings) {
-      const price = this.getLatestPrice(symbol, date)?.close || 0;
-      value += quantity * price;
-    }
-
-    return value;
-  }
-
-  private calculateDrawdown(currentValue: number): number {
-    if (this.equity.length === 0) return 0;
-
-    const maxValue = Math.max(...this.equity.map(e => e.value), currentValue);
-    return ((currentValue - maxValue) / maxValue) * 100;
-  }
-
-  private calculateAverageBuyPrice(symbol: string): number {
-    const buyTrades = this.trades.filter(t => t.symbol === symbol && t.side === 'buy');
-    if (buyTrades.length === 0) return 0;
-
-    const totalAmount = buyTrades.reduce((sum, t) => sum + t.amount, 0);
-    const totalQuantity = buyTrades.reduce((sum, t) => sum + t.quantity, 0);
-
-    return totalAmount / totalQuantity;
-  }
-
-  private calculatePerformance(): PerformanceMetrics {
-    const returns = this.calculateReturns();
-    const totalReturn = ((this.equity[this.equity.length - 1].value - this.config.initialCapital) / this.config.initialCapital) * 100;
-    const annualizedReturn = this.annualizeReturn(totalReturn);
-    const volatility = this.calculateVolatility(returns);
-    const sharpeRatio = this.calculateSharpeRatio(annualizedReturn, volatility);
-    const sortinoRatio = this.calculateSortinoRatio(returns);
-    const maxDrawdown = Math.min(...this.equity.map(e => e.drawdown));
-    const maxDrawdownDuration = this.calculateMaxDrawdownDuration();
     
-    const winningTrades = this.trades.filter(t => t.pnl && t.pnl > 0);
-    const losingTrades = this.trades.filter(t => t.pnl && t.pnl < 0);
-    const winRate = (winningTrades.length / (winningTrades.length + losingTrades.length)) * 100;
-    
-    const averageWin = winningTrades.length > 0 
-      ? winningTrades.reduce((sum, t) => sum + (t.pnl || 0), 0) / winningTrades.length 
-      : 0;
-    
-    const averageLoss = losingTrades.length > 0 
-      ? Math.abs(losingTrades.reduce((sum, t) => sum + (t.pnl || 0), 0) / losingTrades.length)
-      : 0;
-    
-    const profitFactor = averageLoss > 0 ? averageWin / averageLoss : 0;
-    const calmarRatio = maxDrawdown !== 0 ? annualizedReturn / Math.abs(maxDrawdown) : 0;
+    const profitFactor = grossLosses > 0 ? grossProfits / grossLosses : 0;
 
     return {
       totalReturn,
       annualizedReturn,
-      volatility,
       sharpeRatio,
-      sortinoRatio,
       maxDrawdown,
-      maxDrawdownDuration,
       winRate,
       profitFactor,
       totalTrades: this.trades.length,
-      winningTrades: winningTrades.length,
-      losingTrades: losingTrades.length,
-      averageWin,
-      averageLoss,
-      bestTrade: Math.max(...this.trades.map(t => t.pnl || 0)),
-      worstTrade: Math.min(...this.trades.map(t => t.pnl || 0)),
-      calmarRatio,
-      alpha: 0, // 추후 구현
-      beta: 0, // 추후 구현
+      winningTrades,
+      losingTrades: sellTrades.length - winningTrades,
     };
-  }
-
-  private calculateReturns(): number[] {
-    const returns: number[] = [];
-    
-    for (let i = 1; i < this.equity.length; i++) {
-      const dailyReturn = ((this.equity[i].value - this.equity[i - 1].value) / this.equity[i - 1].value) * 100;
-      returns.push(dailyReturn);
-    }
-    
-    return returns;
-  }
-
-  private annualizeReturn(totalReturn: number): number {
-    const days = this.equity.length;
-    const years = days / 252; // 거래일 기준
-    return Math.pow(1 + totalReturn / 100, 1 / years) - 1;
-  }
-
-  private calculateVolatility(returns: number[]): number {
-    const mean = returns.reduce((sum, r) => sum + r, 0) / returns.length;
-    const variance = returns.reduce((sum, r) => sum + Math.pow(r - mean, 2), 0) / returns.length;
-    return Math.sqrt(variance * 252); // 연간 변동성
-  }
-
-  private calculateSharpeRatio(annualizedReturn: number, volatility: number, riskFreeRate: number = 0.02): number {
-    return (annualizedReturn - riskFreeRate) / volatility;
-  }
-
-  private calculateSortinoRatio(returns: number[], targetReturn: number = 0): number {
-    const downsidevReturns = returns.filter(r => r < targetReturn);
-    if (downsidevReturns.length === 0) return 0;
-    
-    const downsideVariance = downsidevReturns.reduce((sum, r) => sum + Math.pow(r - targetReturn, 2), 0) / downsidevReturns.length;
-    const downsideDeviation = Math.sqrt(downsideVariance * 252);
-    
-    const meanReturn = returns.reduce((sum, r) => sum + r, 0) / returns.length * 252;
-    return (meanReturn - targetReturn) / downsideDeviation;
-  }
-
-  private calculateMaxDrawdownDuration(): number {
-    let maxDuration = 0;
-    let currentDuration = 0;
-    let peakValue = this.config.initialCapital;
-
-    for (const point of this.equity) {
-      if (point.value >= peakValue) {
-        peakValue = point.value;
-        currentDuration = 0;
-      } else {
-        currentDuration++;
-        maxDuration = Math.max(maxDuration, currentDuration);
-      }
-    }
-
-    return maxDuration;
-  }
-
-  private getUniqueDates(): Date[] {
-    const dates = new Set<string>();
-    
-    for (const dataArray of this.marketData.values()) {
-      dataArray.forEach(data => {
-        dates.add(data.date.toISOString().split('T')[0]);
-      });
-    }
-    
-    return Array.from(dates)
-      .sort()
-      .map(dateStr => new Date(dateStr));
-  }
-
-  private getDataForDate(date: Date): MarketData[] {
-    const result: MarketData[] = [];
-    const dateStr = date.toISOString().split('T')[0];
-    
-    for (const [symbol, dataArray] of this.marketData) {
-      const data = dataArray.find(d => d.date.toISOString().split('T')[0] === dateStr);
-      if (data) {
-        result.push(data);
-      }
-    }
-    
-    return result;
-  }
-
-  private getLatestPrice(symbol: string, date: Date): MarketData | undefined {
-    const dataArray = this.marketData.get(symbol);
-    if (!dataArray) return undefined;
-    
-    const dateStr = date.toISOString().split('T')[0];
-    return dataArray.find(d => d.date.toISOString().split('T')[0] === dateStr);
   }
 }

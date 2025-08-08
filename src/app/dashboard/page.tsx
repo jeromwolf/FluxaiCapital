@@ -6,33 +6,16 @@ import { HoldingsTable, HoldingData } from '@/components/dashboard/HoldingsTable
 import { AssetAllocationPieChart } from '@/components/charts';
 import { ResponsiveCard, ResponsiveGrid, CollapsibleSection } from '@/components/ui/responsive-card';
 import { useIsMobile } from '@/hooks/useMediaQuery';
+import { usePortfolios, useHoldings } from '@/hooks/useApi';
+import { useHoldingsWithPrices } from '@/hooks/useMarketData';
+import { Loader2 } from 'lucide-react';
 
-// Generate mock holdings data
-function generateMockHoldings(): HoldingData[] {
-  const holdings = [
-    { symbol: 'AAPL', name: 'Apple Inc.', quantity: 100, averagePrice: 150, currentPrice: 175, change24h: 2.5 },
-    { symbol: 'GOOGL', name: 'Alphabet Inc.', quantity: 50, averagePrice: 100, currentPrice: 125, change24h: -1.2 },
-    { symbol: 'MSFT', name: 'Microsoft Corp.', quantity: 75, averagePrice: 250, currentPrice: 300, change24h: 0.8 },
-    { symbol: 'AMZN', name: 'Amazon.com Inc.', quantity: 30, averagePrice: 3000, currentPrice: 3200, change24h: 1.5 },
-    { symbol: 'TSLA', name: 'Tesla Inc.', quantity: 25, averagePrice: 800, currentPrice: 750, change24h: -3.2 },
-    { symbol: 'NVDA', name: 'NVIDIA Corp.', quantity: 40, averagePrice: 400, currentPrice: 500, change24h: 4.1 },
-    { symbol: 'META', name: 'Meta Platforms', quantity: 60, averagePrice: 300, currentPrice: 320, change24h: 0.5 },
-  ];
-
-  // Calculate derived values and add price history
-  const totalValue = holdings.reduce((sum, h) => {
-    const value = h.quantity * h.currentPrice;
-    return sum + value;
-  }, 0);
-
-  return holdings.map((holding, index) => {
-    const cost = holding.quantity * holding.averagePrice;
-    const value = holding.quantity * holding.currentPrice;
-    const returns = value - cost;
-    const percentage = (returns / cost) * 100;
-    const weight = (value / totalValue) * 100;
-
-    // Generate mock price history
+// Convert API holdings to HoldingData format
+function convertToHoldingData(apiHoldings: any[]): HoldingData[] {
+  if (!apiHoldings || apiHoldings.length === 0) return [];
+  
+  return apiHoldings.map((holding, index) => {
+    // Generate mock price history for now
     const priceHistory: Array<{ date: string; value: number }> = [];
     for (let i = 30; i >= 0; i--) {
       const date = new Date();
@@ -47,15 +30,29 @@ function generateMockHoldings(): HoldingData[] {
         });
       }
     }
-
+    
+    // Map symbol to company name (in real app, this would come from API)
+    const symbolToName: Record<string, string> = {
+      'NVDA': 'NVIDIA Corp.',
+      'MSFT': 'Microsoft Corp.',
+      'GOOGL': 'Alphabet Inc.',
+      '005930': 'Samsung Electronics',
+      '035420': 'NAVER Corp.'
+    };
+    
     return {
-      id: `holding-${index}`,
-      ...holding,
-      cost,
-      value,
-      returns,
-      percentage,
-      weight,
+      id: holding.id || `holding-${index}`,
+      symbol: holding.symbol,
+      name: symbolToName[holding.symbol] || holding.symbol,
+      quantity: holding.quantity,
+      averagePrice: holding.averagePrice,
+      currentPrice: holding.currentPrice,
+      cost: holding.quantity * holding.averagePrice,
+      value: holding.marketValue,
+      returns: holding.unrealizedPnL,
+      percentage: (holding.unrealizedPnL / (holding.quantity * holding.averagePrice)) * 100,
+      weight: holding.weight || 0,
+      change24h: (Math.random() - 0.5) * 5, // Mock 24h change
       priceHistory
     };
   });
@@ -72,10 +69,32 @@ function holdingsToPieChartData(holdings: HoldingData[]) {
 }
 
 export default function DashboardPage() {
-  const [holdings] = React.useState(generateMockHoldings());
   const [sortBy, setSortBy] = React.useState<keyof HoldingData>('weight');
   const [sortOrder, setSortOrder] = React.useState<'asc' | 'desc'>('desc');
   const isMobile = useIsMobile();
+  
+  // Fetch portfolios
+  const { data: portfolios, error: portfoliosError, isLoading: portfoliosLoading } = usePortfolios();
+  
+  // Get the first active portfolio (in real app, user would select)
+  const activePortfolio = portfolios?.find((p: any) => p.isActive) || portfolios?.[0];
+  
+  // Fetch holdings for the active portfolio
+  const { data: holdingsData, error: holdingsError, isLoading: holdingsLoading } = useHoldings(
+    activePortfolio?.id || null
+  );
+  
+  const baseHoldings = React.useMemo(() => {
+    if (!holdingsData?.holdings) return [];
+    return convertToHoldingData(holdingsData.holdings);
+  }, [holdingsData]);
+  
+  // Get real-time prices for holdings
+  const { holdings: holdingsWithPrices } = useHoldingsWithPrices(baseHoldings);
+  const holdings = holdingsWithPrices.length > 0 ? holdingsWithPrices : baseHoldings;
+  
+  const isLoading = portfoliosLoading || holdingsLoading;
+  const error = portfoliosError || holdingsError;
 
   const handleSort = (field: keyof HoldingData) => {
     if (sortBy === field) {
@@ -92,6 +111,36 @@ export default function DashboardPage() {
   };
 
   const pieChartData = holdingsToPieChartData(holdings);
+  
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-red-600 dark:text-red-400">데이터를 불러오는 중 오류가 발생했습니다.</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!activePortfolio) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-gray-600 dark:text-gray-400">포트폴리오가 없습니다.</p>
+          <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">먼저 포트폴리오를 생성해주세요.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn(
@@ -111,8 +160,44 @@ export default function DashboardPage() {
         </div>
       )}
 
+      {/* Portfolio Info */}
+      <div className={isMobile ? 'px-4' : ''}>
+        <ResponsiveCard>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {activePortfolio.name}
+          </h2>
+          {activePortfolio.description && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              {activePortfolio.description}
+            </p>
+          )}
+          <div className="flex items-center gap-4 mt-3 text-sm">
+            <span className="text-gray-600 dark:text-gray-400">
+              총 자산가치: <span className="font-semibold text-gray-900 dark:text-gray-100">
+                {holdingsData?.summary?.totalValue?.toLocaleString()} KRW
+              </span>
+            </span>
+            <span className="text-gray-600 dark:text-gray-400">
+              수익률: <span className={cn(
+                "font-semibold",
+                holdingsData?.summary?.totalReturn > 0 
+                  ? "text-green-600 dark:text-green-400" 
+                  : "text-red-600 dark:text-red-400"
+              )}>
+                {holdingsData?.summary?.totalReturn > 0 ? '+' : ''}
+                {holdingsData?.summary?.totalReturn?.toFixed(2)}%
+              </span>
+            </span>
+          </div>
+        </ResponsiveCard>
+      </div>
+      
       {/* Portfolio Overview with Period Tabs */}
-      <PortfolioOverview />
+      <PortfolioOverview 
+        portfolioId={activePortfolio.id}
+        totalValue={holdingsData?.summary?.totalValue}
+        totalReturn={holdingsData?.summary?.totalReturn}
+      />
 
       {/* Asset Allocation and Holdings */}
       {isMobile ? (

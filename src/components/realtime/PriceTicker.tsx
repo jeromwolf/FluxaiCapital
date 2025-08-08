@@ -3,8 +3,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { PriceUpdate } from '@/lib/websocket/types';
-import { usePriceSubscription } from '@/hooks/useWebSocket';
+import { useRealtimePrice, useMarketPrice } from '@/hooks/useMarketData';
 
 interface PriceTickerProps {
   symbol: string;
@@ -19,8 +18,18 @@ export function PriceTicker({
   showVolume = false,
   variant = 'default'
 }: PriceTickerProps) {
-  const prices = usePriceSubscription([symbol]);
-  const priceData = prices[symbol];
+  // Use real-time price updates
+  const { ticker, isConnected } = useRealtimePrice(symbol);
+  // Use API price as fallback
+  const { price: apiPrice } = useMarketPrice(!isConnected ? symbol : null);
+  
+  const priceData = ticker || (apiPrice && {
+    price: apiPrice.price,
+    change: apiPrice.change,
+    changePercent: apiPrice.changePercent,
+    volume: apiPrice.volume,
+    timestamp: apiPrice.updatedAt.getTime()
+  });
   
   const [flash, setFlash] = React.useState<'up' | 'down' | null>(null);
   const prevPriceRef = React.useRef<number | null>(null);
@@ -88,7 +97,7 @@ export function PriceTicker({
               flash === 'down' && 'text-red-600 dark:text-red-400',
               !flash && 'text-gray-900 dark:text-gray-100'
             )}>
-              {priceData.price.toLocaleString('ko-KR')} KRW
+              {priceData.price.toLocaleString('ko-KR')}
             </p>
           </div>
           <div className={cn(

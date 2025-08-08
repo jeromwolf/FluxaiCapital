@@ -25,11 +25,16 @@ npm install
 # Setup environment variables
 cp .env.example .env.local
 
+# Setup database
+npm run db:generate
+npm run db:push
+npm run db:seed  # Optional: seed with sample data
+
 # Run development server (port 4321)
 npm run dev
 
 # Open browser
-open http://localhost:4321/dashboard
+open http://localhost:4321
 ```
 
 ## 🛠 Tech Stack
@@ -47,10 +52,10 @@ open http://localhost:4321/dashboard
 - **State Management**: React Hooks + Context
 
 ### Infrastructure
-- **Database**: PostgreSQL (via Prisma ORM)
-- **Authentication**: Supabase Auth
+- **Database**: SQLite (dev) / PostgreSQL (prod) via Prisma ORM
+- **Authentication**: NextAuth.js (Credentials Provider)
 - **Deployment**: Vercel
-- **Code Quality**: ESLint, Prettier, Husky
+- **Code Quality**: ESLint, Prettier, TypeScript Strict Mode
 
 ## 📁 Project Structure
 
@@ -58,11 +63,15 @@ open http://localhost:4321/dashboard
 src/
 ├── app/                    # Next.js App Router
 │   ├── api/               # API routes
+│   │   ├── auth/         # NextAuth endpoints
+│   │   └── v1/           # RESTful API v1
+│   │       ├── portfolios/
+│   │       ├── market/
+│   │       └── users/
 │   ├── dashboard/         # Dashboard pages
-│   │   ├── layout.tsx    # Dashboard layout
-│   │   ├── page.tsx      # Main dashboard
-│   │   ├── portfolio/    # Portfolio management
-│   │   └── reports/      # Reports & analytics
+│   ├── portfolio/         # Portfolio management
+│   ├── backtest/          # Backtesting features
+│   ├── market/            # Market data views
 │   └── layout.tsx        # Root layout
 ├── components/           # React components
 │   ├── charts/          # Chart components
@@ -92,17 +101,25 @@ src/
 │   ├── usePeriodData.ts # Period filtering
 │   └── useWebSocket.ts  # WebSocket connection
 ├── lib/                 # Utility functions
+│   ├── api/            # API clients
+│   │   └── client.ts   # Base API client
+│   ├── auth.ts         # NextAuth configuration
+│   ├── backtest/       # Backtesting engine
+│   │   ├── engine.ts   # Core backtest logic
+│   │   ├── strategies/ # Trading strategies
+│   │   └── types.ts    # Type definitions
+│   ├── market/         # Market data providers
+│   │   ├── client.ts   # Market data client
+│   │   └── providers/  # Data providers
 │   ├── utils/          # Helper functions
-│   │   ├── period-filters.ts
-│   │   └── returns-calculator.ts
 │   └── websocket/      # WebSocket implementation
-│       ├── client.ts   # WebSocket client
-│       ├── types.ts    # Type definitions
-│       └── mock-server.ts # Development mock
+├── prisma/             # Database schema
+│   ├── schema.prisma   # Prisma schema
+│   └── seed.ts        # Database seeding
 └── styles/             # Global styles
 ```
 
-## 🎯 Current Features (Week 1-3 Completed)
+## 🎯 Current Features (Week 1-5 Completed)
 
 ### Week 1: Chart System ✅
 - **Chart Components**
@@ -149,6 +166,40 @@ src/
   - 알림 센터 (읽음/안읽음 관리)
   - 연결 상태 모니터링
 
+### Week 4: Authentication & API ✅
+- **Authentication System**
+  - NextAuth.js 통합 (Credentials Provider)
+  - 보호된 라우트 미들웨어
+  - 사용자 가입/로그인 폼
+  - 세션 관리
+- **RESTful API v1**
+  - 포트폴리오 CRUD
+  - 거래 내역 관리
+  - 시장 데이터 조회
+  - 사용자 관리
+- **Database Integration**
+  - Prisma ORM 설정
+  - 사용자/포트폴리오/거래 스키마
+  - 데이터베이스 시드
+
+### Week 5: Advanced Features ✅
+- **Backtesting Engine**
+  - 백테스트 엔진 구현
+  - 모멘텀 전략 (20일 이동평균)
+  - 평균회귀 전략 (RSI 기반)
+  - 백테스트 UI 페이지
+- **Portfolio Management**
+  - 포트폴리오 상세 페이지
+  - 거래 추가 다이얼로그
+  - 실시간 가격 연동
+  - PDF 리포트 생성
+  - 이메일 리포트 전송
+- **Market Data Integration**
+  - 시장 데이터 프로바이더 패턴
+  - 캔들스틱 차트
+  - 수익률 차트
+  - Custom hooks (useMarketData)
+
 ## 🔧 Development
 
 ### Available Scripts
@@ -165,9 +216,10 @@ npm run lint:fix     # Fix ESLint issues
 npm run type-check   # TypeScript type checking
 npm run format       # Format with Prettier
 
-# Database (when configured)
+# Database
 npm run db:generate  # Generate Prisma client
 npm run db:push      # Push schema to database
+npm run db:seed      # Seed database with sample data
 npm run db:studio    # Open Prisma Studio
 ```
 
@@ -181,11 +233,15 @@ NEXT_PUBLIC_APP_URL=http://localhost:4321
 NEXT_PUBLIC_WS_URL=ws://localhost:3001
 
 # Database
-DATABASE_URL=postgresql://user:password@localhost:5432/fluxai
+DATABASE_URL=file:./dev.db  # SQLite for development
+# DATABASE_URL=postgresql://user:password@localhost:5432/fluxai  # PostgreSQL for production
 
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+# Authentication
+NEXTAUTH_URL=http://localhost:4321
+NEXTAUTH_SECRET=your-nextauth-secret-here
+
+# API
+NEXT_PUBLIC_API_URL=http://localhost:4321/api/v1
 ```
 
 ## 📊 Development Status
@@ -194,29 +250,41 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 - [x] Project setup with Next.js 14
 - [x] TypeScript strict mode configuration
 - [x] Tailwind CSS + Design system
-- [x] Chart component library
+- [x] Chart component library (Recharts)
 - [x] Dashboard UI components
 - [x] Responsive design (Mobile/Tablet/Desktop)
 - [x] Real-time WebSocket integration
 - [x] Period-based data filtering
 - [x] Returns calculation system
 - [x] Alert notification system
+- [x] Authentication system (NextAuth.js)
+- [x] Database integration (Prisma + SQLite)
+- [x] RESTful API v1 implementation
+- [x] Portfolio management features
+- [x] Transaction tracking
+- [x] Backtesting engine with strategies
+- [x] Market data integration
+- [x] PDF report generation
+- [x] Protected routes middleware
 
 ### In Progress 🚧
-- [ ] Authentication system (Supabase)
-- [ ] Database integration (Prisma + PostgreSQL)
-- [ ] API endpoints implementation
-- [ ] Risk management features
-- [ ] AI/ML integration
+- [ ] Risk management features (VaR, Sharpe ratio)
+- [ ] AI/ML integration for predictions
+- [ ] Advanced backtesting strategies
+- [ ] Real broker API integration
+- [ ] Production database migration (PostgreSQL)
 
 ### Planned 📋
 - [ ] Advanced analytics dashboard
-- [ ] Automated trading strategies
-- [ ] Backtesting engine
+- [ ] Automated trading execution
+- [ ] Options trading support
 - [ ] Multi-language support (Korean/English)
 - [ ] Mobile app (React Native)
-- [ ] Public API
+- [ ] Public API documentation
 - [ ] Performance optimization
+- [ ] Social trading features
+- [ ] Tax reporting
+- [ ] Cryptocurrency support
 
 ## 🎨 Design System
 

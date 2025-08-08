@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { Mail, Lock, Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createClient } from '@/lib/supabase/client';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -22,14 +22,14 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithPassword({
+      const result = await signIn('credentials', {
         email,
         password,
+        redirect: false,
       });
 
-      if (error) {
-        setError(error.message);
+      if (result?.error) {
+        setError(result.error);
       } else {
         router.push('/dashboard');
         router.refresh();
@@ -46,20 +46,11 @@ export default function LoginForm() {
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
+      await signIn('google', {
+        callbackUrl: '/dashboard',
       });
-
-      if (error) {
-        setError(error.message);
-      }
     } catch (err) {
       setError('Google 로그인 중 오류가 발생했습니다.');
-    } finally {
       setIsLoading(false);
     }
   };

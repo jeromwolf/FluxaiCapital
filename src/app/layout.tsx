@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
+import AuthProvider from "@/components/providers/AuthProvider";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,9 +43,12 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${inter.variable} ${notoSansKR.variable}`}>
       <body className="font-sans antialiased bg-gray-50 dark:bg-gray-900">
-        <div className="relative flex min-h-screen flex-col">
-          {children}
-        </div>
+        <AuthProvider>
+          <div className="relative flex min-h-screen flex-col">
+            {children}
+          </div>
+        </AuthProvider>
+        <Toaster position="top-right" richColors />
       </body>
     </html>
   );

@@ -2,12 +2,12 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { Mail, Lock, User, Loader2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { createClient } from '@/lib/supabase/client';
 
 export default function SignupForm() {
   const router = useRouter();
@@ -38,29 +38,44 @@ export default function SignupForm() {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('비밀번호는 최소 6자 이상이어야 합니다.');
+    if (formData.password.length < 8) {
+      setError('비밀번호는 최소 8자 이상이어야 합니다.');
       setIsLoading(false);
       return;
     }
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          data: {
-            name: formData.name,
-          },
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-        },
+      // Sign up via our API
+      const response = await fetch('/api/v1/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+        }),
       });
 
-      if (error) {
-        setError(error.message);
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || '회원가입 중 오류가 발생했습니다.');
+        return;
+      }
+
+      // Auto sign in after signup
+      const result = await signIn('credentials', {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        setError('회원가입은 완료되었지만 로그인에 실패했습니다.');
+        router.push('/login');
       } else {
-        router.push('/login?message=회원가입이 완료되었습니다. 이메일을 확인해주세요.');
+        router.push('/dashboard');
+        router.refresh();
       }
     } catch (err) {
       setError('회원가입 중 오류가 발생했습니다.');
@@ -74,20 +89,11 @@ export default function SignupForm() {
     setError(null);
 
     try {
-      const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
-        },
+      await signIn('google', {
+        callbackUrl: '/dashboard',
       });
-
-      if (error) {
-        setError(error.message);
-      }
     } catch (err) {
       setError('Google 회원가입 중 오류가 발생했습니다.');
-    } finally {
       setIsLoading(false);
     }
   };

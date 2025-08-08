@@ -45,11 +45,22 @@ function portfolioToMiniChartData(data: any[]) {
 
 interface PortfolioOverviewProps {
   className?: string;
+  portfolioId?: string;
+  portfolioData?: any[];
+  totalValue?: number;
+  totalReturn?: number;
 }
 
-export function PortfolioOverview({ className }: PortfolioOverviewProps) {
+export function PortfolioOverview({ 
+  className,
+  portfolioId,
+  portfolioData: externalData,
+  totalValue,
+  totalReturn
+}: PortfolioOverviewProps) {
   const { period, setPeriod } = usePeriod('1M');
-  const [portfolioData] = React.useState(generateMockPortfolioData());
+  const [mockData] = React.useState(generateMockPortfolioData());
+  const portfolioData = externalData || mockData;
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   
@@ -74,7 +85,7 @@ export function PortfolioOverview({ className }: PortfolioOverviewProps) {
     [aggregatedData]
   );
 
-  const currentValue = filteredData[filteredData.length - 1]?.totalValue || 0;
+  const currentValue = totalValue || filteredData[filteredData.length - 1]?.totalValue || 0;
   const periodLabel = getPeriodLabel(period);
 
   return (

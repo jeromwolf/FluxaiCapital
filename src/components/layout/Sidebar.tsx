@@ -14,7 +14,8 @@ import {
   ChevronRight,
   TrendingUp,
   Bell,
-  HelpCircle
+  HelpCircle,
+  Activity
 } from 'lucide-react';
 
 interface NavItem {
@@ -26,16 +27,17 @@ interface NavItem {
 
 const mainNavItems: NavItem[] = [
   { title: '대시보드', href: '/dashboard', icon: Home },
-  { title: '포트폴리오', href: '/dashboard/portfolio', icon: PieChart },
-  { title: '분석', href: '/dashboard/analysis', icon: BarChart3 },
-  { title: '리포트', href: '/dashboard/reports', icon: FileText },
+  { title: '포트폴리오', href: '/portfolio', icon: PieChart },
+  { title: '시장', href: '/market', icon: TrendingUp },
+  { title: '백테스팅', href: '/backtest', icon: Activity },
+  { title: '분석', href: '/stocks', icon: BarChart3 },
+  { title: '리포트', href: '/reports', icon: FileText },
 ];
 
 const secondaryNavItems: NavItem[] = [
-  { title: '시장 동향', href: '/dashboard/market', icon: TrendingUp },
-  { title: '알림', href: '/dashboard/notifications', icon: Bell, badge: '3' },
-  { title: '설정', href: '/dashboard/settings', icon: Settings },
-  { title: '도움말', href: '/dashboard/help', icon: HelpCircle },
+  { title: '알림', href: '/notifications', icon: Bell, badge: '3' },
+  { title: '설정', href: '/settings', icon: Settings },
+  { title: '도움말', href: '/help', icon: HelpCircle },
 ];
 
 interface SidebarProps {
