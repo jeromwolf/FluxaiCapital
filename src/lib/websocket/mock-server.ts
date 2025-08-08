@@ -240,6 +240,6 @@ export class MockWebSocket extends EventTarget {
 }
 
 // Override WebSocket in development
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (typeof window !== 'undefined' && process.env["NODE_ENV"] === 'development') {
   (window as any).MockWebSocket = MockWebSocket;
 }

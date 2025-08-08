@@ -39,7 +39,7 @@ export default function LoginPage() {
               </Link>
             </div>
             
-            {process.env.NODE_ENV === 'development' && (
+            {process.env["NODE_ENV"] === 'development' && (
               <div className="pt-4 border-t">
                 <Link
                   href="/dev-login"

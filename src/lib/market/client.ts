@@ -79,7 +79,7 @@ let marketDataClient: MarketDataClient | null = null
 export function getMarketDataClient(): MarketDataClient {
   if (!marketDataClient) {
     marketDataClient = new MarketDataClient(
-      (process.env.NEXT_PUBLIC_MARKET_DATA_PROVIDER as MarketDataProvider) || 'mock'
+      (process.env["NEXT_PUBLIC_MARKET_DATA_PROVIDER"] as MarketDataProvider) || 'mock'
     )
   }
   return marketDataClient

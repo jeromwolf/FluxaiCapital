@@ -1,6 +1,6 @@
 // API Client for FLUX AI Capital
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4321'
+const API_BASE_URL = process.env["NEXT_PUBLIC_API_URL"] || 'http://localhost:4321'
 
 interface ApiResponse<T> {
   success: boolean

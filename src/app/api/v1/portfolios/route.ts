@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import prisma from '@/lib/prisma'
 import { z } from 'zod'
+import { withApiMiddleware } from '@/lib/api/middleware'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 
 // Validation schema
 const createPortfolioSchema = z.object({
@@ -12,8 +15,15 @@ const createPortfolioSchema = z.object({
 })
 
 // GET /api/v1/portfolios
-export async function GET(request: NextRequest) {
+export const GET = withApiMiddleware(async (request: NextRequest) => {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     const searchParams = request.nextUrl.searchParams
     const userId = searchParams.get('userId')
     const isActive = searchParams.get('isActive')
@@ -51,11 +61,18 @@ export async function GET(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+}, { validateCSRF: false }) // GET requests don't need CSRF validation
 
 // POST /api/v1/portfolios
-export async function POST(request: NextRequest) {
+export const POST = withApiMiddleware(async (request: NextRequest) => {
   try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
     const body = await request.json()
     const validatedData = createPortfolioSchema.parse(body)
     
@@ -107,7 +124,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, message: 'Invalid data', errors: error.errors },
+        { success: false, message: 'Invalid data', errors: error.issues },
         { status: 400 }
       )
     }
@@ -118,4 +135,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-}
+}) // POST requests will have CSRF validation by default

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/components/providers/AuthProvider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "sonner";
 
 const inter = Inter({
@@ -41,14 +42,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${inter.variable} ${notoSansKR.variable}`}>
+    <html lang="ko" className={`${inter.variable} ${notoSansKR.variable}`} suppressHydrationWarning>
       <body className="font-sans antialiased bg-gray-50 dark:bg-gray-900">
-        <AuthProvider>
-          <div className="relative flex min-h-screen flex-col">
-            {children}
-          </div>
-        </AuthProvider>
-        <Toaster position="top-right" richColors />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AuthProvider>
+            <div className="relative flex min-h-screen flex-col">
+              {children}
+            </div>
+          </AuthProvider>
+          <Toaster position="top-right" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -20,7 +20,7 @@ export class WebSocketClient {
 
   constructor(url?: string) {
     // Use environment variable or default URL
-    this.url = url || process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:3001';
+    this.url = url || process.env["NEXT_PUBLIC_WS_URL"] || 'ws://localhost:3001';
   }
 
   connect(): void {

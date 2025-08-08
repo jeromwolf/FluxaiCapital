@@ -15,7 +15,7 @@ const createProductionTransporter = () => {
     service: 'SendGrid',
     auth: {
       user: 'apikey',
-      pass: process.env.SENDGRID_API_KEY,
+      pass: process.env["SENDGRID_API_KEY"],
     },
   });
 };
@@ -35,7 +35,7 @@ export class EmailService {
   private transporter: any;
 
   constructor() {
-    this.transporter = process.env.NODE_ENV === 'production'
+    this.transporter = process.env["NODE_ENV"] === 'production'
       ? createProductionTransporter()
       : createTestTransporter();
   }
@@ -43,14 +43,14 @@ export class EmailService {
   async sendEmail(options: EmailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
       const mailOptions = {
-        from: process.env.EMAIL_FROM || 'noreply@flux.ai.kr',
+        from: process.env["EMAIL_FROM"] || 'noreply@flux.ai.kr',
         to: options.to,
         subject: options.subject,
         html: options.html,
         attachments: options.attachments,
       };
 
-      if (process.env.NODE_ENV === 'development') {
+      if (process.env["NODE_ENV"] === 'development') {
         console.log('📧 [DEV] Email would be sent:');
         console.log(`To: ${mailOptions.to}`);
         console.log(`Subject: ${mailOptions.subject}`);

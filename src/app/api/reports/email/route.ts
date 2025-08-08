@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generatePDFReport } from '@/lib/reports/pdf-generator';
 import { emailService } from '@/lib/email/service';
+import { convertPortfolioForReport } from '@/lib/utils/decimal-converter';
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,7 +41,8 @@ export async function POST(req: NextRequest) {
     }
 
     // Generate PDF report
-    const pdfBuffer = await generatePDFReport(portfolio, reportType);
+    const convertedData = convertPortfolioForReport(portfolio);
+    const pdfBuffer = await generatePDFReport(convertedData, reportType);
 
     // Send email with PDF attachment
     const emailResult = await emailService.sendReportEmail(

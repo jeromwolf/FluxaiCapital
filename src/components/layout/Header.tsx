@@ -16,6 +16,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
+import { SearchBar } from './SearchBar';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
 
 const navigation = [
   { name: '대시보드', href: '/dashboard' },
@@ -63,6 +65,8 @@ export default function Header() {
         </div>
 
         <div className="flex items-center gap-4">
+          <SearchBar className="hidden md:block w-64" />
+          <ThemeToggle />
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -173,6 +177,12 @@ export default function Header() {
                   </Link>
                 </Button>
               )}
+            </div>
+            <div className="border-t px-3 py-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">테마 설정</span>
+                <ThemeToggle />
+              </div>
             </div>
           </div>
         </div>

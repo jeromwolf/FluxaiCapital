@@ -34,7 +34,7 @@ export default function Home() {
                 로그인
               </Button>
             </Link>
-            {process.env.NODE_ENV === 'development' && (
+            {process.env["NODE_ENV"] === 'development' && (
               <Link href="/dev-login">
                 <Button variant="secondary" size="lg" className="w-full sm:w-auto">
                   개발자 모드

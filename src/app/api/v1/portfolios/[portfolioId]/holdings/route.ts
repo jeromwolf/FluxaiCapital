@@ -11,18 +11,13 @@ const createHoldingSchema = z.object({
   currentPrice: z.number().positive(),
 })
 
-const updateHoldingSchema = z.object({
-  quantity: z.number().positive().optional(),
-  averagePrice: z.number().positive().optional(),
-  currentPrice: z.number().positive().optional(),
-})
 
 interface RouteParams {
   params: Promise<{ portfolioId: string }>
 }
 
 // GET /api/v1/portfolios/[portfolioId]/holdings
-export async function GET(request: NextRequest, props: RouteParams) {
+export async function GET(_request: NextRequest, props: RouteParams) {
   const params = await props.params
   try {
     const holdings = await prisma.holding.findMany({
@@ -170,7 +165,7 @@ export async function POST(request: NextRequest, props: RouteParams) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, message: 'Invalid data', errors: error.errors },
+        { success: false, message: 'Invalid data', errors: error.issues },
         { status: 400 }
       )
     }

@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
       data: {
         email: validatedData.email,
         password: hashedPassword,
-        name: validatedData.name,
+        name: validatedData.name || null,
       },
       select: {
         id: true,
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message: '입력 데이터가 올바르지 않습니다.',
-          errors: error.errors,
+          errors: error.issues,
         },
         { status: 400 }
       )

@@ -9,7 +9,7 @@ interface RouteParams {
 
 // POST /api/v1/portfolios/[portfolioId]/holdings/update-prices
 // Update all holdings with current market prices
-export async function POST(request: NextRequest, props: RouteParams) {
+export async function POST(_request: NextRequest, props: RouteParams) {
   const params = await props.params
   try {
     // Get all holdings for the portfolio

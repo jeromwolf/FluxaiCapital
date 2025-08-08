@@ -3,6 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { PrismaAdapter } from '@auth/prisma-adapter'
 import prisma from '@/lib/prisma'
 import bcrypt from 'bcryptjs'
+import { AuditLogger } from '@/lib/security/audit'
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -28,6 +29,8 @@ export const authOptions: NextAuthOptions = {
         })
 
         if (!user || !user.password) {
+          // Log failed login attempt
+          await AuditLogger.logLogin(credentials.email, false)
           throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.')
         }
 
@@ -37,8 +40,13 @@ export const authOptions: NextAuthOptions = {
         )
 
         if (!isPasswordValid) {
+          // Log failed login attempt
+          await AuditLogger.logLogin(user.id, false)
           throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.')
         }
+
+        // Log successful login
+        await AuditLogger.logLogin(user.id, true)
 
         return {
           id: user.id,
@@ -70,5 +78,5 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
     error: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env["NEXTAUTH_SECRET"],
 }

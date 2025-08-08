@@ -14,7 +14,7 @@ interface RouteParams {
 }
 
 // GET /api/v1/users/[userId]
-export async function GET(request: NextRequest, props: RouteParams) {
+export async function GET(_request: NextRequest, props: RouteParams) {
   const params = await props.params
   try {
     const user = await prisma.user.findUnique({
@@ -71,7 +71,7 @@ export async function PATCH(request: NextRequest, props: RouteParams) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, message: 'Invalid data', errors: error.errors },
+        { success: false, message: 'Invalid data', errors: error.issues },
         { status: 400 }
       )
     }

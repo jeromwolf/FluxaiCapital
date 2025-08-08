@@ -9,7 +9,7 @@ interface RouteParams {
 }
 
 // GET /api/v1/portfolios/[portfolioId]/report
-export async function GET(request: NextRequest, props: RouteParams) {
+export async function GET(_request: NextRequest, props: RouteParams) {
   const params = await props.params;
   
   try {

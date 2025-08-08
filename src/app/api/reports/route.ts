@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generatePDFReport } from '@/lib/reports/pdf-generator';
+import { convertPortfolioForReport } from '@/lib/utils/decimal-converter';
 
 export async function POST(req: NextRequest) {
   try {
@@ -39,9 +40,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (format === 'pdf') {
-      const pdfBuffer = await generatePDFReport(portfolio, type);
+      const convertedData = convertPortfolioForReport(portfolio);
+      const pdfBuffer = await generatePDFReport(convertedData, type);
       
-      return new NextResponse(pdfBuffer, {
+      return new NextResponse(pdfBuffer as BodyInit, {
         headers: {
           'Content-Type': 'application/pdf',
           'Content-Disposition': `attachment; filename="${portfolio.name}-${type}-${new Date().toISOString().split('T')[0]}.pdf"`,

@@ -200,6 +200,29 @@ src/
   - 수익률 차트
   - Custom hooks (useMarketData)
 
+### Week 6: Security & UX Enhancement ✅
+- **Dark Mode Support**
+  - next-themes 통합
+  - 라이트/다크/시스템 테마
+  - 모든 컴포넌트 다크모드 지원
+  - 부드러운 테마 전환
+- **Search Functionality**
+  - 전역 검색 컴포넌트
+  - 페이지 및 종목 검색
+  - 키보드 단축키 (Cmd/Ctrl+K)
+  - 실시간 검색 결과
+- **Security Enhancements**
+  - CSRF 토큰 보호
+  - 보안 헤더 추가 (XSS, Clickjacking 방지)
+  - 입력값 검증 (DOMPurify)
+  - 감사 로그 시스템
+  - API 미들웨어 보안 강화
+- **Email Verification**
+  - 이메일 인증 플로우
+  - 인증 토큰 생성/검증
+  - HTML 이메일 템플릿
+  - 세션 검증 미들웨어
+
 ## 🔧 Development
 
 ### Available Scripts
@@ -242,6 +265,13 @@ NEXTAUTH_SECRET=your-nextauth-secret-here
 
 # API
 NEXT_PUBLIC_API_URL=http://localhost:4321/api/v1
+
+# Email (for verification)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your-email@gmail.com
+EMAIL_PASSWORD=your-app-password
+EMAIL_FROM=noreply@flux.ai.kr
 ```
 
 ## 📊 Development Status
@@ -266,6 +296,12 @@ NEXT_PUBLIC_API_URL=http://localhost:4321/api/v1
 - [x] Market data integration
 - [x] PDF report generation
 - [x] Protected routes middleware
+- [x] Dark mode support (next-themes)
+- [x] Global search functionality
+- [x] CSRF protection
+- [x] Security headers & audit logging
+- [x] Email verification system
+- [x] Input validation & sanitization
 
 ### In Progress 🚧
 - [ ] Risk management features (VaR, Sharpe ratio)

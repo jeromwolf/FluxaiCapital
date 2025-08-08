@@ -7,8 +7,9 @@ async function main() {
   console.log('🌱 Starting database seed...')
 
   // Create test users with passwords
-  const testPassword = await bcrypt.hash('test1234', 10)
-  const adminPassword = await bcrypt.hash('admin1234', 10)
+  const testPassword = await bcrypt.hash('test123', 10)
+  const adminPassword = await bcrypt.hash('admin123', 10)
+  const userPassword = await bcrypt.hash('user123', 10)
   
   const testUser = await prisma.user.create({
     data: {
@@ -28,7 +29,16 @@ async function main() {
     },
   })
 
-  console.log('✅ Created users:', { testUser: testUser.email, adminUser: adminUser.email })
+  const normalUser = await prisma.user.create({
+    data: {
+      email: 'user@flux.ai.kr',
+      name: '일반 사용자',
+      password: userPassword,
+      role: 'USER',
+    },
+  })
+
+  console.log('✅ Created users:', { testUser: testUser.email, adminUser: adminUser.email, normalUser: normalUser.email })
 
   // Create portfolios
   const mainPortfolio = await prisma.portfolio.create({
