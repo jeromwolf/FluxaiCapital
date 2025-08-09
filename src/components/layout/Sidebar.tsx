@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import { 
   Home, 
   PieChart, 
@@ -15,29 +16,30 @@ import {
   TrendingUp,
   Bell,
   HelpCircle,
-  Activity
+  Activity,
+  Newspaper
 } from 'lucide-react';
 
 interface NavItem {
-  title: string;
+  titleKey: string;
   href: string;
   icon: React.ElementType;
   badge?: string;
 }
 
 const mainNavItems: NavItem[] = [
-  { title: '대시보드', href: '/dashboard', icon: Home },
-  { title: '포트폴리오', href: '/portfolio', icon: PieChart },
-  { title: '시장', href: '/market', icon: TrendingUp },
-  { title: '백테스팅', href: '/backtest', icon: Activity },
-  { title: '분석', href: '/stocks', icon: BarChart3 },
-  { title: '리포트', href: '/reports', icon: FileText },
+  { titleKey: 'nav.dashboard', href: '/dashboard', icon: Home },
+  { titleKey: 'nav.portfolio', href: '/portfolio', icon: PieChart },
+  { titleKey: 'nav.stocks', href: '/stocks', icon: BarChart3 },
+  { titleKey: 'nav.backtest', href: '/backtest', icon: Activity },
+  { titleKey: 'nav.disclosures', href: '/dashboard/disclosures', icon: Newspaper },
+  { titleKey: 'nav.reports', href: '/reports', icon: FileText },
 ];
 
 const secondaryNavItems: NavItem[] = [
-  { title: '알림', href: '/notifications', icon: Bell, badge: '3' },
-  { title: '설정', href: '/settings', icon: Settings },
-  { title: '도움말', href: '/help', icon: HelpCircle },
+  { titleKey: 'nav.notifications', href: '/notifications', icon: Bell, badge: '3' },
+  { titleKey: 'nav.settings', href: '/settings', icon: Settings },
+  { titleKey: 'nav.help', href: '/help', icon: HelpCircle },
 ];
 
 interface SidebarProps {
@@ -48,6 +50,7 @@ interface SidebarProps {
 export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = React.useState(collapsed);
+  const t = useTranslations();
 
   React.useEffect(() => {
     setIsCollapsed(collapsed);
@@ -118,7 +121,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                 )} />
                 {!isCollapsed && (
                   <>
-                    <span className="font-medium">{item.title}</span>
+                    <span className="font-medium">{t(item.titleKey)}</span>
                     {item.badge && (
                       <span className="ml-auto bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-xs px-2 py-0.5 rounded-full">
                         {item.badge}
@@ -159,7 +162,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                 )} />
                 {!isCollapsed && (
                   <>
-                    <span className="font-medium">{item.title}</span>
+                    <span className="font-medium">{t(item.titleKey)}</span>
                     {item.badge && (
                       <span className="ml-auto bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 text-xs px-2 py-0.5 rounded-full">
                         {item.badge}
@@ -180,7 +183,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
             <div className="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
-                사용자
+                {t('common.user')}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                 user@example.com

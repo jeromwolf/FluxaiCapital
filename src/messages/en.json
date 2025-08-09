@@ -1,0 +1,148 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "stocks": "Stocks",
+    "portfolio": "Portfolio",
+    "risk": "Risk Management",
+    "backtest": "Backtest",
+    "disclosures": "Disclosures",
+    "reports": "Reports",
+    "settings": "Settings",
+    "help": "Help",
+    "notifications": "Notifications"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "email": "Email",
+    "password": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Sign In",
+    "loginTitle": "Sign in to FLUX AI Capital",
+    "welcome": "Welcome to AI-powered asset management platform"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Monitor your portfolio performance at a glance",
+    "overview": "Portfolio Overview",
+    "totalValue": "Total Value",
+    "dayChange": "Day Change",
+    "totalReturn": "Total Return",
+    "holdings": "Holdings",
+    "holdingsCount": "Holdings Count",
+    "holdingsDescription": "All assets in your portfolio",
+    "performance": "Performance",
+    "riskMetrics": "Risk Metrics",
+    "assetAllocation": "Asset Allocation",
+    "portfolioComposition": "Portfolio Composition",
+    "recentActivity": "Recent Activity",
+    "marketOverview": "Market Overview",
+    "avgReturn": "Average Return",
+    "bestReturn": "Best Return",
+    "worstReturn": "Worst Return"
+  },
+  "period": {
+    "1D": "1D",
+    "1W": "1W",
+    "1M": "1M",
+    "3M": "3M",
+    "6M": "6M",
+    "YTD": "YTD",
+    "1Y": "1Y",
+    "ALL": "ALL"
+  },
+  "stocks": {
+    "title": "Stock List",
+    "search": "Search stocks...",
+    "symbol": "Symbol",
+    "name": "Name",
+    "price": "Price",
+    "change": "Change",
+    "volume": "Volume",
+    "marketCap": "Market Cap"
+  },
+  "portfolio": {
+    "title": "Portfolio",
+    "holdings": "Holdings",
+    "transactions": "Transactions",
+    "performance": "Performance",
+    "allocation": "Allocation",
+    "rebalancing": "Rebalancing",
+    "noPortfolio": "No portfolio found.",
+    "createFirst": "Please create a portfolio first."
+  },
+  "risk": {
+    "title": "Risk Management",
+    "var": "VaR (Value at Risk)",
+    "sharpe": "Sharpe Ratio",
+    "volatility": "Volatility",
+    "maxDrawdown": "Max Drawdown",
+    "beta": "Beta",
+    "correlation": "Correlation"
+  },
+  "backtest": {
+    "title": "Backtest",
+    "strategy": "Strategy",
+    "period": "Period",
+    "initialCapital": "Initial Capital",
+    "run": "Run",
+    "results": "Results",
+    "returns": "Returns",
+    "trades": "Trades",
+    "winRate": "Win Rate"
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "notifications": "Notification Settings",
+    "security": "Security",
+    "theme": "Theme",
+    "language": "Language",
+    "korean": "한국어",
+    "english": "English",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "systemMode": "System",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred while loading data.",
+    "success": "Success",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "refresh": "Refresh",
+    "close": "Close",
+    "confirm": "Confirm",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "view": "View",
+    "download": "Download",
+    "upload": "Upload",
+    "user": "User",
+    "menu": "Menu",
+    "unit": {
+      "count": "",
+      "percent": "%",
+      "krw": "KRW",
+      "usd": "$"
+    }
+  },
+  "search": {
+    "placeholder": "Search pages, stocks...",
+    "noResults": "No results found",
+    "pages": "Pages",
+    "stocks": "Stocks"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No new notifications",
+    "settings": "Notification settings"
+  }
+}

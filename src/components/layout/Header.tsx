@@ -18,20 +18,22 @@ import {
 import { cn } from '@/lib/utils';
 import { SearchBar } from './SearchBar';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
-
-const navigation = [
-  { name: '대시보드', href: '/dashboard' },
-  { name: '포트폴리오', href: '/portfolio' },
-  { name: '백테스팅', href: '/backtest' },
-  { name: '리포트', href: '/dashboard/reports' },
-  { name: '시장', href: '/market' },
-  { name: '분석', href: '/analytics' },
-];
+import { LanguageToggle } from '@/components/ui/language-toggle';
+import { useTranslations } from 'next-intl';
 
 export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
+  const t = useTranslations();
+
+  const navigation = [
+    { name: t('nav.dashboard'), href: '/dashboard' },
+    { name: t('nav.portfolio'), href: '/portfolio' },
+    { name: t('nav.backtest'), href: '/backtest' },
+    { name: t('nav.reports'), href: '/reports' },
+    { name: t('nav.stocks'), href: '/stocks' },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -66,6 +68,7 @@ export default function Header() {
 
         <div className="flex items-center gap-4">
           <SearchBar className="hidden md:block w-64" />
+          <LanguageToggle />
           <ThemeToggle />
           {session ? (
             <DropdownMenu>
@@ -77,7 +80,7 @@ export default function Header() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{session.user.name || '사용자'}</p>
+                    <p className="text-sm font-medium leading-none">{session.user.name || t('common.user')}</p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {session.user.email}
                     </p>
@@ -87,12 +90,12 @@ export default function Header() {
                 <DropdownMenuItem asChild>
                   <Link href="/settings">
                     <User className="mr-2 h-4 w-4" />
-                    프로필
+                    {t('settings.profile')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/settings">
-                    설정
+                    {t('nav.settings')}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -101,7 +104,7 @@ export default function Header() {
                   className="text-red-600"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
-                  로그아웃
+                  {t('auth.logout')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -151,13 +154,13 @@ export default function Header() {
               {session ? (
                 <div className="space-y-2">
                   <div className="px-2 py-1">
-                    <p className="text-sm font-medium">{session.user.name || '사용자'}</p>
+                    <p className="text-sm font-medium">{session.user.name || t('common.user')}</p>
                     <p className="text-xs text-muted-foreground">{session.user.email}</p>
                   </div>
                   <Button variant="outline" className="w-full" asChild>
                     <Link href="/settings">
                       <User className="mr-2 h-4 w-4" />
-                      프로필
+                      {t('settings.profile')}
                     </Link>
                   </Button>
                   <Button 
@@ -166,21 +169,21 @@ export default function Header() {
                     onClick={() => signOut({ callbackUrl: '/login' })}
                   >
                     <LogOut className="mr-2 h-4 w-4" />
-                    로그아웃
+                    {t('auth.logout')}
                   </Button>
                 </div>
               ) : (
                 <Button variant="outline" className="w-full" asChild>
                   <Link href="/login">
                     <User className="mr-2 h-4 w-4" />
-                    로그인
+                    {t('auth.login')}
                   </Link>
                 </Button>
               )}
             </div>
             <div className="border-t px-3 py-4">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">테마 설정</span>
+                <span className="text-sm font-medium">{t('settings.theme')}</span>
                 <ThemeToggle />
               </div>
             </div>

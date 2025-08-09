@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 import { 
   Home, 
   PieChart, 
@@ -18,22 +19,23 @@ import {
 } from 'lucide-react';
 
 interface NavItem {
-  title: string;
+  titleKey: string;
   href: string;
   icon: React.ElementType;
 }
 
 const navItems: NavItem[] = [
-  { title: '대시보드', href: '/dashboard', icon: Home },
-  { title: '포트폴리오', href: '/dashboard/portfolio', icon: PieChart },
-  { title: '분석', href: '/dashboard/analysis', icon: BarChart3 },
-  { title: '리포트', href: '/dashboard/reports', icon: FileText },
-  { title: '설정', href: '/dashboard/settings', icon: Settings },
+  { titleKey: 'nav.dashboard', href: '/dashboard', icon: Home },
+  { titleKey: 'nav.portfolio', href: '/portfolio', icon: PieChart },
+  { titleKey: 'nav.stocks', href: '/stocks', icon: BarChart3 },
+  { titleKey: 'nav.reports', href: '/reports', icon: FileText },
+  { titleKey: 'nav.settings', href: '/settings', icon: Settings },
 ];
 
 export function MobileNav() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const t = useTranslations();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -83,7 +85,7 @@ export function MobileNav() {
         {/* Menu Header */}
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-800">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            메뉴
+            {t('common.menu')}
           </h2>
           <button
             onClick={toggleMenu}
@@ -102,7 +104,7 @@ export function MobileNav() {
             </div>
             <div>
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                사용자
+                {t('common.user')}
               </p>
               <p className="text-xs text-gray-500 dark:text-gray-400">
                 user@example.com
@@ -131,7 +133,7 @@ export function MobileNav() {
               >
                 <div className="flex items-center space-x-3">
                   <Icon className="w-5 h-5" />
-                  <span className="font-medium">{item.title}</span>
+                  <span className="font-medium">{t(item.titleKey)}</span>
                 </div>
                 <ChevronRight className="w-4 h-4 text-gray-400" />
               </Link>
@@ -149,7 +151,7 @@ export function MobileNav() {
             }}
           >
             <LogOut className="w-5 h-5" />
-            <span className="font-medium">로그아웃</span>
+            <span className="font-medium">{t('auth.logout')}</span>
           </button>
         </div>
       </div>
@@ -173,7 +175,7 @@ export function MobileNav() {
                 )}
               >
                 <Icon className="w-5 h-5" />
-                <span className="text-xs">{item.title}</span>
+                <span className="text-xs">{t(item.titleKey)}</span>
               </Link>
             );
           })}

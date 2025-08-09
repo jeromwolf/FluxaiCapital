@@ -1,15 +1,22 @@
-import { createHash, randomBytes } from 'crypto';
 import { cookies } from 'next/headers';
 
 const CSRF_COOKIE_NAME = 'csrf-token';
 const CSRF_HEADER_NAME = 'x-csrf-token';
 
 export function generateCSRFToken(): string {
-  return randomBytes(32).toString('hex');
+  // Use Web Crypto API for Edge Runtime compatibility
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
-export function hashToken(token: string): string {
-  return createHash('sha256').update(token).digest('hex');
+export async function hashToken(token: string): Promise<string> {
+  // Use Web Crypto API for hashing
+  const encoder = new TextEncoder();
+  const data = encoder.encode(token);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(byte => byte.toString(16).padStart(2, '0')).join('');
 }
 
 export async function getCSRFToken(): Promise<string> {

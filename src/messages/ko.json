@@ -1,0 +1,148 @@
+{
+  "nav": {
+    "dashboard": "대시보드",
+    "stocks": "주식",
+    "portfolio": "포트폴리오",
+    "risk": "리스크 관리",
+    "backtest": "백테스트",
+    "disclosures": "기업공시",
+    "reports": "리포트",
+    "settings": "설정",
+    "help": "도움말",
+    "notifications": "알림"
+  },
+  "auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "email": "이메일",
+    "password": "비밀번호",
+    "rememberMe": "로그인 유지",
+    "forgotPassword": "비밀번호를 잊으셨나요?",
+    "loginButton": "로그인",
+    "loginTitle": "FLUX AI Capital에 로그인",
+    "welcome": "AI 기반 자산운용 플랫폼에 오신 것을 환영합니다"
+  },
+  "dashboard": {
+    "title": "대시보드",
+    "subtitle": "포트폴리오 성과를 한눈에 확인하세요",
+    "overview": "포트폴리오 개요",
+    "totalValue": "총 자산가치",
+    "dayChange": "일간 변동",
+    "totalReturn": "총 수익률",
+    "holdings": "보유 자산",
+    "holdingsCount": "보유 종목",
+    "holdingsDescription": "포트폴리오에 포함된 모든 자산 목록",
+    "performance": "성과 분석",
+    "riskMetrics": "리스크 지표",
+    "assetAllocation": "자산 배분",
+    "portfolioComposition": "포트폴리오 구성 비중",
+    "recentActivity": "최근 활동",
+    "marketOverview": "시장 개요",
+    "avgReturn": "평균 수익률",
+    "bestReturn": "최고 수익",
+    "worstReturn": "최저 수익"
+  },
+  "period": {
+    "1D": "1일",
+    "1W": "1주",
+    "1M": "1개월",
+    "3M": "3개월",
+    "6M": "6개월",
+    "YTD": "연초대비",
+    "1Y": "1년",
+    "ALL": "전체"
+  },
+  "stocks": {
+    "title": "주식 목록",
+    "search": "종목 검색...",
+    "symbol": "종목코드",
+    "name": "종목명",
+    "price": "현재가",
+    "change": "변동률",
+    "volume": "거래량",
+    "marketCap": "시가총액"
+  },
+  "portfolio": {
+    "title": "포트폴리오",
+    "holdings": "보유 종목",
+    "transactions": "거래 내역",
+    "performance": "성과 분석",
+    "allocation": "자산 배분",
+    "rebalancing": "리밸런싱",
+    "noPortfolio": "포트폴리오가 없습니다.",
+    "createFirst": "먼저 포트폴리오를 생성해주세요."
+  },
+  "risk": {
+    "title": "리스크 관리",
+    "var": "VaR (Value at Risk)",
+    "sharpe": "샤프 비율",
+    "volatility": "변동성",
+    "maxDrawdown": "최대 낙폭",
+    "beta": "베타",
+    "correlation": "상관관계"
+  },
+  "backtest": {
+    "title": "백테스트",
+    "strategy": "전략",
+    "period": "기간",
+    "initialCapital": "초기 자본",
+    "run": "실행",
+    "results": "결과",
+    "returns": "수익률",
+    "trades": "거래 횟수",
+    "winRate": "승률"
+  },
+  "settings": {
+    "title": "설정",
+    "profile": "프로필",
+    "notifications": "알림 설정",
+    "security": "보안",
+    "theme": "테마",
+    "language": "언어",
+    "korean": "한국어",
+    "english": "English",
+    "darkMode": "다크 모드",
+    "lightMode": "라이트 모드",
+    "systemMode": "시스템 설정",
+    "save": "저장",
+    "cancel": "취소"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "데이터를 불러오는 중 오류가 발생했습니다.",
+    "success": "성공",
+    "search": "검색",
+    "filter": "필터",
+    "export": "내보내기",
+    "import": "가져오기",
+    "refresh": "새로고침",
+    "close": "닫기",
+    "confirm": "확인",
+    "delete": "삭제",
+    "edit": "편집",
+    "add": "추가",
+    "view": "보기",
+    "download": "다운로드",
+    "upload": "업로드",
+    "user": "사용자",
+    "menu": "메뉴",
+    "unit": {
+      "count": "개",
+      "percent": "%",
+      "krw": "원",
+      "usd": "$"
+    }
+  },
+  "search": {
+    "placeholder": "페이지, 종목 검색...",
+    "noResults": "검색 결과가 없습니다",
+    "pages": "페이지",
+    "stocks": "종목"
+  },
+  "notifications": {
+    "title": "알림",
+    "markAllRead": "모두 읽음으로 표시",
+    "noNotifications": "새로운 알림이 없습니다",
+    "settings": "알림 설정"
+  }
+}

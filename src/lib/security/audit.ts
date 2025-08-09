@@ -133,3 +133,6 @@ export class AuditLogger {
     });
   }
 }
+
+// Export as auditLog for backward compatibility
+export const auditLog = AuditLogger;

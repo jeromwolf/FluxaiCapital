@@ -1,11 +1,20 @@
 import { withAuth } from 'next-auth/middleware'
 import { NextResponse } from 'next/server'
 import { generateCSRFToken } from '@/lib/security/csrf'
+import createIntlMiddleware from 'next-intl/middleware'
+import { locales, defaultLocale } from '@/config/i18n'
+
+const intlMiddleware = createIntlMiddleware({
+  locales,
+  defaultLocale,
+  localePrefix: 'as-needed'
+})
 
 export default withAuth(
   function middleware(req) {
-    // Add session validation headers
-    const response = NextResponse.next()
+    // Apply internationalization middleware first
+    const intlResponse = intlMiddleware(req)
+    const response = intlResponse || NextResponse.next()
     
     // Add security headers
     response.headers.set('X-Frame-Options', 'DENY')
@@ -48,15 +57,25 @@ export default withAuth(
         const isApiRoute = req.nextUrl.pathname.startsWith('/api/v1')
         const isAuthRoute = req.nextUrl.pathname.startsWith('/api/auth')
         
-        if ((isProtected || (isApiRoute && !isAuthRoute)) && !token) {
+        // Public API routes that don't require authentication
+        const publicApiRoutes = [
+          '/api/v1/market/candles',
+          '/api/v1/market/dart',
+          '/api/v1/social/sentiment',
+        ]
+        const isPublicApi = publicApiRoutes.some(route => 
+          req.nextUrl.pathname.startsWith(route)
+        )
+        
+        if ((isProtected || (isApiRoute && !isAuthRoute && !isPublicApi)) && !token) {
           return false
         }
         
         // Email verification check
-        if (isProtected && token && !token.emailVerified) {
+        if (isProtected && token && !token['emailVerified']) {
           // Allow access to settings page for email verification
           if (!req.nextUrl.pathname.startsWith('/settings')) {
-            return '/settings?verify=email'
+            return false
           }
         }
         
@@ -68,6 +87,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
+    '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|_next).*)',
     '/dashboard/:path*',
     '/portfolio/:path*',
     '/settings/:path*',

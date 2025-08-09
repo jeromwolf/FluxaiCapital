@@ -45,7 +45,17 @@
       "Bash(kill:*)",
       "Bash(sqlite3:*)",
       "Bash(npx tsx:*)",
-      "Bash(touch:*)"
+      "Bash(touch:*)",
+      "Bash(grep:*)",
+      "Bash(./dev.sh)",
+      "Bash(for dir in dashboard backtest market notifications portfolio reports settings stocks help)",
+      "Bash(do cp -r \"src/app/$dir\" \"src/app/[locale]/\")",
+      "Bash(done)",
+      "Bash(pkill:*)",
+      "Bash(./test-auth.sh:*)",
+      "Bash(./test-session.sh:*)",
+      "Bash(./test-features.sh:*)",
+      "Bash(test:*)"
     ],
     "deny": []
   }
