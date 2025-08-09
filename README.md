@@ -8,7 +8,8 @@ AI와 데이터 기반의 전략적 자산관리 플랫폼으로, 1억원에서 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 - Git
 
@@ -40,6 +41,7 @@ open http://localhost:4321
 ## 🛠 Tech Stack
 
 ### Core
+
 - **Framework**: Next.js 14 (App Router)
 - **Language**: TypeScript (Strict Mode)
 - **Styling**: Tailwind CSS + CSS Modules
@@ -47,11 +49,13 @@ open http://localhost:4321
 - **Icons**: Lucide Icons
 
 ### Data Visualization & Real-time
+
 - **Charts**: Recharts
 - **Real-time**: WebSocket (with auto-reconnect)
 - **State Management**: React Hooks + Context
 
 ### Infrastructure
+
 - **Database**: SQLite (dev) / PostgreSQL (prod) via Prisma ORM
 - **Authentication**: NextAuth.js (Credentials Provider)
 - **Deployment**: Vercel
@@ -119,9 +123,10 @@ src/
 └── styles/             # Global styles
 ```
 
-## 🎯 Current Features (Week 1-5 Completed)
+## 🎯 Current Features (Week 1-7 Completed)
 
 ### Week 1: Chart System ✅
+
 - **Chart Components**
   - Recharts 기반 차트 시스템
   - PieChart (자산 배분, 포트폴리오 분포)
@@ -133,6 +138,7 @@ src/
   - 반응형 차트 크기
 
 ### Week 2: Dashboard UI ✅
+
 - **Period System**
   - 기간별 탭 (1D, 1W, 1M, 3M, 6M, 1Y, ALL)
   - 데이터 필터링 로직
@@ -149,6 +155,7 @@ src/
   - useMediaQuery 훅
 
 ### Week 3: Real-time Integration ✅
+
 - **WebSocket Infrastructure**
   - WebSocket 클라이언트 (자동 재연결)
   - React Hooks (useWebSocket, usePriceSubscription)
@@ -167,6 +174,7 @@ src/
   - 연결 상태 모니터링
 
 ### Week 4: Authentication & API ✅
+
 - **Authentication System**
   - NextAuth.js 통합 (Credentials Provider)
   - 보호된 라우트 미들웨어
@@ -183,6 +191,7 @@ src/
   - 데이터베이스 시드
 
 ### Week 5: Advanced Features ✅
+
 - **Backtesting Engine**
   - 백테스트 엔진 구현
   - 모멘텀 전략 (20일 이동평균)
@@ -201,6 +210,7 @@ src/
   - Custom hooks (useMarketData)
 
 ### Week 6: Security & UX Enhancement ✅
+
 - **Dark Mode Support**
   - next-themes 통합
   - 라이트/다크/시스템 테마
@@ -222,6 +232,29 @@ src/
   - 인증 토큰 생성/검증
   - HTML 이메일 템플릿
   - 세션 검증 미들웨어
+
+### Week 7: Internationalization & Optimization ✅
+
+- **Internationalization (i18n)**
+  - next-intl 통합
+  - 한국어/영어 다국어 지원
+  - 동적 언어 전환
+  - 로케일별 라우팅 ([locale])
+- **Mobile Optimization**
+  - 모바일 전용 컴포넌트 (BottomSheet, SwipeableTabs)
+  - Pull-to-refresh 기능
+  - 터치 제스처 지원
+  - 모바일 최적화 레이아웃
+- **API Key Management**
+  - API 키 생성/관리 시스템
+  - 권한 기반 접근 제어
+  - 사용량 추적
+  - 키 만료 관리
+- **Performance Improvements**
+  - 이미지 최적화
+  - 레이지 로딩
+  - 캐싱 전략
+  - Rate limiting
 
 ## 🔧 Development
 
@@ -277,6 +310,7 @@ EMAIL_FROM=noreply@flux.ai.kr
 ## 📊 Development Status
 
 ### Completed ✅
+
 - [x] Project setup with Next.js 14
 - [x] TypeScript strict mode configuration
 - [x] Tailwind CSS + Design system
@@ -302,8 +336,13 @@ EMAIL_FROM=noreply@flux.ai.kr
 - [x] Security headers & audit logging
 - [x] Email verification system
 - [x] Input validation & sanitization
+- [x] Internationalization (Korean/English)
+- [x] Mobile optimization & components
+- [x] API key management system
+- [x] Performance optimization (caching, lazy loading)
 
 ### In Progress 🚧
+
 - [ ] Risk management features (VaR, Sharpe ratio)
 - [ ] AI/ML integration for predictions
 - [ ] Advanced backtesting strategies
@@ -311,13 +350,12 @@ EMAIL_FROM=noreply@flux.ai.kr
 - [ ] Production database migration (PostgreSQL)
 
 ### Planned 📋
+
 - [ ] Advanced analytics dashboard
 - [ ] Automated trading execution
 - [ ] Options trading support
-- [ ] Multi-language support (Korean/English)
 - [ ] Mobile app (React Native)
 - [ ] Public API documentation
-- [ ] Performance optimization
 - [ ] Social trading features
 - [ ] Tax reporting
 - [ ] Cryptocurrency support
@@ -325,6 +363,7 @@ EMAIL_FROM=noreply@flux.ai.kr
 ## 🎨 Design System
 
 ### Colors
+
 - Primary: Blue (#3b82f6)
 - Secondary: Purple (#8b5cf6)
 - Success: Green (#10b981)
@@ -332,11 +371,13 @@ EMAIL_FROM=noreply@flux.ai.kr
 - Danger: Red (#ef4444)
 
 ### Typography
+
 - Font: Inter + Noto Sans KR
 - Responsive font sizes
 - Dark mode optimized
 
 ### Components
+
 - Consistent spacing system
 - Smooth animations
 - Accessible UI patterns
@@ -351,6 +392,7 @@ EMAIL_FROM=noreply@flux.ai.kr
 5. Open a Pull Request
 
 ### Commit Convention
+
 - feat: 새로운 기능
 - fix: 버그 수정
 - docs: 문서 업데이트
