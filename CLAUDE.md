@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## 🔄 Session Continuity
+
+**IMPORTANT**: When starting a new session, always read `docs/SESSION_CONTEXT_2025-08-10.md` first to understand the current project status and recent work completed. This ensures continuity between sessions.
+
 ## Project Overview
 
 **FLUX AI Capital** (https://flux.ai.kr) is an AI-powered strategic asset management platform built with Next.js 14 fullstack architecture. The platform aims to manage assets starting from 100M KRW with strategic growth targets to 1T KRW.
@@ -31,7 +35,7 @@ npm run start        # Start production server
 
 # Code Quality
 npm run lint         # Run ESLint
-npm run lint:fix     # Fix ESLint issues  
+npm run lint:fix     # Fix ESLint issues
 npm run type-check   # Run TypeScript compiler check
 npm run format       # Format with Prettier
 
@@ -105,6 +109,7 @@ npx prisma studio    # Open Prisma Studio
 ## Current Development Status
 
 ### Completed (Week 1-3) ✅
+
 1. **Chart System**: Recharts-based components with theme system
 2. **Dashboard UI**: Period tabs, portfolio overview, holdings table
 3. **Responsive Design**: Mobile/tablet/desktop optimization
@@ -112,6 +117,7 @@ npx prisma studio    # Open Prisma Studio
 5. **Components**: 30+ reusable components across charts, dashboard, layout, and realtime
 
 ### Next Steps 🚧
+
 1. **Authentication**: Supabase Auth integration
 2. **Database**: Prisma + PostgreSQL setup
 3. **API Routes**: RESTful endpoints implementation
@@ -121,26 +127,31 @@ npx prisma studio    # Open Prisma Studio
 ## Important Files
 
 ### Configuration
+
 - `tailwind.config.ts`: Tailwind configuration with custom fonts
 - `src/config/chart-theme.ts`: Chart theming system
 - `.env.example`: Environment variables template
 
 ### Core Components
+
 - `src/app/layout.tsx`: Root layout with font configuration
 - `src/app/dashboard/layout.tsx`: Dashboard layout wrapper
 - `src/app/dashboard/page.tsx`: Main dashboard page
 
 ### Key Libraries
+
 - `src/lib/websocket/client.ts`: WebSocket client implementation
 - `src/lib/utils/period-filters.ts`: Period-based data filtering
 - `src/lib/utils/returns-calculator.ts`: Financial calculations
 
 ### Hooks
+
 - `src/hooks/useWebSocket.ts`: WebSocket connection management
 - `src/hooks/useMediaQuery.ts`: Responsive design utilities
 - `src/hooks/usePeriodData.ts`: Period-based data management
 
 ### Component Systems
+
 - `src/components/charts/`: Chart components (PieChart, MiniChart, etc.)
 - `src/components/dashboard/`: Dashboard-specific components
 - `src/components/layout/`: Layout components (Sidebar, MobileNav, etc.)
@@ -172,6 +183,7 @@ npm run build
 ## WebSocket Mock Server
 
 For development, a mock WebSocket server is available that simulates:
+
 - Real-time price updates (1-second intervals)
 - Portfolio value changes (2-second intervals)
 - Random alerts (10-second intervals)
