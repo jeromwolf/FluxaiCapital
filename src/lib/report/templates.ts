@@ -321,13 +321,13 @@ export const DEFAULT_TEMPLATES: ReportTemplate[] = [
 ];
 
 export function getTemplateById(id: string): ReportTemplate | undefined {
-  return DEFAULT_TEMPLATES.find(template => template.id === id);
+  return DEFAULT_TEMPLATES.find((template) => template.id === id);
 }
 
 export function getTemplatesByType(type: string): ReportTemplate[] {
-  return DEFAULT_TEMPLATES.filter(template => template.type === type);
+  return DEFAULT_TEMPLATES.filter((template) => template.type === type);
 }
 
 export function getActiveTemplates(): ReportTemplate[] {
-  return DEFAULT_TEMPLATES.filter(template => template.isActive);
+  return DEFAULT_TEMPLATES.filter((template) => template.isActive);
 }

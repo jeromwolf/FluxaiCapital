@@ -90,11 +90,7 @@ export const portfolioService = {
   },
 
   // Get portfolio performance
-  async getPerformance(
-    portfolioId: string,
-    startDate?: Date,
-    endDate?: Date
-  ) {
+  async getPerformance(portfolioId: string, startDate?: Date, endDate?: Date) {
     const where: Prisma.PerformanceWhereInput = {
       portfolioId,
     };
@@ -119,9 +115,6 @@ export const portfolioService = {
       where: { portfolioId },
     });
 
-    return holdings.reduce(
-      (total, holding) => total + Number(holding.marketValue),
-      0
-    );
+    return holdings.reduce((total, holding) => total + Number(holding.marketValue), 0);
   },
 };

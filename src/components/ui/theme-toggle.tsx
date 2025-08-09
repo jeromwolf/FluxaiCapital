@@ -25,15 +25,9 @@ export function ThemeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>
-          라이트 모드
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>
-          다크 모드
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>
-          시스템 설정
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('light')}>라이트 모드</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>다크 모드</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('system')}>시스템 설정</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

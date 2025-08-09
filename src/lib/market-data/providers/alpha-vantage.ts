@@ -1,7 +1,7 @@
 // Alpha Vantage API Provider
 import { MarketQuote } from '../types';
 
-const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY!;
+const ALPHA_VANTAGE_API_KEY = process.env.ALPHA_VANTAGE_API_KEY || 'demo';
 const ALPHA_VANTAGE_BASE_URL = 'https://www.alphavantage.co/query';
 
 interface AlphaVantageGlobalQuote {
@@ -61,7 +61,7 @@ export class AlphaVantageProvider {
 
     try {
       const response = await fetch(
-        `${ALPHA_VANTAGE_BASE_URL}?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${this.apiKey}`
+        `${ALPHA_VANTAGE_BASE_URL}?function=GLOBAL_QUOTE&symbol=${symbol}&apikey=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -69,7 +69,7 @@ export class AlphaVantageProvider {
       }
 
       const data: AlphaVantageGlobalQuote = await response.json();
-      
+
       if (!data['Global Quote'] || Object.keys(data['Global Quote']).length === 0) {
         throw new Error(`No data found for symbol ${symbol}`);
       }
@@ -103,16 +103,18 @@ export class AlphaVantageProvider {
     }
   }
 
-  async searchSymbols(keywords: string): Promise<Array<{
-    symbol: string;
-    name: string;
-    type: string;
-    region: string;
-    currency: string;
-  }>> {
+  async searchSymbols(keywords: string): Promise<
+    Array<{
+      symbol: string;
+      name: string;
+      type: string;
+      region: string;
+      currency: string;
+    }>
+  > {
     try {
       const response = await fetch(
-        `${ALPHA_VANTAGE_BASE_URL}?function=SYMBOL_SEARCH&keywords=${keywords}&apikey=${this.apiKey}`
+        `${ALPHA_VANTAGE_BASE_URL}?function=SYMBOL_SEARCH&keywords=${keywords}&apikey=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -120,8 +122,8 @@ export class AlphaVantageProvider {
       }
 
       const data: AlphaVantageSearchResult = await response.json();
-      
-      return data.bestMatches.map(match => ({
+
+      return data.bestMatches.map((match) => ({
         symbol: match['1. symbol'],
         name: match['2. name'],
         type: match['3. type'],
@@ -136,8 +138,16 @@ export class AlphaVantageProvider {
 
   async getTimeSeries(
     symbol: string,
-    interval: '1min' | '5min' | '15min' | '30min' | '60min' | 'daily' | 'weekly' | 'monthly' = 'daily',
-    outputSize: 'compact' | 'full' = 'compact'
+    interval:
+      | '1min'
+      | '5min'
+      | '15min'
+      | '30min'
+      | '60min'
+      | 'daily'
+      | 'weekly'
+      | 'monthly' = 'daily',
+    outputSize: 'compact' | 'full' = 'compact',
   ) {
     const functionMap = {
       '1min': 'TIME_SERIES_INTRADAY',
@@ -145,35 +155,35 @@ export class AlphaVantageProvider {
       '15min': 'TIME_SERIES_INTRADAY',
       '30min': 'TIME_SERIES_INTRADAY',
       '60min': 'TIME_SERIES_INTRADAY',
-      'daily': 'TIME_SERIES_DAILY',
-      'weekly': 'TIME_SERIES_WEEKLY',
-      'monthly': 'TIME_SERIES_MONTHLY',
+      daily: 'TIME_SERIES_DAILY',
+      weekly: 'TIME_SERIES_WEEKLY',
+      monthly: 'TIME_SERIES_MONTHLY',
     };
 
     const func = functionMap[interval];
     let url = `${ALPHA_VANTAGE_BASE_URL}?function=${func}&symbol=${symbol}&apikey=${this.apiKey}&outputsize=${outputSize}`;
-    
+
     if (interval.includes('min')) {
       url += `&interval=${interval}`;
     }
 
     try {
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch time series for ${symbol}`);
       }
 
       const data = await response.json();
-      
+
       // Extract time series data based on the function used
-      const timeSeriesKey = Object.keys(data).find(key => key.includes('Time Series'));
+      const timeSeriesKey = Object.keys(data).find((key) => key.includes('Time Series'));
       if (!timeSeriesKey) {
         throw new Error('No time series data found');
       }
 
       const timeSeries = data[timeSeriesKey];
-      
+
       return Object.entries(timeSeries).map(([timestamp, values]: [string, any]) => ({
         timestamp: new Date(timestamp),
         open: parseFloat(values['1. open']),
@@ -191,23 +201,31 @@ export class AlphaVantageProvider {
   async getTechnicalIndicator(
     symbol: string,
     indicator: 'SMA' | 'EMA' | 'RSI' | 'MACD' | 'STOCH' | 'BBANDS',
-    interval: '1min' | '5min' | '15min' | '30min' | '60min' | 'daily' | 'weekly' | 'monthly' = 'daily',
+    interval:
+      | '1min'
+      | '5min'
+      | '15min'
+      | '30min'
+      | '60min'
+      | 'daily'
+      | 'weekly'
+      | 'monthly' = 'daily',
     timePeriod: number = 20,
-    seriesType: 'close' | 'open' | 'high' | 'low' = 'close'
+    seriesType: 'close' | 'open' | 'high' | 'low' = 'close',
   ) {
     let url = `${ALPHA_VANTAGE_BASE_URL}?function=${indicator}&symbol=${symbol}&interval=${interval}&time_period=${timePeriod}&series_type=${seriesType}&apikey=${this.apiKey}`;
 
     try {
       const response = await fetch(url);
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch ${indicator} for ${symbol}`);
       }
 
       const data = await response.json();
-      
+
       // Extract technical analysis data
-      const taKey = Object.keys(data).find(key => key.includes('Technical Analysis'));
+      const taKey = Object.keys(data).find((key) => key.includes('Technical Analysis'));
       if (!taKey) {
         throw new Error('No technical analysis data found');
       }
@@ -222,7 +240,7 @@ export class AlphaVantageProvider {
   async getSectorPerformance() {
     try {
       const response = await fetch(
-        `${ALPHA_VANTAGE_BASE_URL}?function=SECTOR&apikey=${this.apiKey}`
+        `${ALPHA_VANTAGE_BASE_URL}?function=SECTOR&apikey=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -230,7 +248,7 @@ export class AlphaVantageProvider {
       }
 
       const data = await response.json();
-      
+
       return {
         realTimePerformance: data['Rank A: Real-Time Performance'],
         oneDay: data['Rank B: 1 Day Performance'],

@@ -13,14 +13,14 @@ export class WebSocketClient {
   private handlers: Map<string, Set<WebSocketEventHandler>> = new Map();
   private connectionStatus: ConnectionStatus = {
     connected: false,
-    reconnecting: false
+    reconnecting: false,
   };
   private reconnectTimeout?: NodeJS.Timeout;
   private pingInterval?: NodeJS.Timeout;
 
   constructor(url?: string) {
     // Use environment variable or default URL
-    this.url = url || process.env["NEXT_PUBLIC_WS_URL"] || 'ws://localhost:3001';
+    this.url = url || process.env['NEXT_PUBLIC_WS_URL'] || 'ws://localhost:3001';
   }
 
   connect(): void {
@@ -103,7 +103,7 @@ export class WebSocketClient {
     this.updateConnectionStatus({
       connected: false,
       reconnecting: false,
-      error: error.message
+      error: error.message,
     });
     this.emit('error', error);
   }
@@ -118,7 +118,9 @@ export class WebSocketClient {
     this.reconnectAttempts++;
 
     this.reconnectTimeout = setTimeout(() => {
-      console.log(`Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
+      console.log(
+        `Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
+      );
       this.connect();
     }, this.reconnectInterval);
   }
@@ -151,7 +153,7 @@ export class WebSocketClient {
       const message: WebSocketMessage = {
         type: type as any,
         data,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       this.ws.send(JSON.stringify(message));
     } else {
@@ -180,7 +182,7 @@ export class WebSocketClient {
   private emit(event: string, data: any): void {
     const handlers = this.handlers.get(event);
     if (handlers) {
-      handlers.forEach(handler => {
+      handlers.forEach((handler) => {
         try {
           handler(data);
         } catch (error) {

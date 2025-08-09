@@ -2,39 +2,36 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { ApiKeyManager, API_PERMISSIONS } from '@/lib/api/api-key-manager';
-import { auditLog } from '@/lib/security/audit';
+import { AuditLogger } from '@/lib/security/audit';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const apiKeys = await ApiKeyManager.listApiKeys(session.user.id);
 
-    await auditLog({
+    await AuditLogger.log({
       userId: session.user.id,
       action: 'VIEW_API_KEYS',
       resource: 'api_keys',
-      metadata: { count: apiKeys.length }
+      metadata: { count: apiKeys.length },
     });
 
     return NextResponse.json({ apiKeys });
   } catch (error) {
     console.error('Failed to list API keys:', error);
-    return NextResponse.json(
-      { error: 'Failed to list API keys' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to list API keys' }, { status: 500 });
   }
 }
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -44,20 +41,17 @@ export async function POST(req: NextRequest) {
 
     // Validate input
     if (!name || !permissions || !Array.isArray(permissions)) {
-      return NextResponse.json(
-        { error: 'Invalid input' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid input' }, { status: 400 });
     }
 
     // Validate permissions
     const validPermissions = Object.values(API_PERMISSIONS);
-    const invalidPermissions = permissions.filter(p => !validPermissions.includes(p));
-    
+    const invalidPermissions = permissions.filter((p) => !validPermissions.includes(p));
+
     if (invalidPermissions.length > 0) {
       return NextResponse.json(
         { error: 'Invalid permissions', invalidPermissions },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,12 +62,12 @@ export async function POST(req: NextRequest) {
       expiresIn,
     });
 
-    await auditLog({
+    await AuditLogger.log({
       userId: session.user.id,
       action: 'CREATE_API_KEY',
       resource: 'api_keys',
       resourceId: apiKey.id,
-      metadata: { name, permissions }
+      metadata: { name, permissions },
     });
 
     return NextResponse.json({
@@ -81,13 +75,10 @@ export async function POST(req: NextRequest) {
         ...apiKey,
         key: plainKey, // Only return plain key on creation
       },
-      message: 'Save this API key securely. You won\'t be able to see it again.',
+      message: "Save this API key securely. You won't be able to see it again.",
     });
   } catch (error) {
     console.error('Failed to create API key:', error);
-    return NextResponse.json(
-      { error: 'Failed to create API key' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create API key' }, { status: 500 });
   }
 }

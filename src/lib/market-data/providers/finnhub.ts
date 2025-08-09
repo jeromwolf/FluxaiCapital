@@ -1,7 +1,7 @@
 // Finnhub API Provider for real-time market data
 import { MarketQuote } from '../types';
 
-const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY!;
+const FINNHUB_API_KEY = process.env.FINNHUB_API_KEY || 'demo';
 const FINNHUB_BASE_URL = 'https://finnhub.io/api/v1';
 
 interface FinnhubQuote {
@@ -26,7 +26,7 @@ interface FinnhubProfile {
 export class FinnhubProvider {
   private apiKey: string;
   private websocket: WebSocket | null = null;
-  
+
   constructor() {
     this.apiKey = FINNHUB_API_KEY;
   }
@@ -35,22 +35,22 @@ export class FinnhubProvider {
     try {
       // Get quote data
       const quoteResponse = await fetch(
-        `${FINNHUB_BASE_URL}/quote?symbol=${symbol}&token=${this.apiKey}`
+        `${FINNHUB_BASE_URL}/quote?symbol=${symbol}&token=${this.apiKey}`,
       );
-      
+
       if (!quoteResponse.ok) {
         throw new Error(`Failed to fetch quote for ${symbol}`);
       }
-      
+
       const quote: FinnhubQuote = await quoteResponse.json();
-      
+
       // Get company profile for additional info
       const profileResponse = await fetch(
-        `${FINNHUB_BASE_URL}/stock/profile2?symbol=${symbol}&token=${this.apiKey}`
+        `${FINNHUB_BASE_URL}/stock/profile2?symbol=${symbol}&token=${this.apiKey}`,
       );
-      
-      const profile: FinnhubProfile = profileResponse.ok 
-        ? await profileResponse.json() 
+
+      const profile: FinnhubProfile = profileResponse.ok
+        ? await profileResponse.json()
         : { name: symbol, marketCapitalization: 0 };
 
       const change = quote.c - quote.pc;
@@ -77,25 +77,23 @@ export class FinnhubProvider {
   }
 
   async getMultipleQuotes(symbols: string[]): Promise<MarketQuote[]> {
-    const quotes = await Promise.allSettled(
-      symbols.map(symbol => this.getQuote(symbol))
-    );
+    const quotes = await Promise.allSettled(symbols.map((symbol) => this.getQuote(symbol)));
 
     return quotes
-      .filter((result): result is PromiseFulfilledResult<MarketQuote> => 
-        result.status === 'fulfilled'
+      .filter(
+        (result): result is PromiseFulfilledResult<MarketQuote> => result.status === 'fulfilled',
       )
-      .map(result => result.value);
+      .map((result) => result.value);
   }
 
   async getCandles(
     symbol: string,
     resolution: 'D' | 'W' | 'M' | '1' | '5' | '15' | '30' | '60',
     from: number,
-    to: number
+    to: number,
   ) {
     const response = await fetch(
-      `${FINNHUB_BASE_URL}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${this.apiKey}`
+      `${FINNHUB_BASE_URL}/stock/candle?symbol=${symbol}&resolution=${resolution}&from=${from}&to=${to}&token=${this.apiKey}`,
     );
 
     if (!response.ok) {
@@ -103,7 +101,7 @@ export class FinnhubProvider {
     }
 
     const data = await response.json();
-    
+
     if (data.s !== 'ok') {
       return [];
     }
@@ -126,14 +124,16 @@ export class FinnhubProvider {
     }
 
     this.websocket = new WebSocket(`wss://ws.finnhub.io?token=${this.apiKey}`);
-    
+
     this.websocket.addEventListener('open', () => {
       // Subscribe to symbols
-      symbols.forEach(symbol => {
-        this.websocket?.send(JSON.stringify({
-          type: 'subscribe',
-          symbol: symbol
-        }));
+      symbols.forEach((symbol) => {
+        this.websocket?.send(
+          JSON.stringify({
+            type: 'subscribe',
+            symbol: symbol,
+          }),
+        );
       });
     });
 
@@ -151,11 +151,13 @@ export class FinnhubProvider {
     // Return unsubscribe function
     return () => {
       if (this.websocket && this.websocket.readyState === WebSocket.OPEN) {
-        symbols.forEach(symbol => {
-          this.websocket?.send(JSON.stringify({
-            type: 'unsubscribe',
-            symbol: symbol
-          }));
+        symbols.forEach((symbol) => {
+          this.websocket?.send(
+            JSON.stringify({
+              type: 'unsubscribe',
+              symbol: symbol,
+            }),
+          );
         });
         this.websocket.close();
       }
@@ -164,7 +166,7 @@ export class FinnhubProvider {
 
   async getMarketNews(category: 'general' | 'forex' | 'crypto' | 'merger' = 'general') {
     const response = await fetch(
-      `${FINNHUB_BASE_URL}/news?category=${category}&token=${this.apiKey}`
+      `${FINNHUB_BASE_URL}/news?category=${category}&token=${this.apiKey}`,
     );
 
     if (!response.ok) {
@@ -172,7 +174,7 @@ export class FinnhubProvider {
     }
 
     const news = await response.json();
-    
+
     return news.slice(0, 10).map((item: any) => ({
       id: item.id,
       headline: item.headline,
@@ -187,7 +189,7 @@ export class FinnhubProvider {
 
   async getMarketStatus() {
     const response = await fetch(
-      `${FINNHUB_BASE_URL}/stock/market-status?exchange=US&token=${this.apiKey}`
+      `${FINNHUB_BASE_URL}/stock/market-status?exchange=US&token=${this.apiKey}`,
     );
 
     if (!response.ok) {

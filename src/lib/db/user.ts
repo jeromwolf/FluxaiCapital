@@ -68,7 +68,7 @@ export const userService = {
     request?: {
       ipAddress?: string;
       userAgent?: string;
-    }
+    },
   ) {
     return await prisma.activity.create({
       data: {
@@ -91,7 +91,7 @@ export const userService = {
       type?: ActivityType;
       startDate?: Date;
       endDate?: Date;
-    }
+    },
   ) {
     const where: any = { userId };
 
@@ -113,11 +113,7 @@ export const userService = {
   },
 
   // Get all users (admin only)
-  async getAll(options?: {
-    limit?: number;
-    offset?: number;
-    role?: UserRole;
-  }) {
+  async getAll(options?: { limit?: number; offset?: number; role?: UserRole }) {
     const where: any = {};
     if (options?.role) where.role = options.role;
 

@@ -1,8 +1,17 @@
 import Link from 'next/link';
 import { TrendingUp } from 'lucide-react';
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import LoginForm from '@/components/auth/LoginForm';
+
+export const dynamic = 'force-dynamic';
 
 export default function LoginPage() {
   return (
@@ -13,17 +22,13 @@ export default function LoginPage() {
             <TrendingUp className="h-10 w-10 text-primary" />
             <span className="text-2xl font-bold">FLUX AI Capital</span>
           </Link>
-          <p className="mt-2 text-sm text-muted-foreground">
-            AI 기반 전략적 자산관리 플랫폼
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">AI 기반 전략적 자산관리 플랫폼</p>
         </div>
 
         <Card>
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl">로그인</CardTitle>
-            <CardDescription>
-              계정에 로그인하여 서비스를 이용하세요
-            </CardDescription>
+            <CardDescription>계정에 로그인하여 서비스를 이용하세요</CardDescription>
           </CardHeader>
           <CardContent>
             <LoginForm />
@@ -31,15 +36,12 @@ export default function LoginPage() {
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-sm text-center text-muted-foreground">
               계정이 없으신가요?{' '}
-              <Link
-                href="/signup"
-                className="font-medium text-primary hover:underline"
-              >
+              <Link href="/signup" className="font-medium text-primary hover:underline">
                 회원가입
               </Link>
             </div>
-            
-            {process.env["NODE_ENV"] === 'development' && (
+
+            {process.env['NODE_ENV'] === 'development' && (
               <div className="pt-4 border-t">
                 <Link
                   href="/dev-login"

@@ -11,34 +11,42 @@
 ## 실제 API 연동 계획
 
 ### 1. Alpha Vantage (무료)
+
 ```env
 ALPHA_VANTAGE_API_KEY=your_api_key_here
 ```
+
 - 일일 500 API 호출 제한
 - 실시간 및 과거 데이터 제공
 - [가입하기](https://www.alphavantage.co/support/#api-key)
 
 ### 2. Yahoo Finance (무료)
+
 ```typescript
 // src/lib/market/providers/yahoo.ts
-import yahooFinance from 'yahoo-finance2'
+import yahooFinance from 'yahoo-finance2';
 ```
+
 - API 키 불필요
 - 실시간 가격 및 과거 데이터
 - npm install yahoo-finance2
 
 ### 3. Korea Investment API (유료)
+
 ```env
 KIS_APP_KEY=your_app_key_here
 KIS_APP_SECRET=your_app_secret_here
 ```
+
 - 한국 주식 실시간 데이터
 - [한국투자증권 OpenAPI](https://apiportal.koreainvestment.com)
 
 ### 4. Polygon.io (프리미엄)
+
 ```env
 POLYGON_API_KEY=your_api_key_here
 ```
+
 - 고급 시장 데이터
 - WebSocket 실시간 스트리밍
 - [가입하기](https://polygon.io)
@@ -51,12 +59,12 @@ POLYGON_API_KEY=your_api_key_here
 
 ```typescript
 // 현재 (Mock)
-import { MockMarketProvider } from './providers/mock'
-const provider = new MockMarketProvider()
+import { MockMarketProvider } from './providers/mock';
+const provider = new MockMarketProvider();
 
 // 실제 API 연동 시
-import { AlphaVantageProvider } from './providers/alphavantage'
-const provider = new AlphaVantageProvider(process.env.ALPHA_VANTAGE_API_KEY)
+import { AlphaVantageProvider } from './providers/alphavantage';
+const provider = new AlphaVantageProvider(process.env.ALPHA_VANTAGE_API_KEY);
 ```
 
 ## 주의사항

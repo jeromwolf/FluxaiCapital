@@ -46,7 +46,7 @@ export default function SettingsPage() {
     setIsLoading(true);
     try {
       // API 호출 로직
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       alert('프로필이 저장되었습니다.');
     } catch (error) {
       alert('저장 중 오류가 발생했습니다.');
@@ -58,12 +58,8 @@ export default function SettingsPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          설정
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          계정 설정과 환경설정을 관리하세요
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">설정</h1>
+        <p className="text-gray-600 dark:text-gray-400">계정 설정과 환경설정을 관리하세요</p>
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
@@ -137,7 +133,7 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={notifications.email}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setNotifications({ ...notifications, email: checked })
                   }
                 />
@@ -150,7 +146,7 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={notifications.portfolio}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setNotifications({ ...notifications, portfolio: checked })
                   }
                 />
@@ -163,7 +159,7 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={notifications.price}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setNotifications({ ...notifications, price: checked })
                   }
                 />
@@ -176,7 +172,7 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={notifications.news}
-                  onCheckedChange={(checked) => 
+                  onCheckedChange={(checked) =>
                     setNotifications({ ...notifications, news: checked })
                   }
                 />
@@ -201,9 +197,7 @@ export default function SettingsPage() {
                 </div>
                 <Switch
                   checked={security.twoFactor}
-                  onCheckedChange={(checked) => 
-                    setSecurity({ ...security, twoFactor: checked })
-                  }
+                  onCheckedChange={(checked) => setSecurity({ ...security, twoFactor: checked })}
                 />
               </div>
 

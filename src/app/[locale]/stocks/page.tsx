@@ -35,10 +35,10 @@ const koreanStocks = [
 export default function StocksPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMarket, setSelectedMarket] = useState<'US' | 'KR'>('US');
-  
+
   const stockList = selectedMarket === 'US' ? popularStocks : koreanStocks;
-  const symbols = stockList.map(s => s.symbol);
-  const { data: prices, isLoading } = useMarketPrices(symbols);
+  const symbols = stockList.map((s) => s.symbol);
+  const { prices, isLoading } = useMarketPrices(symbols);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,20 +47,17 @@ export default function StocksPage() {
     }
   };
 
-  const filteredStocks = stockList.filter(stock =>
-    stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    stock.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredStocks = stockList.filter(
+    (stock) =>
+      stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      stock.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          주식 시장
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          실시간 주가 정보와 차트를 확인하세요
-        </p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">주식 시장</h1>
+        <p className="text-gray-600 dark:text-gray-400">실시간 주가 정보와 차트를 확인하세요</p>
       </div>
 
       {/* 검색 바 */}
@@ -99,7 +96,8 @@ export default function StocksPage() {
       {/* 종목 리스트 */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {filteredStocks.map((stock) => {
-          const price = prices?.[stock.symbol];
+          const priceData = prices?.[stock.symbol as keyof typeof prices] as any;
+          const price = priceData && typeof priceData === 'object' ? priceData : null;
           const changePercent = price?.changePercent || 0;
           const isPositive = changePercent >= 0;
 
@@ -111,9 +109,7 @@ export default function StocksPage() {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                       {stock.symbol}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {stock.name}
-                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{stock.name}</p>
                   </div>
                   <Activity className="h-5 w-5 text-gray-400" />
                 </div>
@@ -126,7 +122,7 @@ export default function StocksPage() {
                 ) : price ? (
                   <div>
                     <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
-                      ${price.price.toFixed(2)}
+                      ${price?.price?.toFixed(2) || '0.00'}
                     </div>
                     <div className="flex items-center gap-2">
                       {isPositive ? (
@@ -134,20 +130,22 @@ export default function StocksPage() {
                       ) : (
                         <TrendingDown className="h-4 w-4 text-red-600" />
                       )}
-                      <span className={`text-sm font-medium ${
-                        isPositive ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {isPositive ? '+' : ''}{changePercent.toFixed(2)}%
+                      <span
+                        className={`text-sm font-medium ${
+                          isPositive ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        {isPositive ? '+' : ''}
+                        {changePercent.toFixed(2)}%
                       </span>
                       <span className="text-sm text-gray-600 dark:text-gray-400">
-                        ({isPositive ? '+' : ''}{price.change.toFixed(2)})
+                        ({isPositive ? '+' : ''}
+                        {price?.change?.toFixed(2) || '0.00'})
                       </span>
                     </div>
                   </div>
                 ) : (
-                  <div className="text-gray-500">
-                    가격 정보 없음
-                  </div>
+                  <div className="text-gray-500">가격 정보 없음</div>
                 )}
               </ResponsiveCard>
             </Link>

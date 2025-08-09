@@ -1,7 +1,16 @@
 'use client';
 
 import React from 'react';
-import { LineChart, Line, AreaChart, Area, ResponsiveContainer, XAxis, YAxis, Tooltip } from 'recharts';
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts';
 import { chartTheme } from '@/config/chart-theme';
 import { cn } from '@/lib/utils';
 
@@ -49,42 +58,52 @@ export default function MiniChart({
   showAxis = false,
   showTooltip = true,
   loading = false,
-  trend
+  trend,
 }: MiniChartProps) {
   // Auto-detect trend if not provided
-  const detectedTrend = trend || (() => {
-    if (data.length < 2) return 'neutral';
-    const first = data[0]?.value || 0;
-    const last = data[data.length - 1]?.value || 0;
-    if (last > first) return 'up';
-    if (last < first) return 'down';
-    return 'neutral';
-  })();
+  const detectedTrend =
+    trend ||
+    (() => {
+      if (data.length < 2) return 'neutral';
+      const first = data[0]?.value || 0;
+      const last = data[data.length - 1]?.value || 0;
+      if (last > first) return 'up';
+      if (last < first) return 'down';
+      return 'neutral';
+    })();
 
   // Set color based on trend if not provided
-  const chartColor = color || (() => {
-    switch (detectedTrend) {
-      case 'up': return chartTheme.colors.success;
-      case 'down': return chartTheme.colors.danger;
-      default: return chartTheme.colors.primary;
-    }
-  })();
+  const chartColor =
+    color ||
+    (() => {
+      switch (detectedTrend) {
+        case 'up':
+          return chartTheme.colors.success;
+        case 'down':
+          return chartTheme.colors.danger;
+        default:
+          return chartTheme.colors.primary;
+      }
+    })();
 
   if (loading) {
     return (
-      <div 
-        className={cn('flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded', className)}
+      <div
+        className={cn(
+          'flex items-center justify-center bg-gray-100 dark:bg-gray-800 rounded',
+          className,
+        )}
         style={{ width, height }}
       >
         <div className="animate-pulse flex space-x-1">
           {[...Array(5)].map((_, i) => (
-            <div 
+            <div
               key={i}
               className="bg-gray-300 dark:bg-gray-600 rounded"
-              style={{ 
-                width: 4, 
+              style={{
+                width: 4,
                 height: Math.random() * 20 + 10,
-                animationDelay: `${i * 0.1}s`
+                animationDelay: `${i * 0.1}s`,
               }}
             />
           ))}
@@ -95,8 +114,11 @@ export default function MiniChart({
 
   if (!data || data.length === 0) {
     return (
-      <div 
-        className={cn('flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded text-gray-400 dark:text-gray-600', className)}
+      <div
+        className={cn(
+          'flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded text-gray-400 dark:text-gray-600',
+          className,
+        )}
         style={{ width, height }}
       >
         <span className="text-xs">데이터 없음</span>
@@ -111,13 +133,13 @@ export default function MiniChart({
           <AreaChart data={data} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
             {showAxis && (
               <>
-                <XAxis 
-                  dataKey="date" 
+                <XAxis
+                  dataKey="date"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: chartTheme.colors.text.secondary }}
                 />
-                <YAxis 
+                <YAxis
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: chartTheme.colors.text.secondary }}
@@ -140,13 +162,13 @@ export default function MiniChart({
           <LineChart data={data} margin={{ top: 2, right: 2, left: 2, bottom: 2 }}>
             {showAxis && (
               <>
-                <XAxis 
-                  dataKey="date" 
+                <XAxis
+                  dataKey="date"
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: chartTheme.colors.text.secondary }}
                 />
-                <YAxis 
+                <YAxis
                   axisLine={false}
                   tickLine={false}
                   tick={{ fontSize: 10, fill: chartTheme.colors.text.secondary }}
@@ -170,12 +192,12 @@ export default function MiniChart({
 }
 
 // Preset mini chart components for common use cases
-export function TrendMiniChart({ 
-  data, 
-  positive, 
-  className 
-}: { 
-  data: MiniChartData[]; 
+export function TrendMiniChart({
+  data,
+  positive,
+  className,
+}: {
+  data: MiniChartData[];
   positive?: boolean;
   className?: string;
 }) {
@@ -191,12 +213,12 @@ export function TrendMiniChart({
   );
 }
 
-export function SparklineChart({ 
-  data, 
+export function SparklineChart({
+  data,
   className,
-  color = chartTheme.colors.primary
-}: { 
-  data: MiniChartData[]; 
+  color = chartTheme.colors.primary,
+}: {
+  data: MiniChartData[];
   className?: string;
   color?: string;
 }) {
@@ -214,12 +236,12 @@ export function SparklineChart({
   );
 }
 
-export function PriceChart({ 
-  data, 
-  trend, 
-  className 
-}: { 
-  data: MiniChartData[]; 
+export function PriceChart({
+  data,
+  trend,
+  className,
+}: {
+  data: MiniChartData[];
   trend?: 'up' | 'down' | 'neutral';
   className?: string;
 }) {
@@ -235,12 +257,14 @@ export function PriceChart({
         showTooltip={false}
       />
       {trend && (
-        <span className={cn(
-          'text-xs font-medium',
-          trend === 'up' && 'text-green-600 dark:text-green-400',
-          trend === 'down' && 'text-red-600 dark:text-red-400',
-          trend === 'neutral' && 'text-gray-600 dark:text-gray-400'
-        )}>
+        <span
+          className={cn(
+            'text-xs font-medium',
+            trend === 'up' && 'text-green-600 dark:text-green-400',
+            trend === 'down' && 'text-red-600 dark:text-red-400',
+            trend === 'neutral' && 'text-gray-600 dark:text-gray-400',
+          )}
+        >
           {trend === 'up' ? '↗' : trend === 'down' ? '↘' : '→'}
         </span>
       )}
@@ -249,17 +273,17 @@ export function PriceChart({
 }
 
 // Chart with percentage change indicator
-export function PerformanceChart({ 
-  data, 
-  percentage, 
-  className 
-}: { 
-  data: MiniChartData[]; 
+export function PerformanceChart({
+  data,
+  percentage,
+  className,
+}: {
+  data: MiniChartData[];
   percentage: number;
   className?: string;
 }) {
   const isPositive = percentage >= 0;
-  
+
   return (
     <div className={cn('flex items-center space-x-3', className)}>
       <MiniChart
@@ -269,28 +293,31 @@ export function PerformanceChart({
         height={32}
         width={80}
       />
-      <span className={cn(
-        'text-sm font-medium',
-        isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-      )}>
-        {isPositive ? '+' : ''}{percentage.toFixed(2)}%
+      <span
+        className={cn(
+          'text-sm font-medium',
+          isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
+        )}
+      >
+        {isPositive ? '+' : ''}
+        {percentage.toFixed(2)}%
       </span>
     </div>
   );
 }
 
 // Loading skeleton for mini charts
-export function MiniChartSkeleton({ 
-  width = 200, 
-  height = 60, 
-  className 
-}: { 
-  width?: number; 
-  height?: number; 
+export function MiniChartSkeleton({
+  width = 200,
+  height = 60,
+  className,
+}: {
+  width?: number;
+  height?: number;
   className?: string;
 }) {
   return (
-    <div 
+    <div
       className={cn('bg-gray-200 dark:bg-gray-700 animate-pulse rounded', className)}
       style={{ width, height }}
     />

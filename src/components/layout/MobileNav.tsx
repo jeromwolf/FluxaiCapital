@@ -5,17 +5,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import { 
-  Home, 
-  PieChart, 
-  BarChart3, 
-  FileText, 
+import {
+  Home,
+  PieChart,
+  BarChart3,
+  FileText,
   Settings,
   Menu,
   X,
   ChevronRight,
   User,
-  LogOut
+  LogOut,
 } from 'lucide-react';
 
 interface NavItem {
@@ -48,9 +48,7 @@ export function MobileNav() {
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">F</span>
             </div>
-            <span className="font-semibold text-gray-900 dark:text-gray-100">
-              FLUX AI
-            </span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">FLUX AI</span>
           </Link>
 
           <button
@@ -68,18 +66,13 @@ export function MobileNav() {
       </div>
 
       {/* Mobile Menu Overlay */}
-      {isOpen && (
-        <div
-          className="lg:hidden fixed inset-0 z-30 bg-black/50"
-          onClick={toggleMenu}
-        />
-      )}
+      {isOpen && <div className="lg:hidden fixed inset-0 z-30 bg-black/50" onClick={toggleMenu} />}
 
       {/* Mobile Menu Drawer */}
       <div
         className={cn(
           'lg:hidden fixed top-0 right-0 z-40 h-full w-80 bg-white dark:bg-gray-900 shadow-xl transform transition-transform duration-300 ease-in-out',
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+          isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
         {/* Menu Header */}
@@ -106,9 +99,7 @@ export function MobileNav() {
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 {t('common.user')}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                user@example.com
-              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">user@example.com</p>
             </div>
           </div>
         </div>
@@ -128,7 +119,7 @@ export function MobileNav() {
                   'flex items-center justify-between px-4 py-3 rounded-lg transition-colors',
                   isActive
                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300',
                 )}
               >
                 <div className="flex items-center space-x-3">
@@ -171,7 +162,7 @@ export function MobileNav() {
                   'flex flex-col items-center justify-center space-y-1 transition-colors',
                   isActive
                     ? 'text-blue-600 dark:text-blue-400'
-                    : 'text-gray-600 dark:text-gray-400'
+                    : 'text-gray-600 dark:text-gray-400',
                 )}
               >
                 <Icon className="w-5 h-5" />

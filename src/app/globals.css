@@ -68,7 +68,9 @@
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-feature-settings: "rlig" 1, "calt" 1;
+    font-feature-settings:
+      'rlig' 1,
+      'calt' 1;
   }
 }
 
@@ -76,13 +78,13 @@
   .container {
     @apply mx-auto w-full max-w-7xl px-4;
   }
-  
+
   @media (min-width: 640px) {
     .container {
       @apply px-6;
     }
   }
-  
+
   @media (min-width: 1024px) {
     .container {
       @apply px-8;
@@ -126,7 +128,7 @@
     background-color: hsl(var(--background));
     ring-offset-color: hsl(var(--background));
   }
-  
+
   .input-base:focus-visible {
     --tw-ring-color: hsl(var(--ring));
   }

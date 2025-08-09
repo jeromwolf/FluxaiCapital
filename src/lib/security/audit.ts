@@ -7,14 +7,20 @@ export enum AuditAction {
   LOGOUT = 'LOGOUT',
   PASSWORD_CHANGE = 'PASSWORD_CHANGE',
   PASSWORD_RESET = 'PASSWORD_RESET',
-  
+
   // Data Access
   DATA_VIEW = 'DATA_VIEW',
   DATA_CREATE = 'DATA_CREATE',
   DATA_UPDATE = 'DATA_UPDATE',
   DATA_DELETE = 'DATA_DELETE',
   DATA_EXPORT = 'DATA_EXPORT',
-  
+
+  // API Keys
+  VIEW_API_KEYS = 'VIEW_API_KEYS',
+  CREATE_API_KEY = 'CREATE_API_KEY',
+  UPDATE_API_KEY = 'UPDATE_API_KEY',
+  REVOKE_API_KEY = 'REVOKE_API_KEY',
+
   // Security
   PERMISSION_CHANGE = 'PERMISSION_CHANGE',
   SECURITY_ALERT = 'SECURITY_ALERT',
@@ -24,7 +30,7 @@ export enum AuditAction {
 
 export interface AuditLogData {
   userId?: string;
-  action: AuditAction;
+  action: AuditAction | string;
   resource?: string;
   resourceId?: string;
   metadata?: Record<string, any>;
@@ -39,20 +45,20 @@ export class AuditLogger {
       await prisma.activity.create({
         data: {
           userId: data.userId || 'system',
-          type: data.action,
+          type: data.action as any, // TODO: Map to ActivityType enum
           action: this.formatActionMessage(data),
           metadata: data.metadata || {},
-        }
+        },
       });
     } catch (error) {
       // Log to console if database write fails
       console.error('Failed to write audit log:', error, data);
     }
   }
-  
+
   private static formatActionMessage(data: AuditLogData): string {
     const { action, resource, resourceId, success } = data;
-    
+
     switch (action) {
       case AuditAction.LOGIN_SUCCESS:
         return 'User logged in successfully';
@@ -72,6 +78,14 @@ export class AuditLogger {
         return `Deleted ${resource}${resourceId ? ` (${resourceId})` : ''}`;
       case AuditAction.DATA_EXPORT:
         return `Exported ${resource} data`;
+      case AuditAction.VIEW_API_KEYS:
+        return 'Viewed API keys';
+      case AuditAction.CREATE_API_KEY:
+        return `Created API key${resourceId ? ` (${resourceId})` : ''}`;
+      case AuditAction.UPDATE_API_KEY:
+        return `Updated API key${resourceId ? ` (${resourceId})` : ''}`;
+      case AuditAction.REVOKE_API_KEY:
+        return `Revoked API key${resourceId ? ` (${resourceId})` : ''}`;
       case AuditAction.SECURITY_ALERT:
         return `Security alert: ${data.metadata?.message || 'Unknown'}`;
       case AuditAction.CSRF_VIOLATION:
@@ -82,7 +96,7 @@ export class AuditLogger {
         return `${action}${resource ? ` on ${resource}` : ''}`;
     }
   }
-  
+
   // Convenience methods
   static async logLogin(userId: string, success: boolean, ipAddress?: string): Promise<void> {
     await this.log({
@@ -92,12 +106,12 @@ export class AuditLogger {
       success,
     });
   }
-  
+
   static async logDataAccess(
     userId: string,
     action: 'view' | 'create' | 'update' | 'delete' | 'export',
     resource: string,
-    resourceId?: string
+    resourceId?: string,
   ): Promise<void> {
     const actionMap = {
       view: AuditAction.DATA_VIEW,
@@ -106,7 +120,7 @@ export class AuditLogger {
       delete: AuditAction.DATA_DELETE,
       export: AuditAction.DATA_EXPORT,
     };
-    
+
     await this.log({
       userId,
       action: actionMap[action],
@@ -114,18 +128,18 @@ export class AuditLogger {
       resourceId,
     });
   }
-  
+
   static async logSecurityEvent(
     type: 'csrf' | 'rate_limit' | 'alert',
     metadata?: Record<string, any>,
-    userId?: string
+    userId?: string,
   ): Promise<void> {
     const actionMap = {
       csrf: AuditAction.CSRF_VIOLATION,
       rate_limit: AuditAction.RATE_LIMIT_EXCEEDED,
       alert: AuditAction.SECURITY_ALERT,
     };
-    
+
     await this.log({
       userId,
       action: actionMap[type],

@@ -85,7 +85,7 @@ export function useMarketOverview(enabled = true) {
 
     const fetchOverview = async () => {
       try {
-        const overview = await marketData.getMarketOverview();
+        const overview = await marketData.getMarketIndices();
         setData(overview);
         setError(null);
       } catch (err) {

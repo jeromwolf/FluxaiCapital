@@ -50,7 +50,7 @@ export default function CreatePortfolioDialog({
     try {
       // TODO: API 연동
       console.log('Creating portfolio:', { ...formData, userId });
-      
+
       // 임시로 성공 처리
       setTimeout(() => {
         router.refresh();
@@ -70,9 +70,7 @@ export default function CreatePortfolioDialog({
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>새 포트폴리오 만들기</DialogTitle>
-            <DialogDescription>
-              포트폴리오의 기본 정보를 입력하세요
-            </DialogDescription>
+            <DialogDescription>포트폴리오의 기본 정보를 입력하세요</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid gap-2">
@@ -80,9 +78,7 @@ export default function CreatePortfolioDialog({
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="예: 성장주 포트폴리오"
                 required
                 disabled={isLoading}
@@ -93,9 +89,7 @@ export default function CreatePortfolioDialog({
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="포트폴리오에 대한 간단한 설명을 입력하세요"
                 rows={3}
                 disabled={isLoading}
@@ -105,9 +99,7 @@ export default function CreatePortfolioDialog({
               <Label htmlFor="currency">기준 통화</Label>
               <Select
                 value={formData.currency}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, currency: value })
-                }
+                onValueChange={(value) => setFormData({ ...formData, currency: value })}
                 disabled={isLoading}
               >
                 <SelectTrigger id="currency">

@@ -62,9 +62,9 @@ export class AIStrategyEngine {
       sharpeRatio: 0.83,
       recommendedHoldings: ['NVDA', 'MSFT', 'GOOGL', '005930', '035420'],
       allocation: {
-        'NVDA': 25,
-        'MSFT': 20,
-        'GOOGL': 20,
+        NVDA: 25,
+        MSFT: 20,
+        GOOGL: 20,
         '005930': 20,
         '035420': 15,
       },
@@ -93,9 +93,9 @@ export class AIStrategyEngine {
       allocation: {
         '005380': 20,
         '000660': 20,
-        'AAPL': 20,
-        'JNJ': 20,
-        'PG': 20,
+        AAPL: 20,
+        JNJ: 20,
+        PG: 20,
       },
       confidence: 78,
       backtestResults: {
@@ -120,11 +120,11 @@ export class AIStrategyEngine {
       sharpeRatio: 0.88,
       recommendedHoldings: ['MSFT', '005930', 'GOOGL', '373220', 'JPM', '035720'],
       allocation: {
-        'MSFT': 18,
+        MSFT: 18,
         '005930': 17,
-        'GOOGL': 16,
+        GOOGL: 16,
         '373220': 17,
-        'JPM': 16,
+        JPM: 16,
         '035720': 16,
       },
       confidence: 82,
@@ -142,11 +142,11 @@ export class AIStrategyEngine {
       sharpeRatio: 0.91,
       recommendedHoldings: ['JNJ', 'PG', 'KO', '207940', 'WMT'],
       allocation: {
-        'JNJ': 22,
-        'PG': 20,
-        'KO': 20,
+        JNJ: 22,
+        PG: 20,
+        KO: 20,
         '207940': 20,
-        'WMT': 18,
+        WMT: 18,
       },
       confidence: 88,
     },
@@ -160,7 +160,7 @@ export class AIStrategyEngine {
       riskLevel: 'medium',
       expectedReturn: 14.8,
       volatility: 18.5,
-      sharpeRatio: 0.80,
+      sharpeRatio: 0.8,
       recommendedHoldings: ['005930', '000660', '035420', '035720', '373220', '207940'],
       allocation: {
         '005930': 20,
@@ -200,12 +200,12 @@ export class AIStrategyEngine {
   // Get personalized strategy recommendations
   async getRecommendations(
     userProfile: UserProfile,
-    currentHoldings?: string[]
+    currentHoldings?: string[],
   ): Promise<TradingStrategy[]> {
     const marketConditions = await this.analyzeMarketConditions();
-    
+
     // Filter strategies based on user profile
-    let filteredStrategies = this.strategies.filter(strategy => {
+    let filteredStrategies = this.strategies.filter((strategy) => {
       // Risk matching
       if (userProfile.riskTolerance === 'conservative' && strategy.riskLevel === 'high') {
         return false;
@@ -213,38 +213,38 @@ export class AIStrategyEngine {
       if (userProfile.riskTolerance === 'aggressive' && strategy.riskLevel === 'low') {
         return false;
       }
-      
+
       // Return expectations
       if (strategy.expectedReturn < userProfile.goalReturn * 0.7) {
         return false;
       }
-      
+
       return true;
     });
 
     // Adjust confidence based on market conditions
-    filteredStrategies = filteredStrategies.map(strategy => {
+    filteredStrategies = filteredStrategies.map((strategy) => {
       let confidence = strategy.confidence;
-      
+
       // Adjust for market trend
       if (marketConditions.trend === 'bullish' && strategy.type === 'momentum') {
         confidence += 10;
       } else if (marketConditions.trend === 'bearish' && strategy.type === 'defensive') {
         confidence += 15;
       }
-      
+
       // Adjust for volatility
       if (marketConditions.volatility === 'high' && strategy.riskLevel === 'low') {
         confidence += 5;
       }
-      
+
       // Adjust for user's investment horizon
       if (userProfile.investmentHorizon === 'long' && strategy.type === 'growth') {
         confidence += 8;
       } else if (userProfile.investmentHorizon === 'short' && strategy.type === 'dividend') {
         confidence += 5;
       }
-      
+
       return {
         ...strategy,
         confidence: Math.min(100, confidence),
@@ -256,44 +256,43 @@ export class AIStrategyEngine {
   }
 
   // Generate AI insights
-  async generateInsights(
-    strategy: TradingStrategy,
-    userProfile: UserProfile
-  ): Promise<string[]> {
+  async generateInsights(strategy: TradingStrategy, userProfile: UserProfile): Promise<string[]> {
     const insights: string[] = [];
-    
+
     // Market condition insights
     const marketConditions = await this.analyzeMarketConditions();
-    
+
     if (marketConditions.trend === 'bullish') {
       insights.push('현재 시장은 상승 추세를 보이고 있어 성장주 전략이 유리할 수 있습니다.');
     } else if (marketConditions.trend === 'bearish') {
       insights.push('시장이 하락 국면에 있어 방어적인 포지션이 권장됩니다.');
     }
-    
+
     // Strategy-specific insights
     if (strategy.type === 'momentum') {
       insights.push('모멘텀 전략은 단기적으로 높은 수익을 낼 수 있지만 변동성이 큽니다.');
     } else if (strategy.type === 'dividend') {
       insights.push('배당주 전략은 안정적인 현금흐름을 제공하며 하락장에서 방어적입니다.');
     }
-    
+
     // Risk insights
     if (strategy.volatility > 20) {
       insights.push('이 전략의 변동성이 높아 단기적으로 큰 손실을 볼 수 있습니다.');
     }
-    
+
     // Performance insights
     if (strategy.backtestResults) {
       const { winRate, maxDrawdown } = strategy.backtestResults;
-      insights.push(`과거 백테스트 결과 ${winRate}%의 승률과 최대 ${Math.abs(maxDrawdown)}%의 낙폭을 보였습니다.`);
+      insights.push(
+        `과거 백테스트 결과 ${winRate}%의 승률과 최대 ${Math.abs(maxDrawdown)}%의 낙폭을 보였습니다.`,
+      );
     }
-    
+
     // Personalized insights
     if (userProfile.age > 50 && strategy.riskLevel === 'high') {
       insights.push('은퇴가 가까워질수록 보수적인 전략을 고려해보세요.');
     }
-    
+
     return insights;
   }
 
@@ -305,7 +304,7 @@ export class AIStrategyEngine {
       maxPositionSize?: number;
       minPositionSize?: number;
       maxTransactions?: number;
-    }
+    },
   ): Promise<{
     recommendations: Array<{
       action: 'buy' | 'sell' | 'hold';
@@ -322,25 +321,27 @@ export class AIStrategyEngine {
   }> {
     const totalValue = currentHoldings.reduce((sum, h) => sum + h.value, 0);
     const currentWeights: Record<string, number> = {};
-    
-    currentHoldings.forEach(h => {
+
+    currentHoldings.forEach((h) => {
       currentWeights[h.symbol] = (h.value / totalValue) * 100;
     });
 
     const recommendations = [];
-    
+
     // Calculate rebalancing recommendations
     for (const [symbol, targetWeight] of Object.entries(targetStrategy.allocation)) {
       const currentWeight = currentWeights[symbol] || 0;
       const diff = targetWeight - currentWeight;
-      
-      if (Math.abs(diff) > 2) { // Only rebalance if difference > 2%
+
+      if (Math.abs(diff) > 2) {
+        // Only rebalance if difference > 2%
+        const action: 'buy' | 'sell' | 'hold' = diff > 0 ? 'buy' : 'sell';
         recommendations.push({
-          action: diff > 0 ? 'buy' : 'sell' as const,
+          action,
           symbol,
           currentWeight,
           targetWeight,
-          amount: Math.abs(diff * totalValue / 100),
+          amount: Math.abs((diff * totalValue) / 100),
         });
       }
     }
@@ -348,8 +349,9 @@ export class AIStrategyEngine {
     // Sell positions not in target strategy
     for (const holding of currentHoldings) {
       if (!targetStrategy.allocation[holding.symbol]) {
+        const action: 'buy' | 'sell' | 'hold' = 'sell';
         recommendations.push({
-          action: 'sell' as const,
+          action,
           symbol: holding.symbol,
           currentWeight: currentWeights[holding.symbol],
           targetWeight: 0,

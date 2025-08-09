@@ -55,7 +55,11 @@
       "Bash(./test-auth.sh:*)",
       "Bash(./test-session.sh:*)",
       "Bash(./test-features.sh:*)",
-      "Bash(test:*)"
+      "Bash(test:*)",
+      "Bash(npx tsc:*)",
+      "Bash(rg:*)",
+      "Bash(NEXT_LINT=false npm run build)",
+      "Bash(bash:*)"
     ],
     "deny": []
   }

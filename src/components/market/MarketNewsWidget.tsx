@@ -27,7 +27,7 @@ export function MarketNewsWidget({
   const fetchNews = async () => {
     try {
       setRefreshing(true);
-      const data = await marketData.getMarketNews(category);
+      const data = await marketData.getNews(undefined, 50); // Get general news
       setNews(data.slice(0, limit));
     } catch (error) {
       console.error('Failed to fetch market news:', error);
@@ -39,7 +39,7 @@ export function MarketNewsWidget({
 
   useEffect(() => {
     fetchNews();
-    
+
     // Refresh news every 5 minutes
     const interval = setInterval(fetchNews, 5 * 60 * 1000);
     return () => clearInterval(interval);
@@ -92,9 +92,7 @@ export function MarketNewsWidget({
   return (
     <ResponsiveCard className={className}>
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          시장 뉴스
-        </h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">시장 뉴스</h3>
         <Button
           size="icon"
           variant="ghost"
@@ -147,7 +145,11 @@ export function MarketNewsWidget({
                 {item.sentiment && (
                   <span className={cn('font-medium', getSentimentColor(item.sentiment))}>
                     <TrendingUp className="h-3 w-3 inline-block mr-1" />
-                    {item.sentiment === 'positive' ? '긍정' : item.sentiment === 'negative' ? '부정' : '중립'}
+                    {item.sentiment === 'positive'
+                      ? '긍정'
+                      : item.sentiment === 'negative'
+                        ? '부정'
+                        : '중립'}
                   </span>
                 )}
               </div>

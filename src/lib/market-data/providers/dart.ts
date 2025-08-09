@@ -1,15 +1,15 @@
 /**
  * DART (Data Analysis, Retrieval and Transfer System) API Provider
  * 한국 금융감독원 전자공시시스템 API
- * 
+ *
  * Documentation: https://opendart.fss.or.kr/
  */
 
-import { 
-  DartDisclosure, 
-  DartFinancialStatement, 
+import {
+  DartDisclosure,
+  DartFinancialStatement,
   DartMajorShareholder,
-  DartCompanyInfo 
+  DartCompanyInfo,
 } from '../types';
 
 interface DartApiResponse<T> {
@@ -18,12 +18,13 @@ interface DartApiResponse<T> {
   list?: T[];
 }
 
-interface DartCorpCode {
-  corp_code: string;
-  corp_name: string;
-  stock_code: string | null;
-  modify_date: string;
-}
+// Unused interface - removed to fix TS6133
+// interface DartCorpCode {
+//   corp_code: string;
+//   corp_name: string;
+//   stock_code: string | null;
+//   modify_date: string;
+// }
 
 export class DartProvider {
   private apiKey: string;
@@ -41,7 +42,7 @@ export class DartProvider {
    * Initialize the corp code mapping
    * In production, this should fetch from DART's corp code API
    */
-  private async initializeCorpCodeMap() {
+  private initializeCorpCodeMap() {
     // Popular Korean stocks mapping (stock_code -> corp_code)
     // In production, download from: https://opendart.fss.or.kr/api/corpCode.xml
     const mappings = {
@@ -104,14 +105,14 @@ export class DartProvider {
       }
 
       const data = await response.json();
-      
+
       if (data.status !== '000') {
         throw new Error(`DART API error: ${data.message}`);
       }
 
       // Cache the result
       this.cache.set(cacheKey, { data, timestamp: Date.now() });
-      
+
       return data;
     } catch (error) {
       console.error('DART API request failed:', error);
@@ -126,13 +127,13 @@ export class DartProvider {
     corpCode?: string;
     stockCode?: string;
     startDate?: string; // YYYYMMDD
-    endDate?: string;   // YYYYMMDD
+    endDate?: string; // YYYYMMDD
     reportType?: string; // A: 정기공시, B: 주요사항보고, C: 발행공시, D: 지분공시, etc.
     pageNo?: number;
     pageCount?: number;
   }): Promise<DartDisclosure[]> {
     let corpCode = params.corpCode;
-    
+
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {
       corpCode = this.getCorpCode(params.stockCode);
@@ -143,7 +144,7 @@ export class DartProvider {
 
     const today = new Date();
     const thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
-    
+
     const apiParams: Record<string, string> = {
       bgn_de: params.startDate || this.formatDate(thirtyDaysAgo),
       end_de: params.endDate || this.formatDate(today),
@@ -160,7 +161,7 @@ export class DartProvider {
     }
 
     const response = await this.makeRequest<DartApiResponse<DartDisclosure>>('list', apiParams);
-    return response.list || [];
+    return (response as any).list || [];
   }
 
   /**
@@ -169,12 +170,12 @@ export class DartProvider {
   async getFinancialStatements(params: {
     corpCode?: string;
     stockCode?: string;
-    year: string;         // YYYY
-    reportCode: string;   // 11011: 사업보고서, 11012: 반기보고서, 11013: 1분기보고서, 11014: 3분기보고서
+    year: string; // YYYY
+    reportCode: string; // 11011: 사업보고서, 11012: 반기보고서, 11013: 1분기보고서, 11014: 3분기보고서
     fsDiv?: 'CFS' | 'OFS'; // CFS: 연결재무제표, OFS: 개별재무제표
   }): Promise<DartFinancialStatement[]> {
     let corpCode = params.corpCode;
-    
+
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {
       corpCode = this.getCorpCode(params.stockCode);
@@ -197,8 +198,11 @@ export class DartProvider {
       apiParams.fs_div = params.fsDiv;
     }
 
-    const response = await this.makeRequest<DartApiResponse<DartFinancialStatement>>('fnlttSinglAcnt', apiParams);
-    return response.list || [];
+    const response = await this.makeRequest<DartApiResponse<DartFinancialStatement>>(
+      'fnlttSinglAcnt',
+      apiParams,
+    );
+    return (response as any).list || [];
   }
 
   /**
@@ -209,7 +213,7 @@ export class DartProvider {
     stockCode?: string;
   }): Promise<DartMajorShareholder[]> {
     let corpCode = params.corpCode;
-    
+
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {
       corpCode = this.getCorpCode(params.stockCode);
@@ -241,8 +245,11 @@ export class DartProvider {
     };
 
     try {
-      const response = await this.makeRequest<DartApiResponse<DartMajorShareholder>>('hyslrSttus', apiParams);
-      return response.list || [];
+      const response = await this.makeRequest<DartApiResponse<DartMajorShareholder>>(
+        'hyslrSttus',
+        apiParams,
+      );
+      return (response as any).list || [];
     } catch (error) {
       console.error('Failed to get major shareholders:', error);
       return [];
@@ -257,7 +264,7 @@ export class DartProvider {
     stockCode?: string;
   }): Promise<DartCompanyInfo | null> {
     let corpCode = params.corpCode;
-    
+
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {
       corpCode = this.getCorpCode(params.stockCode);
@@ -276,7 +283,7 @@ export class DartProvider {
 
     try {
       const response = await this.makeRequest<DartCompanyInfo>('company', apiParams);
-      return response;
+      return response as DartCompanyInfo;
     } catch (error) {
       console.error('Failed to get company info:', error);
       return null;
@@ -286,7 +293,7 @@ export class DartProvider {
   /**
    * Get document viewer URL
    */
-  getDocumentViewerUrl(rceptNo: string): string {
+  static getDocumentViewerUrl(rceptNo: string): string {
     return `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${rceptNo}`;
   }
 
@@ -334,27 +341,28 @@ export class DartProvider {
       const metrics: Record<string, number> = {};
 
       // Parse financial statements to extract key metrics
-      statements.forEach(statement => {
-        const amount = parseFloat(statement.thstrm_amount.replace(/,/g, ''));
-        
+      statements.forEach((statement) => {
+        const amount = parseFloat((statement as any).thstrm_amount?.replace(/,/g, '') || '0');
+        const accountName = (statement as any).account_nm || '';
+
         // Income statement items
-        if (statement.account_nm.includes('매출액') || statement.account_nm.includes('수익')) {
+        if (accountName.includes('매출액') || accountName.includes('수익')) {
           metrics.revenue = amount;
-        } else if (statement.account_nm.includes('영업이익')) {
+        } else if (accountName.includes('영업이익')) {
           metrics.operatingProfit = amount;
-        } else if (statement.account_nm.includes('당기순이익')) {
+        } else if (accountName.includes('당기순이익')) {
           metrics.netIncome = amount;
         }
         // Balance sheet items
-        else if (statement.account_nm === '자산총계') {
+        else if (accountName === '자산총계') {
           metrics.totalAssets = amount;
-        } else if (statement.account_nm === '자본총계') {
+        } else if (accountName === '자본총계') {
           metrics.totalEquity = amount;
-        } else if (statement.account_nm === '부채총계') {
+        } else if (accountName === '부채총계') {
           metrics.totalLiabilities = amount;
         }
         // Per share items
-        else if (statement.account_nm.includes('주당순이익')) {
+        else if (accountName.includes('주당순이익')) {
           metrics.eps = amount;
         }
       });
@@ -380,15 +388,17 @@ export class DartProvider {
   /**
    * Search companies by name
    */
-  async searchCompanies(query: string): Promise<Array<{
-    corpCode: string;
-    corpName: string;
-    stockCode?: string;
-  }>> {
+  searchCompanies(query: string): Promise<
+    Array<{
+      corpCode: string;
+      corpName: string;
+      stockCode?: string;
+    }>
+  > {
     // In production, this should search through the corp code list
     // For now, return matching companies from our mapping
     const results: Array<{ corpCode: string; corpName: string; stockCode?: string }> = [];
-    
+
     const corpNames: Record<string, string> = {
       '00126380': '삼성전자',
       '00164742': 'SK하이닉스',
@@ -403,7 +413,7 @@ export class DartProvider {
     };
 
     const queryLower = query.toLowerCase();
-    
+
     for (const [stockCode, corpCode] of this.corpCodeMap.entries()) {
       const corpName = corpNames[corpCode];
       if (corpName && corpName.toLowerCase().includes(queryLower)) {
@@ -415,7 +425,7 @@ export class DartProvider {
       }
     }
 
-    return results;
+    return Promise.resolve(results);
   }
 }
 
@@ -425,8 +435,8 @@ let dartInstance: DartProvider | null = null;
 export function getDartProvider(): DartProvider {
   if (!dartInstance) {
     const apiKey = process.env.DART_API_KEY;
-    if (!apiKey) {
-      throw new Error('DART_API_KEY is not configured');
+    if (!apiKey || apiKey.trim() === '' || apiKey.startsWith('your-')) {
+      throw new Error('DART_API_KEY is not configured or invalid');
     }
     dartInstance = new DartProvider(apiKey);
   }

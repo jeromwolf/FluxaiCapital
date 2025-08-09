@@ -43,28 +43,24 @@ export function RealtimeStockCard({
         'p-4 rounded-lg border bg-white dark:bg-gray-800',
         'hover:shadow-md transition-all duration-200',
         onClick && 'cursor-pointer',
-        className
+        className,
       )}
       onClick={onClick}
     >
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-              {quote.symbol}
-            </h3>
+            <h3 className="font-semibold text-gray-900 dark:text-gray-100">{quote.symbol}</h3>
             <Icon
               className={cn(
                 'w-4 h-4',
                 isPositive
                   ? 'text-green-600 dark:text-green-400'
-                  : 'text-red-600 dark:text-red-400'
+                  : 'text-red-600 dark:text-red-400',
               )}
             />
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400">
-            {quote.nameKr || quote.name}
-          </p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">{quote.nameKr || quote.name}</p>
         </div>
 
         <div className="text-right">
@@ -74,12 +70,12 @@ export function RealtimeStockCard({
           <p
             className={cn(
               'text-sm font-medium',
-              isPositive
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-red-600 dark:text-red-400'
+              isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
             )}
           >
-            {isPositive ? '+' : ''}{quote.change.toLocaleString()} ({isPositive ? '+' : ''}{quote.changePercent}%)
+            {isPositive ? '+' : ''}
+            {quote.change.toLocaleString()} ({isPositive ? '+' : ''}
+            {quote.changePercent}%)
           </p>
         </div>
       </div>
@@ -122,9 +118,7 @@ export function RealtimeStockCard({
       {/* Real-time indicator */}
       <div className="mt-2 flex items-center gap-1">
         <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-        <span className="text-xs text-gray-500 dark:text-gray-400">
-          실시간
-        </span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">실시간</span>
       </div>
     </div>
   );

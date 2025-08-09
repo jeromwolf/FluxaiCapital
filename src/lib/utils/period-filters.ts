@@ -45,18 +45,19 @@ export function getStartDateForPeriod(period: Period, baseDate: Date = new Date(
 export function filterDataByPeriod<T extends DataPoint>(
   data: T[],
   period: Period,
-  dateField: keyof T = 'date' as keyof T
+  dateField: keyof T = 'date' as keyof T,
 ): T[] {
   if (!data || data.length === 0) return [];
   if (period === 'ALL') return data;
 
   const startDate = getStartDateForPeriod(period);
-  
-  return data.filter(item => {
-    const itemDate = typeof item[dateField] === 'string' 
-      ? parseISO(item[dateField] as string)
-      : new Date(item[dateField] as string | number | Date);
-    
+
+  return data.filter((item) => {
+    const itemDate =
+      typeof item[dateField] === 'string'
+        ? parseISO(item[dateField] as string)
+        : new Date(item[dateField] as string | number | Date);
+
     return isAfter(itemDate, startDate) || itemDate.getTime() === startDate.getTime();
   });
 }
@@ -66,7 +67,7 @@ export function filterDataByPeriod<T extends DataPoint>(
  */
 export function calculatePeriodReturns(
   data: PortfolioData[],
-  period: Period
+  period: Period,
 ): {
   returns: number;
   percentageChange: number;
@@ -76,7 +77,7 @@ export function calculatePeriodReturns(
   endDate: string;
 } {
   const filteredData = filterDataByPeriod(data, period);
-  
+
   if (filteredData.length < 2) {
     return {
       returns: 0,
@@ -84,13 +85,13 @@ export function calculatePeriodReturns(
       startValue: filteredData[0]?.totalValue || 0,
       endValue: filteredData[0]?.totalValue || 0,
       startDate: filteredData[0]?.date || '',
-      endDate: filteredData[0]?.date || ''
+      endDate: filteredData[0]?.date || '',
     };
   }
 
   const startData = filteredData[0];
   const endData = filteredData[filteredData.length - 1];
-  
+
   if (!startData || !endData) {
     return {
       returns: 0,
@@ -98,14 +99,15 @@ export function calculatePeriodReturns(
       startValue: 0,
       endValue: 0,
       startDate: '',
-      endDate: ''
+      endDate: '',
     };
   }
-  
+
   const returns = endData.totalValue - startData.totalValue;
-  const percentageChange = startData.totalValue > 0 
-    ? ((endData.totalValue - startData.totalValue) / startData.totalValue) * 100
-    : 0;
+  const percentageChange =
+    startData.totalValue > 0
+      ? ((endData.totalValue - startData.totalValue) / startData.totalValue) * 100
+      : 0;
 
   return {
     returns,
@@ -113,7 +115,7 @@ export function calculatePeriodReturns(
     startValue: startData.totalValue,
     endValue: endData.totalValue,
     startDate: startData.date,
-    endDate: endData.date
+    endDate: endData.date,
   };
 }
 
@@ -128,33 +130,38 @@ export function getPeriodLabel(period: Period): string {
     '3M': '3개월',
     '6M': '6개월',
     '1Y': '연간',
-    'ALL': '전체'
+    ALL: '전체',
   };
-  
+
   return labels[period] || period;
 }
 
 /**
  * Format period returns for display
  */
-export function formatPeriodReturns(returns: number, percentageChange: number): {
+export function formatPeriodReturns(
+  returns: number,
+  percentageChange: number,
+): {
   returnsText: string;
   percentageText: string;
   isPositive: boolean;
 } {
   const isPositive = returns >= 0;
-  
+
   return {
     returnsText: `${isPositive ? '+' : ''}${returns.toLocaleString('ko-KR')} KRW`,
     percentageText: `${isPositive ? '+' : ''}${percentageChange.toFixed(2)}%`,
-    isPositive
+    isPositive,
   };
 }
 
 /**
  * Get appropriate data granularity for period
  */
-export function getDataGranularityForPeriod(period: Period): 'hourly' | 'daily' | 'weekly' | 'monthly' {
+export function getDataGranularityForPeriod(
+  period: Period,
+): 'hourly' | 'daily' | 'weekly' | 'monthly' {
   switch (period) {
     case '1D':
       return 'hourly';
@@ -178,7 +185,7 @@ export function getDataGranularityForPeriod(period: Period): 'hourly' | 'daily' 
 export function aggregateDataByGranularity<T extends DataPoint>(
   data: T[],
   granularity: 'hourly' | 'daily' | 'weekly' | 'monthly',
-  valueField: keyof T = 'value' as keyof T
+  valueField: keyof T = 'value' as keyof T,
 ): T[] {
   // This is a simplified version. In production, you'd want more sophisticated aggregation
   if (granularity === 'hourly' || data.length <= 100) {
@@ -201,36 +208,31 @@ export function getComparisonPeriod(period: Period): Period {
     '3M': '6M',
     '6M': '1Y',
     '1Y': 'ALL',
-    'ALL': 'ALL'
+    ALL: 'ALL',
   };
-  
+
   return comparisonMap[period];
 }
 
 /**
  * Check if data is stale for a period
  */
-export function isDataStaleForPeriod(
-  lastUpdateTime: Date | string,
-  period: Period
-): boolean {
-  const lastUpdate = typeof lastUpdateTime === 'string' 
-    ? parseISO(lastUpdateTime) 
-    : lastUpdateTime;
-    
+export function isDataStaleForPeriod(lastUpdateTime: Date | string, period: Period): boolean {
+  const lastUpdate = typeof lastUpdateTime === 'string' ? parseISO(lastUpdateTime) : lastUpdateTime;
+
   const now = new Date();
   const timeDiff = now.getTime() - lastUpdate.getTime();
-  
+
   // Define staleness thresholds for each period
   const staleThresholds: Record<Period, number> = {
-    '1D': 5 * 60 * 1000,      // 5 minutes
-    '1W': 15 * 60 * 1000,     // 15 minutes
-    '1M': 60 * 60 * 1000,     // 1 hour
+    '1D': 5 * 60 * 1000, // 5 minutes
+    '1W': 15 * 60 * 1000, // 15 minutes
+    '1M': 60 * 60 * 1000, // 1 hour
     '3M': 6 * 60 * 60 * 1000, // 6 hours
     '6M': 24 * 60 * 60 * 1000, // 1 day
     '1Y': 24 * 60 * 60 * 1000, // 1 day
-    'ALL': 7 * 24 * 60 * 60 * 1000 // 1 week
+    ALL: 7 * 24 * 60 * 60 * 1000, // 1 week
   };
-  
+
   return timeDiff > (staleThresholds[period] || staleThresholds['1M']);
 }

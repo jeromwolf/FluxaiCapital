@@ -14,7 +14,7 @@ export function useIntersectionObserver({
   freezeOnceVisible = false,
 }: UseIntersectionObserverProps = {}): [
   (node: Element | null) => void,
-  IntersectionObserverEntry | undefined
+  IntersectionObserverEntry | undefined,
 ] {
   const [entry, setEntry] = useState<IntersectionObserverEntry>();
   const [node, setNode] = useState<Element | null>(null);
@@ -44,10 +44,12 @@ export function useIntersectionObserver({
 // Hook for lazy loading images
 export function useLazyLoadImage(src: string) {
   const [imageSrc, setImageSrc] = useState<string | undefined>();
-  const [imageRef, { isIntersecting }] = useIntersectionObserver({
+  const [imageRef, entry] = useIntersectionObserver({
     threshold: 0,
     rootMargin: '50px',
   });
+
+  const isIntersecting = entry?.isIntersecting;
 
   useEffect(() => {
     if (isIntersecting && src) {
@@ -59,10 +61,7 @@ export function useLazyLoadImage(src: string) {
 }
 
 // Hook for infinite scroll
-export function useInfiniteScroll(
-  callback: () => void,
-  options?: UseIntersectionObserverProps
-) {
+export function useInfiniteScroll(callback: () => void, options?: UseIntersectionObserverProps) {
   const [targetRef, entry] = useIntersectionObserver(options);
 
   useEffect(() => {

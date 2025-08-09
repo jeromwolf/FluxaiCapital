@@ -1,13 +1,5 @@
 import React from 'react';
-import {
-  Document,
-  Page,
-  Text,
-  View,
-  StyleSheet,
-  Font,
-  Image,
-} from '@react-pdf/renderer';
+import { Document, Page, Text, View, StyleSheet, Font, Image } from '@react-pdf/renderer';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
@@ -196,7 +188,7 @@ export const PortfolioReport: React.FC<PortfolioReportProps> = ({
   transactions = [],
 }) => {
   const reportDate = new Date();
-  
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
@@ -204,7 +196,8 @@ export const PortfolioReport: React.FC<PortfolioReportProps> = ({
         <View style={styles.header}>
           <Text style={styles.title}>{portfolio.name}</Text>
           <Text style={styles.subtitle}>
-            FLUX AI Capital 포트폴리오 리포트 | {format(reportDate, 'yyyy년 MM월 dd일', { locale: ko })}
+            FLUX AI Capital 포트폴리오 리포트 |{' '}
+            {format(reportDate, 'yyyy년 MM월 dd일', { locale: ko })}
           </Text>
         </View>
 
@@ -226,21 +219,26 @@ export const PortfolioReport: React.FC<PortfolioReportProps> = ({
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>미실현 손익</Text>
-              <Text style={[
-                styles.summaryValue,
-                summary.totalUnrealizedPnL >= 0 ? styles.positive : styles.negative
-              ]}>
+              <Text
+                style={[
+                  styles.summaryValue,
+                  summary.totalUnrealizedPnL >= 0 ? styles.positive : styles.negative,
+                ]}
+              >
                 {summary.totalUnrealizedPnL >= 0 ? '+' : ''}
                 {summary.totalUnrealizedPnL.toLocaleString()} {portfolio.currency}
               </Text>
             </View>
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>총 수익률</Text>
-              <Text style={[
-                styles.summaryValue,
-                summary.totalReturn >= 0 ? styles.positive : styles.negative
-              ]}>
-                {summary.totalReturn >= 0 ? '+' : ''}{summary.totalReturn.toFixed(2)}%
+              <Text
+                style={[
+                  styles.summaryValue,
+                  summary.totalReturn >= 0 ? styles.positive : styles.negative,
+                ]}
+              >
+                {summary.totalReturn >= 0 ? '+' : ''}
+                {summary.totalReturn.toFixed(2)}%
               </Text>
             </View>
           </View>
@@ -287,7 +285,7 @@ export const PortfolioReport: React.FC<PortfolioReportProps> = ({
                 <Text style={styles.tableCellHeader}>평가금액</Text>
               </View>
             </View>
-            
+
             {/* Table Rows */}
             {holdings.map((holding, index) => (
               <View style={styles.tableRow} key={index}>
@@ -333,13 +331,11 @@ export const PortfolioReport: React.FC<PortfolioReportProps> = ({
                   <Text style={styles.tableCellHeader}>금액</Text>
                 </View>
               </View>
-              
+
               {transactions.slice(0, 5).map((tx, index) => (
                 <View style={styles.tableRow} key={index}>
                   <View style={styles.tableCol}>
-                    <Text style={styles.tableCell}>
-                      {format(new Date(tx.executedAt), 'MM/dd')}
-                    </Text>
+                    <Text style={styles.tableCell}>{format(new Date(tx.executedAt), 'MM/dd')}</Text>
                   </View>
                   <View style={styles.tableCol}>
                     <Text style={styles.tableCell}>{tx.type}</Text>
@@ -353,9 +349,7 @@ export const PortfolioReport: React.FC<PortfolioReportProps> = ({
                     </Text>
                   </View>
                   <View style={styles.tableCol}>
-                    <Text style={styles.tableCell}>
-                      {tx.amount.toLocaleString()}
-                    </Text>
+                    <Text style={styles.tableCell}>{tx.amount.toLocaleString()}</Text>
                   </View>
                 </View>
               ))}

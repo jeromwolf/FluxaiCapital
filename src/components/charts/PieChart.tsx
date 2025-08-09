@@ -1,7 +1,14 @@
 'use client';
 
 import React from 'react';
-import { PieChart as RechartsPieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { ChartContainer } from './ChartContainer';
 import { chartTheme, pieChartConfig } from '@/config/chart-theme';
 
@@ -39,22 +46,13 @@ const CustomTooltip = ({ active, payload }: any) => {
     return (
       <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-2">
-          <div 
-            className="w-3 h-3 rounded-full" 
-            style={{ backgroundColor: payload[0].color }}
-          />
-          <span className="font-medium text-gray-900 dark:text-gray-100">
-            {data.name}
-          </span>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].color }} />
+          <span className="font-medium text-gray-900 dark:text-gray-100">{data.name}</span>
         </div>
         <div className="mt-1 text-sm text-gray-600 dark:text-gray-400">
           <div>가치: {data.value?.toLocaleString('ko-KR')} KRW</div>
-          {data.percentage && (
-            <div>비중: {data.percentage.toFixed(1)}%</div>
-          )}
-          {data.symbol && (
-            <div>심볼: {data.symbol}</div>
-          )}
+          {data.percentage && <div>비중: {data.percentage.toFixed(1)}%</div>}
+          {data.symbol && <div>심볼: {data.symbol}</div>}
         </div>
       </div>
     );
@@ -64,18 +62,18 @@ const CustomTooltip = ({ active, payload }: any) => {
 
 const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percentage }: any) => {
   if (percentage < 3) return null; // Hide labels for very small segments
-  
+
   const RADIAN = Math.PI / 180;
   const radius = outerRadius + 20;
   const x = cx + radius * Math.cos(-midAngle * RADIAN);
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
   return (
-    <text 
-      x={x} 
-      y={y} 
+    <text
+      x={x}
+      y={y}
       fill={chartTheme.colors.text.primary}
-      textAnchor={x > cx ? 'start' : 'end'} 
+      textAnchor={x > cx ? 'start' : 'end'}
       dominantBaseline="central"
       fontSize={chartTheme.fonts.sizes.sm}
       fontFamily={chartTheme.fonts.family}
@@ -91,13 +89,8 @@ const CustomLegend = ({ payload }: any) => {
     <div className="flex flex-wrap justify-center gap-4 mt-4">
       {payload?.map((entry: any, index: number) => (
         <div key={index} className="flex items-center space-x-2">
-          <div 
-            className="w-3 h-3 rounded-full" 
-            style={{ backgroundColor: entry.color }}
-          />
-          <span className="text-sm text-gray-600 dark:text-gray-400">
-            {entry.value}
-          </span>
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
+          <span className="text-sm text-gray-600 dark:text-gray-400">{entry.value}</span>
         </div>
       ))}
     </div>
@@ -119,14 +112,14 @@ export default function PieChart({
   loading = false,
   error,
   isDark = false,
-  onSegmentClick
+  onSegmentClick,
 }: PieChartProps) {
   // Calculate percentages and assign colors
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
   const processedData = data.map((item, index) => ({
     ...item,
     percentage: totalValue > 0 ? (item.value / totalValue) * 100 : 0,
-    color: item.color || defaultColors[index % defaultColors.length]
+    color: item.color || defaultColors[index % defaultColors.length],
   }));
 
   const handleSegmentClick = (data: any, index: number) => {
@@ -193,46 +186,35 @@ export default function PieChart({
           style={{ cursor: onSegmentClick ? 'pointer' : 'default' }}
         >
           {processedData.map((entry, index) => (
-            <Cell 
-              key={`cell-${index}`} 
+            <Cell
+              key={`cell-${index}`}
               fill={entry.color}
               className="hover:opacity-80 transition-opacity duration-200"
             />
           ))}
         </Pie>
-        
-        {showTooltip && (
-          <Tooltip content={<CustomTooltip />} />
-        )}
-        
-        {showLegend && (
-          <Legend content={<CustomLegend />} />
-        )}
+
+        {showTooltip && <Tooltip content={<CustomTooltip />} />}
+
+        {showLegend && <Legend content={<CustomLegend />} />}
       </RechartsPieChart>
     </ChartContainer>
   );
 }
 
 // Preset configurations for common use cases
-export const AssetAllocationPieChart = (props: Omit<PieChartProps, 'innerRadius' | 'outerRadius'>) => (
-  <PieChart 
-    {...props}
-    innerRadius={50}
-    outerRadius={110}
-    title={props.title || "자산 배분"}
-  />
-);
+export const AssetAllocationPieChart = (
+  props: Omit<PieChartProps, 'innerRadius' | 'outerRadius'>,
+) => <PieChart {...props} innerRadius={50} outerRadius={110} title={props.title || '자산 배분'} />;
 
 export const PortfolioDistributionPieChart = (props: Omit<PieChartProps, 'innerRadius'>) => (
-  <PieChart 
-    {...props}
-    innerRadius={0}
-    title={props.title || "포트폴리오 분포"}
-  />
+  <PieChart {...props} innerRadius={0} title={props.title || '포트폴리오 분포'} />
 );
 
-export const CompactPieChart = (props: Omit<PieChartProps, 'height' | 'showLegend' | 'showLabels'>) => (
-  <PieChart 
+export const CompactPieChart = (
+  props: Omit<PieChartProps, 'height' | 'showLegend' | 'showLabels'>,
+) => (
+  <PieChart
     {...props}
     height={250}
     showLegend={false}

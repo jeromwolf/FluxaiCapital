@@ -7,7 +7,7 @@ export function useMediaQuery(query: string): boolean {
 
   useEffect(() => {
     const media = window.matchMedia(query);
-    
+
     // Set the initial value
     setMatches(media.matches);
 
@@ -66,7 +66,7 @@ export function useDeviceType() {
   if (isTablet) return 'tablet';
   if (isLargeDesktop) return 'large-desktop';
   if (isDesktop) return 'desktop';
-  
+
   return 'unknown';
 }
 
@@ -81,9 +81,7 @@ export function useIsLandscape() {
 
 // High DPI screen detection
 export function useIsRetina() {
-  return useMediaQuery(
-    '(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)'
-  );
+  return useMediaQuery('(-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)');
 }
 
 // Reduced motion preference

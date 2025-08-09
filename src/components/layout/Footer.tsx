@@ -7,16 +7,11 @@ export default function Footer() {
       <div className="container py-8 md:py-12">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">
-            <Link
-              href="/"
-              className="flex items-center gap-2 font-semibold"
-            >
+            <Link href="/" className="flex items-center gap-2 font-semibold">
               <TrendingUp className="h-6 w-6 text-primary" />
               <span>FLUX AI Capital</span>
             </Link>
-            <p className="mt-4 text-sm text-muted-foreground">
-              AI 기반 전략적 자산관리
-            </p>
+            <p className="mt-4 text-sm text-muted-foreground">AI 기반 전략적 자산관리</p>
           </div>
 
           <div>

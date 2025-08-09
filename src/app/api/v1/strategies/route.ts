@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     const searchParams = request.nextUrl.searchParams;
-    
+
     const userId = searchParams.get('userId');
     const isPublic = searchParams.get('public') === 'true';
     const type = searchParams.get('type');
@@ -33,8 +33,8 @@ export async function GET(request: NextRequest) {
     const skip = (page - 1) * limit;
 
     // Build where clause
-    const where: any = {};
-    
+    const where: Record<string, any> = {};
+
     if (userId) {
       where.userId = userId;
     } else if (isPublic) {
@@ -71,39 +71,41 @@ export async function GET(request: NextRequest) {
                   avatarUrl: true,
                   reputation: true,
                   followerCount: true,
-                }
-              }
-            }
+                },
+              },
+            },
           },
           _count: {
             select: {
               likes: true,
               comments: true,
               sharedStrategies: true,
-            }
+            },
           },
           // Include if user has liked
-          likes: session?.user?.id ? {
-            where: {
-              userId: session.user.id
-            },
-            select: { id: true }
-          } : false,
+          likes: session?.user?.id
+            ? {
+                where: {
+                  userId: session.user.id,
+                },
+                select: { id: true },
+              }
+            : false,
         },
         orderBy: {
-          [sortBy]: order
+          [sortBy]: order as 'asc' | 'desc',
         },
         skip,
         take: limit,
       }),
-      prisma.strategy.count({ where })
+      prisma.strategy.count({ where }),
     ]);
 
     // Transform the data
-    const transformedStrategies = strategies.map(strategy => ({
+    const transformedStrategies = strategies.map((strategy) => ({
       ...strategy,
-      tags: strategy.tags as string[],
-      isLiked: strategy.likes?.length > 0,
+      tags: Array.isArray(strategy.tags) ? (strategy.tags as string[]) : [],
+      isLiked: Array.isArray(strategy.likes) && strategy.likes.length > 0,
       likesCount: strategy._count.likes,
       commentsCount: strategy._count.comments,
       sharesCount: strategy._count.sharedStrategies,
@@ -116,14 +118,11 @@ export async function GET(request: NextRequest) {
         limit,
         total,
         totalPages: Math.ceil(total / limit),
-      }
+      },
     });
   } catch (error) {
     console.error('Error fetching strategies:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch strategies' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch strategies' }, { status: 500 });
   }
 }
 
@@ -131,12 +130,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     const body = await request.json();
@@ -149,8 +145,8 @@ export async function POST(request: NextRequest) {
         name: validatedData.name,
         description: validatedData.description,
         type: validatedData.type,
-        config: validatedData.config,
-        rules: validatedData.rules,
+        config: validatedData.config as any,
+        rules: validatedData.rules as any,
         riskLevel: validatedData.riskLevel || 'MEDIUM',
         tags: validatedData.tags || [],
         isPublic: validatedData.isPublic || false,
@@ -162,16 +158,16 @@ export async function POST(request: NextRequest) {
             name: true,
             email: true,
             image: true,
-          }
+          },
         },
         _count: {
           select: {
             likes: true,
             comments: true,
             sharedStrategies: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     // Log activity
@@ -183,40 +179,39 @@ export async function POST(request: NextRequest) {
         metadata: {
           strategyId: strategy.id,
           strategyType: strategy.type,
-        }
-      }
+        },
+      },
     });
 
     // Update user profile strategy count if exists
     await prisma.userProfile.updateMany({
       where: { userId: session.user.id },
-      data: { 
-        strategyCount: { increment: 1 }
-      }
+      data: {
+        strategyCount: { increment: 1 },
+      },
     });
 
-    return NextResponse.json({
-      strategy: {
-        ...strategy,
-        tags: strategy.tags as string[],
-        likesCount: strategy._count.likes,
-        commentsCount: strategy._count.comments,
-        sharesCount: strategy._count.sharedStrategies,
-      }
-    }, { status: 201 });
-
+    return NextResponse.json(
+      {
+        strategy: {
+          ...strategy,
+          tags: strategy.tags as string[],
+          likesCount: '_count' in strategy ? strategy._count?.likes || 0 : 0,
+          commentsCount: '_count' in strategy ? strategy._count?.comments || 0 : 0,
+          sharesCount: '_count' in strategy ? strategy._count?.sharedStrategies || 0 : 0,
+        },
+      },
+      { status: 201 },
+    );
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { error: 'Invalid request data', details: error.issues },
+        { status: 400 },
       );
     }
-    
+
     console.error('Error creating strategy:', error);
-    return NextResponse.json(
-      { error: 'Failed to create strategy' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to create strategy' }, { status: 500 });
   }
 }

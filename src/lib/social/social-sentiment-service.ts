@@ -36,11 +36,14 @@ interface MarketSentimentSnapshot {
     score: number;
     momentum: 'increasing' | 'decreasing' | 'stable';
   };
-  sectors: Record<string, {
-    sentiment: number;
-    volume: number;
-    topStocks: string[];
-  }>;
+  sectors: Record<
+    string,
+    {
+      sentiment: number;
+      volume: number;
+      topStocks: string[];
+    }
+  >;
   trendingTopics: Array<{
     topic: string;
     sentiment: number;
@@ -68,10 +71,7 @@ export class SocialSentimentService {
   /**
    * Get comprehensive sentiment analysis for a stock
    */
-  async getStockSentiment(
-    symbol: string, 
-    companyName?: string
-  ): Promise<StockSentiment> {
+  async getStockSentiment(symbol: string, companyName?: string): Promise<StockSentiment> {
     const cacheKey = `stock_${symbol}`;
     const cached = this.getCached(cacheKey);
     if (cached) return cached;
@@ -79,7 +79,7 @@ export class SocialSentimentService {
     try {
       // Build search query
       const query = this.twitterClient.buildStockQuery(symbol, companyName);
-      
+
       // Fetch recent tweets
       const searchResult = await this.twitterClient.searchTweets({
         query,
@@ -87,7 +87,7 @@ export class SocialSentimentService {
       });
 
       // Analyze sentiment for each tweet
-      const tweetsWithSentiment = searchResult.tweets.map(tweet => {
+      const tweetsWithSentiment = searchResult.tweets.map((tweet) => {
         const analysis = this.sentimentAnalyzer.analyzeSentiment(tweet.text);
         return {
           ...tweet,
@@ -99,7 +99,7 @@ export class SocialSentimentService {
       // Calculate overall metrics
       const sentimentMetrics = this.twitterClient.calculateEngagementMetrics(tweetsWithSentiment);
       const marketSentiment = this.sentimentAnalyzer.analyzeMarketSentiment(
-        tweetsWithSentiment.map(t => t.text)
+        tweetsWithSentiment.map((t) => t.text),
       );
 
       // Get volume trends
@@ -113,7 +113,7 @@ export class SocialSentimentService {
           return engagementB - engagementA;
         })
         .slice(0, 5)
-        .map(tweet => ({
+        .map((tweet) => ({
           id: tweet.id,
           text: tweet.text,
           author: tweet.authorUsername || 'Unknown',
@@ -127,25 +127,26 @@ export class SocialSentimentService {
         const analysis = this.sentimentAnalyzer.analyzeSentiment(tweet.text);
         allKeywords.push(...analysis.keywords);
       }
-      
+
       const keywords = this.getTopKeywords(allKeywords, 10);
 
       const result: StockSentiment = {
         symbol,
         companyName,
         sentiment: {
-          current: marketSentiment.momentum > 10 ? 'bullish' : 
-                  marketSentiment.momentum < -10 ? 'bearish' : 'neutral',
+          current:
+            marketSentiment.momentum > 10
+              ? 'bullish'
+              : marketSentiment.momentum < -10
+                ? 'bearish'
+                : 'neutral',
           score: marketSentiment.momentum,
           confidence: marketSentiment.confidence * 100,
         },
         metrics: {
           tweetVolume: searchResult.resultCount,
           engagement: sentimentMetrics.engagementRate,
-          reach: tweetsWithSentiment.reduce(
-            (sum, t) => sum + (t.metrics.impressionCount || 0), 
-            0
-          ),
+          reach: tweetsWithSentiment.reduce((sum, t) => sum + (t.metrics.impressionCount || 0), 0),
           influencerActivity: this.calculateInfluencerActivity(tweetsWithSentiment),
         },
         trends: volumeTrends,
@@ -173,17 +174,17 @@ export class SocialSentimentService {
     try {
       // Get trending finance topics
       const trendingTopics = await this.twitterClient.getTrendingFinanceTopics();
-      
+
       // Analyze sentiment for trending topics
       const topicsWithSentiment = await Promise.all(
-        trendingTopics.slice(0, 10).map(async topic => {
+        trendingTopics.slice(0, 10).map(async (topic) => {
           const tweets = await this.twitterClient.searchTweets({
             query: topic.query,
             maxResults: 50,
           });
 
           const sentiment = this.sentimentAnalyzer.analyzeMarketSentiment(
-            tweets.tweets.map(t => t.text)
+            tweets.tweets.map((t) => t.text),
           );
 
           return {
@@ -191,7 +192,7 @@ export class SocialSentimentService {
             sentiment: sentiment.momentum,
             volume: topic.tweetVolume || 0,
           };
-        })
+        }),
       );
 
       // Get overall market sentiment
@@ -223,8 +224,8 @@ export class SocialSentimentService {
    * Monitor sentiment changes in real-time
    */
   async *monitorSentimentChanges(
-    symbols: string[], 
-    intervalMs: number = 60000
+    symbols: string[],
+    intervalMs: number = 60000,
   ): AsyncGenerator<{
     symbol: string;
     previousSentiment: number;
@@ -244,9 +245,10 @@ export class SocialSentimentService {
 
           let alert: string | undefined;
           if (Math.abs(change) > 20) {
-            alert = change > 0 
-              ? `Significant positive sentiment shift for ${symbol}`
-              : `Significant negative sentiment shift for ${symbol}`;
+            alert =
+              change > 0
+                ? `Significant positive sentiment shift for ${symbol}`
+                : `Significant negative sentiment shift for ${symbol}`;
           }
 
           yield {
@@ -263,7 +265,7 @@ export class SocialSentimentService {
         }
       }
 
-      await new Promise(resolve => setTimeout(resolve, intervalMs));
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
     }
   }
 
@@ -273,7 +275,7 @@ export class SocialSentimentService {
   async getSentimentPriceCorrelation(
     symbol: string,
     priceData: Array<{ time: string; price: number }>,
-    days: number = 7
+    days: number = 7,
   ): Promise<{
     correlation: number;
     leadTime: number; // Hours sentiment leads/lags price
@@ -281,15 +283,11 @@ export class SocialSentimentService {
   }> {
     try {
       const query = this.twitterClient.buildStockQuery(symbol);
-      const volumeMetrics = await this.twitterClient.getVolumeMetrics(
-        query, 
-        'hour', 
-        days
-      );
+      const volumeMetrics = await this.twitterClient.getVolumeMetrics(query, 'hour', days);
 
       // Get sentiment for each time period
       const sentimentData: Array<{ time: string; sentiment: number }> = [];
-      
+
       for (const metric of volumeMetrics) {
         const tweets = await this.twitterClient.searchTweets({
           query,
@@ -299,7 +297,7 @@ export class SocialSentimentService {
         });
 
         const sentiment = this.sentimentAnalyzer.analyzeMarketSentiment(
-          tweets.tweets.map(t => t.text)
+          tweets.tweets.map((t) => t.text),
         );
 
         sentimentData.push({
@@ -310,19 +308,15 @@ export class SocialSentimentService {
 
       // Calculate correlation with different lead/lag times
       const correlations: Array<{ leadTime: number; correlation: number }> = [];
-      
+
       for (let leadTime = -24; leadTime <= 24; leadTime += 1) {
-        const correlation = this.calculateCorrelation(
-          sentimentData,
-          priceData,
-          leadTime
-        );
+        const correlation = this.calculateCorrelation(sentimentData, priceData, leadTime);
         correlations.push({ leadTime, correlation });
       }
 
       // Find best correlation
-      const best = correlations.reduce((prev, current) => 
-        Math.abs(current.correlation) > Math.abs(prev.correlation) ? current : prev
+      const best = correlations.reduce((prev, current) =>
+        Math.abs(current.correlation) > Math.abs(prev.correlation) ? current : prev,
       );
 
       return {
@@ -352,12 +346,12 @@ export class SocialSentimentService {
       // For now, return volume data with neutral sentiment
       // In production, you'd fetch and analyze tweets for each period
       return {
-        hourly: hourlyVolume.map(v => ({
+        hourly: hourlyVolume.map((v) => ({
           time: v.time,
           sentiment: 0,
           volume: v.count,
         })),
-        daily: dailyVolume.map(v => ({
+        daily: dailyVolume.map((v) => ({
           time: v.time,
           sentiment: 0,
           volume: v.count,
@@ -374,7 +368,7 @@ export class SocialSentimentService {
    */
   private calculateInfluencerActivity(tweets: any[]): number {
     // Simple heuristic: high engagement tweets indicate influencer activity
-    const highEngagementTweets = tweets.filter(tweet => {
+    const highEngagementTweets = tweets.filter((tweet) => {
       const engagement = tweet.metrics.likeCount + tweet.metrics.retweetCount;
       return engagement > 100;
     });
@@ -387,7 +381,7 @@ export class SocialSentimentService {
    */
   private getTopKeywords(keywords: string[], limit: number): string[] {
     const frequency: Record<string, number> = {};
-    
+
     for (const keyword of keywords) {
       frequency[keyword] = (frequency[keyword] || 0) + 1;
     }
@@ -401,9 +395,7 @@ export class SocialSentimentService {
   /**
    * Calculate overall market sentiment
    */
-  private calculateOverallSentiment(
-    topics: Array<{ sentiment: number; volume: number }>
-  ): {
+  private calculateOverallSentiment(topics: Array<{ sentiment: number; volume: number }>): {
     sentiment: 'bullish' | 'bearish' | 'neutral';
     score: number;
     momentum: 'increasing' | 'decreasing' | 'stable';
@@ -412,10 +404,7 @@ export class SocialSentimentService {
       return { sentiment: 'neutral', score: 0, momentum: 'stable' };
     }
 
-    const weightedSum = topics.reduce(
-      (sum, topic) => sum + topic.sentiment * topic.volume, 
-      0
-    );
+    const weightedSum = topics.reduce((sum, topic) => sum + topic.sentiment * topic.volume, 0);
     const totalVolume = topics.reduce((sum, topic) => sum + topic.volume, 0);
     const score = totalVolume > 0 ? weightedSum / totalVolume : 0;
 
@@ -429,11 +418,16 @@ export class SocialSentimentService {
   /**
    * Get sector-specific sentiments
    */
-  private async getSectorSentiments(): Promise<Record<string, {
-    sentiment: number;
-    volume: number;
-    topStocks: string[];
-  }>> {
+  private async getSectorSentiments(): Promise<
+    Record<
+      string,
+      {
+        sentiment: number;
+        volume: number;
+        topStocks: string[];
+      }
+    >
+  > {
     const sectors = {
       tech: ['AAPL', 'MSFT', 'GOOGL', 'META', 'NVDA'],
       finance: ['JPM', 'BAC', 'GS', 'MS', 'WFC'],
@@ -459,11 +453,13 @@ export class SocialSentimentService {
   /**
    * Get sentiment from financial influencers
    */
-  private async getInfluencerSentiments(): Promise<Array<{
-    username: string;
-    followerCount: number;
-    recentSentiment: number;
-  }>> {
+  private async getInfluencerSentiments(): Promise<
+    Array<{
+      username: string;
+      followerCount: number;
+      recentSentiment: number;
+    }>
+  > {
     const influencers = [
       { username: 'jimcramer', followerCount: 2100000 },
       { username: 'ReformedBroker', followerCount: 1400000 },
@@ -475,14 +471,9 @@ export class SocialSentimentService {
 
     for (const influencer of influencers) {
       try {
-        const tweets = await this.twitterClient.getInfluencerTweets(
-          influencer.username, 
-          10
-        );
-        
-        const sentiment = this.sentimentAnalyzer.analyzeMarketSentiment(
-          tweets.map(t => t.text)
-        );
+        const tweets = await this.twitterClient.getInfluencerTweets(influencer.username, 10);
+
+        const sentiment = this.sentimentAnalyzer.analyzeMarketSentiment(tweets.map((t) => t.text));
 
         results.push({
           username: influencer.username,
@@ -503,7 +494,7 @@ export class SocialSentimentService {
   private calculateCorrelation(
     sentimentData: Array<{ time: string; sentiment: number }>,
     priceData: Array<{ time: string; price: number }>,
-    leadTimeHours: number
+    leadTimeHours: number,
   ): number {
     // Simple correlation calculation
     // In production, use proper statistical methods

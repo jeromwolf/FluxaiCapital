@@ -97,12 +97,12 @@ export const AVAILABLE_STRATEGIES: StrategyConfig[] = [
 ];
 
 export function getStrategyById(id: string): StrategyConfig | undefined {
-  return AVAILABLE_STRATEGIES.find(strategy => strategy.id === id);
+  return AVAILABLE_STRATEGIES.find((strategy) => strategy.id === id);
 }
 
 export function createStrategy(id: string, parameters?: Record<string, any>): BaseStrategy | null {
   const config = getStrategyById(id);
   if (!config) return null;
-  
+
   return config.createInstance(parameters);
 }

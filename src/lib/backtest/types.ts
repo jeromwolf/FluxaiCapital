@@ -64,3 +64,22 @@ export interface BacktestResult {
     return: number;
   }>;
 }
+
+export interface MarketData {
+  date: Date;
+  symbol: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+
+export interface Signal {
+  date: Date;
+  symbol: string;
+  action: 'buy' | 'sell' | 'hold';
+  quantity?: number;
+  confidence?: number;
+  reason?: string;
+}

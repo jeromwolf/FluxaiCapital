@@ -85,10 +85,10 @@ export default function ApiKeysPage() {
       });
 
       if (!response.ok) throw new Error('Failed to create API key');
-      
+
       const data = await response.json();
       setCreatedKey(data.apiKey.key);
-      
+
       toast({
         title: t('common.success'),
         description: 'API key created successfully',
@@ -96,7 +96,7 @@ export default function ApiKeysPage() {
 
       // Reset form
       setNewKeyData({ name: '', permissions: [], expiresIn: '0' });
-      
+
       // Refresh list
       fetchApiKeys();
     } catch (error) {
@@ -158,9 +158,7 @@ export default function ApiKeysPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-            API Keys
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">API Keys</h1>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Manage your API keys for programmatic access
           </p>
@@ -200,11 +198,7 @@ export default function ApiKeysPage() {
                 <div className="space-y-2">
                   <Label>Your API Key</Label>
                   <div className="flex gap-2">
-                    <Input
-                      value={createdKey}
-                      readOnly
-                      className="font-mono text-sm"
-                    />
+                    <Input value={createdKey} readOnly className="font-mono text-sm" />
                     <Button
                       size="icon"
                       variant="outline"
@@ -275,7 +269,9 @@ export default function ApiKeysPage() {
                               } else {
                                 setNewKeyData({
                                   ...newKeyData,
-                                  permissions: newKeyData.permissions.filter(p => p !== permission),
+                                  permissions: newKeyData.permissions.filter(
+                                    (p) => p !== permission,
+                                  ),
                                 });
                               }
                             }}
@@ -316,9 +312,7 @@ export default function ApiKeysPage() {
       ) : apiKeys.length === 0 ? (
         <ResponsiveCard className="text-center py-12">
           <Key className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-            No API Keys
-          </h3>
+          <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">No API Keys</h3>
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Create your first API key to get started
           </p>
@@ -329,14 +323,10 @@ export default function ApiKeysPage() {
             <ResponsiveCard key={apiKey.id}>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                    {apiKey.name}
-                  </h3>
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100">{apiKey.name}</h3>
                   <div className="mt-1 space-y-1 text-sm text-gray-600 dark:text-gray-400">
                     <p>Created: {formatDate(apiKey.createdAt)}</p>
-                    {apiKey.lastUsedAt && (
-                      <p>Last used: {formatDate(apiKey.lastUsedAt)}</p>
-                    )}
+                    {apiKey.lastUsedAt && <p>Last used: {formatDate(apiKey.lastUsedAt)}</p>}
                     {apiKey.expiresAt && (
                       <p className="text-amber-600 dark:text-amber-400">
                         Expires: {formatDate(apiKey.expiresAt)}
@@ -381,11 +371,7 @@ export default function ApiKeysPage() {
               {showKey === apiKey.id && (
                 <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-2">
-                    <Input
-                      value={apiKey.key}
-                      readOnly
-                      className="font-mono text-sm"
-                    />
+                    <Input value={apiKey.key} readOnly className="font-mono text-sm" />
                     <Button
                       size="icon"
                       variant="outline"
@@ -401,14 +387,17 @@ export default function ApiKeysPage() {
         </div>
       )}
 
-      <ResponsiveCard variant="compact" className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
+      <ResponsiveCard
+        variant="compact"
+        className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800"
+      >
         <div className="flex gap-3">
           <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-amber-800 dark:text-amber-200">
             <p className="font-medium">Security Notice</p>
             <p className="mt-1">
-              Keep your API keys secure and never share them publicly. Treat them like passwords.
-              If you suspect a key has been compromised, delete it immediately.
+              Keep your API keys secure and never share them publicly. Treat them like passwords. If
+              you suspect a key has been compromised, delete it immediately.
             </p>
           </div>
         </div>

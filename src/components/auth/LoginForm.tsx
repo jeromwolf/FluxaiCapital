@@ -58,9 +58,7 @@ export default function LoginForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-          {error}
-        </div>
+        <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">{error}</div>
       )}
 
       <div className="space-y-2">
@@ -112,9 +110,7 @@ export default function LoginForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            또는
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">또는</span>
         </div>
       </div>
 

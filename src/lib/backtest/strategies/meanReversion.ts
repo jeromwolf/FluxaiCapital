@@ -11,7 +11,7 @@ export const meanReversionStrategy: BacktestStrategy = {
     overboughtLevel: 70,
     positionSize: 0.1,
     maxPositions: 5,
-  }
+  },
 };
 
 export function calculateRSI(prices: number[], period: number): number {
@@ -39,7 +39,7 @@ export function calculateRSI(prices: number[], period: number): number {
   }
 
   const rs = avgGain / avgLoss;
-  const rsi = 100 - (100 / (1 + rs));
+  const rsi = 100 - 100 / (1 + rs);
 
   return rsi;
 }
@@ -48,7 +48,7 @@ export function getMeanReversionSignal(
   prices: number[],
   rsiPeriod: number,
   oversoldLevel: number,
-  overboughtLevel: number
+  overboughtLevel: number,
 ): 'BUY' | 'SELL' | 'HOLD' {
   const rsi = calculateRSI(prices, rsiPeriod);
   const previousRSI = calculateRSI(prices.slice(0, -1), rsiPeriod);

@@ -38,14 +38,14 @@ export default function BacktestConfig({ userId, isRunning }: BacktestConfigProp
 
   const [strategyParams, setStrategyParams] = useState<Record<string, any>>({});
 
-  const selectedStrategy = AVAILABLE_STRATEGIES.find(s => s.id === config.strategyId);
+  const selectedStrategy = AVAILABLE_STRATEGIES.find((s) => s.id === config.strategyId);
 
   const updateConfig = (key: string, value: any) => {
-    setConfig(prev => ({ ...prev, [key]: value }));
+    setConfig((prev) => ({ ...prev, [key]: value }));
   };
 
   const updateStrategyParam = (key: string, value: any) => {
-    setStrategyParams(prev => ({ ...prev, [key]: value }));
+    setStrategyParams((prev) => ({ ...prev, [key]: value }));
   };
 
   return (
@@ -57,9 +57,7 @@ export default function BacktestConfig({ userId, isRunning }: BacktestConfigProp
             <Settings className="h-5 w-5" />
             기본 설정
           </CardTitle>
-          <CardDescription>
-            백테스트의 기본 매개변수를 설정하세요
-          </CardDescription>
+          <CardDescription>백테스트의 기본 매개변수를 설정하세요</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
@@ -104,8 +102,8 @@ export default function BacktestConfig({ userId, isRunning }: BacktestConfigProp
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="currency">기준 통화</Label>
-              <Select 
-                value={config.currency} 
+              <Select
+                value={config.currency}
                 onValueChange={(value) => updateConfig('currency', value)}
                 disabled={isRunning}
               >
@@ -121,8 +119,8 @@ export default function BacktestConfig({ userId, isRunning }: BacktestConfigProp
 
             <div className="space-y-2">
               <Label htmlFor="benchmark">벤치마크</Label>
-              <Select 
-                value={config.benchmark} 
+              <Select
+                value={config.benchmark}
                 onValueChange={(value) => updateConfig('benchmark', value)}
                 disabled={isRunning}
               >
@@ -174,15 +172,13 @@ export default function BacktestConfig({ userId, isRunning }: BacktestConfigProp
             <Calendar className="h-5 w-5" />
             전략 설정
           </CardTitle>
-          <CardDescription>
-            백테스트할 투자 전략을 선택하고 설정하세요
-          </CardDescription>
+          <CardDescription>백테스트할 투자 전략을 선택하고 설정하세요</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="strategy">투자 전략</Label>
-            <Select 
-              value={config.strategyId} 
+            <Select
+              value={config.strategyId}
               onValueChange={(value) => updateConfig('strategyId', value)}
               disabled={isRunning}
             >
@@ -202,9 +198,7 @@ export default function BacktestConfig({ userId, isRunning }: BacktestConfigProp
           {selectedStrategy && (
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-muted-foreground">
-                  {selectedStrategy.description}
-                </p>
+                <p className="text-sm text-muted-foreground">{selectedStrategy.description}</p>
               </div>
 
               {/* 전략 매개변수 */}
@@ -234,9 +228,10 @@ export default function BacktestConfig({ userId, isRunning }: BacktestConfigProp
                       type={param.type}
                       value={strategyParams[key] || param.default}
                       onChange={(e) => {
-                        const value = param.type === 'number' 
-                          ? parseFloat(e.target.value) || param.default
-                          : e.target.value;
+                        const value =
+                          param.type === 'number'
+                            ? parseFloat(e.target.value) || param.default
+                            : e.target.value;
                         updateStrategyParam(key, value);
                       }}
                       min={param.min}

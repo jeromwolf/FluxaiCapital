@@ -14,7 +14,8 @@ import { useSocialSentiment } from '@/hooks/useSocialSentiment';
 export default function SentimentAnalysisPage() {
   const [searchSymbol, setSearchSymbol] = useState('');
   const [trackedSymbols, setTrackedSymbols] = useState(['AAPL', 'TSLA', 'NVDA']);
-  const { sentimentData, marketSentiment, alerts, getSentimentSignal, getPortfolioAdjustments } = useSocialSentiment(trackedSymbols);
+  const { sentimentData, marketSentiment, alerts, getSentimentSignal, getPortfolioAdjustments } =
+    useSocialSentiment(trackedSymbols);
 
   const handleAddSymbol = () => {
     if (searchSymbol && !trackedSymbols.includes(searchSymbol.toUpperCase())) {
@@ -24,7 +25,7 @@ export default function SentimentAnalysisPage() {
   };
 
   const handleRemoveSymbol = (symbol: string) => {
-    setTrackedSymbols(trackedSymbols.filter(s => s !== symbol));
+    setTrackedSymbols(trackedSymbols.filter((s) => s !== symbol));
   };
 
   return (
@@ -47,7 +48,7 @@ export default function SentimentAnalysisPage() {
 
             <TabsContent value="market" className="space-y-4">
               <SocialSentiment />
-              
+
               <Card>
                 <CardHeader>
                   <CardTitle>Sentiment Alerts</CardTitle>
@@ -59,12 +60,19 @@ export default function SentimentAnalysisPage() {
                   ) : (
                     <div className="space-y-3">
                       {alerts.slice(0, 5).map((alert) => (
-                        <div key={alert.id} className="flex items-start gap-3 p-3 rounded-lg border">
-                          <AlertCircle className={`h-5 w-5 mt-0.5 ${
-                            alert.severity === 'high' ? 'text-red-500' :
-                            alert.severity === 'medium' ? 'text-yellow-500' :
-                            'text-blue-500'
-                          }`} />
+                        <div
+                          key={alert.id}
+                          className="flex items-start gap-3 p-3 rounded-lg border"
+                        >
+                          <AlertCircle
+                            className={`h-5 w-5 mt-0.5 ${
+                              alert.severity === 'high'
+                                ? 'text-red-500'
+                                : alert.severity === 'medium'
+                                  ? 'text-yellow-500'
+                                  : 'text-blue-500'
+                            }`}
+                          />
                           <div className="flex-1">
                             <p className="text-sm font-medium">{alert.message}</p>
                             <div className="flex items-center gap-2 mt-1">
@@ -132,9 +140,7 @@ export default function SentimentAnalysisPage() {
                     <Brain className="h-5 w-5" />
                     AI Trading Signals
                   </CardTitle>
-                  <CardDescription>
-                    Sentiment-based trading recommendations
-                  </CardDescription>
+                  <CardDescription>Sentiment-based trading recommendations</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {trackedSymbols.map((symbol) => {
@@ -146,9 +152,11 @@ export default function SentimentAnalysisPage() {
                             <span className="font-semibold">{symbol}</span>
                             <Badge
                               variant={
-                                signal.signal === 'buy' ? 'default' :
-                                signal.signal === 'sell' ? 'destructive' :
-                                'secondary'
+                                signal.signal === 'buy'
+                                  ? 'default'
+                                  : signal.signal === 'sell'
+                                    ? 'destructive'
+                                    : 'secondary'
                               }
                             >
                               {signal.signal.toUpperCase()}
@@ -186,7 +194,10 @@ export default function SentimentAnalysisPage() {
                 <CardContent>
                   <div className="space-y-3">
                     {getPortfolioAdjustments().map((adjustment) => (
-                      <div key={adjustment.symbol} className="flex items-center justify-between p-3 rounded-lg border">
+                      <div
+                        key={adjustment.symbol}
+                        className="flex items-center justify-between p-3 rounded-lg border"
+                      >
                         <div>
                           <span className="font-medium">{adjustment.symbol}</span>
                           <p className="text-sm text-muted-foreground">{adjustment.reason}</p>
@@ -194,9 +205,13 @@ export default function SentimentAnalysisPage() {
                         <div className="text-right">
                           <div className="flex items-center gap-2">
                             <span className="text-sm">{adjustment.currentWeight.toFixed(1)}%</span>
-                            <TrendingUp className={`h-4 w-4 ${
-                              adjustment.suggestedWeight > adjustment.currentWeight ? 'text-green-500' : 'text-red-500'
-                            }`} />
+                            <TrendingUp
+                              className={`h-4 w-4 ${
+                                adjustment.suggestedWeight > adjustment.currentWeight
+                                  ? 'text-green-500'
+                                  : 'text-red-500'
+                              }`}
+                            />
                             <span className="text-sm font-medium">
                               {adjustment.suggestedWeight.toFixed(1)}%
                             </span>
@@ -213,7 +228,7 @@ export default function SentimentAnalysisPage() {
 
         <div className="space-y-6">
           <SocialSentimentWidget symbols={trackedSymbols} />
-          
+
           <Card>
             <CardHeader>
               <CardTitle>How It Works</CardTitle>

@@ -156,7 +156,7 @@ export class KoreanStockProvider {
   }
 
   async getMultipleQuotes(symbols: string[]): Promise<KoreanStockQuote[]> {
-    return Promise.all(symbols.map(symbol => this.getQuote(symbol)));
+    return Promise.all(symbols.map((symbol) => this.getQuote(symbol)));
   }
 
   async getTopMovers(market?: 'KOSPI' | 'KOSDAQ'): Promise<{
@@ -165,13 +165,11 @@ export class KoreanStockProvider {
   }> {
     const allSymbols = Object.keys(this.stocks);
     const quotes = await this.getMultipleQuotes(allSymbols);
-    
-    const filteredQuotes = market 
-      ? quotes.filter(q => q.market === market)
-      : quotes;
+
+    const filteredQuotes = market ? quotes.filter((q) => q.market === market) : quotes;
 
     const sorted = filteredQuotes.sort((a, b) => b.changePercent - a.changePercent);
-    
+
     return {
       gainers: sorted.slice(0, 5),
       losers: sorted.slice(-5).reverse(),
@@ -192,7 +190,7 @@ export class KoreanStockProvider {
       const changePercent = (Math.random() - 0.5) * 0.03; // ±1.5%
       const value = base * (1 + changePercent);
       const change = value - base;
-      
+
       return {
         value: Number(value.toFixed(2)),
         change: Number(change.toFixed(2)),
@@ -208,10 +206,7 @@ export class KoreanStockProvider {
   }
 
   // Subscribe to real-time updates
-  subscribeToQuotes(
-    symbols: string[],
-    callback: (quotes: KoreanStockQuote[]) => void
-  ): () => void {
+  subscribeToQuotes(symbols: string[], callback: (quotes: KoreanStockQuote[]) => void): () => void {
     const interval = setInterval(async () => {
       const quotes = await this.getMultipleQuotes(symbols);
       callback(quotes);

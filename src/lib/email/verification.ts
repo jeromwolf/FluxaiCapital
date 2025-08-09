@@ -2,20 +2,20 @@ import nodemailer from 'nodemailer';
 
 // Email transporter configuration
 const transporter = nodemailer.createTransport({
-  host: process.env["EMAIL_HOST"] || 'smtp.gmail.com',
-  port: parseInt(process.env["EMAIL_PORT"] || '587'),
+  host: process.env['EMAIL_HOST'] || 'smtp.gmail.com',
+  port: parseInt(process.env['EMAIL_PORT'] || '587'),
   secure: false,
   auth: {
-    user: process.env["EMAIL_USER"],
-    pass: process.env["EMAIL_PASSWORD"],
+    user: process.env['EMAIL_USER'],
+    pass: process.env['EMAIL_PASSWORD'],
   },
 });
 
 export async function sendVerificationEmail(email: string, token: string) {
-  const verificationUrl = `${process.env["NEXTAUTH_URL"]}/api/auth/verify-email?token=${token}`;
-  
+  const verificationUrl = `${process.env['NEXTAUTH_URL']}/api/auth/verify-email?token=${token}`;
+
   const mailOptions = {
-    from: `"FLUX AI Capital" <${process.env["EMAIL_FROM"] || 'noreply@flux.ai.kr'}>`,
+    from: `"FLUX AI Capital" <${process.env['EMAIL_FROM'] || 'noreply@flux.ai.kr'}>`,
     to: email,
     subject: '[FLUX AI Capital] 이메일 인증을 완료해주세요',
     html: `

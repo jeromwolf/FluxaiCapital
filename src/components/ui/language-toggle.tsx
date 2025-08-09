@@ -19,15 +19,15 @@ export function LanguageToggle() {
   const switchLocale = (newLocale: string) => {
     // Remove the current locale from the pathname
     const segments = pathname.split('/');
-    const currentLocaleIndex = segments.findIndex(segment => segment === locale);
-    
+    const currentLocaleIndex = segments.findIndex((segment) => segment === locale);
+
     if (currentLocaleIndex !== -1) {
       segments[currentLocaleIndex] = newLocale;
     } else {
       // If locale is not in the path, prepend it
       segments.unshift(newLocale);
     }
-    
+
     const newPath = segments.join('/') || `/${newLocale}`;
     router.push(newPath);
   };
@@ -35,11 +35,7 @@ export function LanguageToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-9 w-9"
-        >
+        <Button variant="ghost" size="icon" className="h-9 w-9">
           <Languages className="h-4 w-4" />
           <span className="sr-only">Toggle language</span>
         </Button>

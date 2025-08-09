@@ -4,21 +4,19 @@ import { MarketData, Signal } from '../types';
 export class MovingAverageStrategy extends BaseStrategy {
   private priceHistory: Map<string, number[]> = new Map();
 
-  constructor(parameters: {
-    fastPeriod?: number;
-    slowPeriod?: number;
-    type?: 'sma' | 'ema';
-  } = {}) {
-    super(
-      'Moving Average',
-      '이동평균선 교차를 기반으로 한 매매 전략',
-      {
-        fastPeriod: 20,
-        slowPeriod: 50,
-        type: 'sma',
-        ...parameters,
-      }
-    );
+  constructor(
+    parameters: {
+      fastPeriod?: number;
+      slowPeriod?: number;
+      type?: 'sma' | 'ema';
+    } = {},
+  ) {
+    super('Moving Average', '이동평균선 교차를 기반으로 한 매매 전략', {
+      fastPeriod: 20,
+      slowPeriod: 50,
+      type: 'sma',
+      ...parameters,
+    });
   }
 
   generateSignals(data: MarketData[], holdings: Map<string, number>): Signal[] {
@@ -26,12 +24,12 @@ export class MovingAverageStrategy extends BaseStrategy {
 
     for (const marketData of data) {
       const symbol = marketData.symbol;
-      
+
       // 가격 이력 업데이트
       if (!this.priceHistory.has(symbol)) {
         this.priceHistory.set(symbol, []);
       }
-      
+
       const prices = this.priceHistory.get(symbol)!;
       prices.push(marketData.close);
 
@@ -47,7 +45,11 @@ export class MovingAverageStrategy extends BaseStrategy {
     return signals;
   }
 
-  private checkCrossover(marketData: MarketData, prices: number[], currentPosition: number): Signal | null {
+  private checkCrossover(
+    marketData: MarketData,
+    prices: number[],
+    currentPosition: number,
+  ): Signal | null {
     const { fastPeriod, slowPeriod, type } = this.parameters;
 
     // 이동평균 계산
@@ -80,7 +82,7 @@ export class MovingAverageStrategy extends BaseStrategy {
         'buy',
         undefined,
         this.calculateConfidence(currentFast, currentSlow, prices),
-        `골든 크로스: Fast MA(${fastPeriod}) > Slow MA(${slowPeriod})`
+        `골든 크로스: Fast MA(${fastPeriod}) > Slow MA(${slowPeriod})`,
       );
     }
 
@@ -92,7 +94,7 @@ export class MovingAverageStrategy extends BaseStrategy {
         'sell',
         currentPosition,
         this.calculateConfidence(currentSlow, currentFast, prices),
-        `데드 크로스: Fast MA(${fastPeriod}) < Slow MA(${slowPeriod})`
+        `데드 크로스: Fast MA(${fastPeriod}) < Slow MA(${slowPeriod})`,
       );
     }
 
@@ -104,7 +106,7 @@ export class MovingAverageStrategy extends BaseStrategy {
     const spread = Math.abs(higher - lower) / lower;
     const recentPrices = prices.slice(-10); // 최근 10일
     const volatility = this.calculateVolatility(recentPrices);
-    
+
     // 스프레드는 높을수록, 변동성은 낮을수록 좋음
     const confidence = Math.min(spread * 10, 0.5) + Math.max(0, 0.5 - volatility);
     return Math.min(Math.max(confidence, 0.1), 1.0);
@@ -119,8 +121,9 @@ export class MovingAverageStrategy extends BaseStrategy {
     }
 
     const mean = returns.reduce((sum, ret) => sum + ret, 0) / returns.length;
-    const variance = returns.reduce((sum, ret) => sum + Math.pow(ret - mean, 2), 0) / returns.length;
-    
+    const variance =
+      returns.reduce((sum, ret) => sum + Math.pow(ret - mean, 2), 0) / returns.length;
+
     return Math.sqrt(variance);
   }
 

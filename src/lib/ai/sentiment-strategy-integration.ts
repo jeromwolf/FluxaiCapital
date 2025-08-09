@@ -43,12 +43,12 @@ export class SentimentStrategyIntegration {
       rsi?: number;
       macd?: { signal: 'buy' | 'sell' | 'neutral' };
       supportResistance?: { support: number; resistance: number };
-    }
+    },
   ): Promise<StrategySignal> {
     try {
       // Get sentiment data
       const sentimentData = await this.sentimentService.getStockSentiment(symbol);
-      
+
       // Check if we have enough data
       if (sentimentData.metrics.tweetVolume < this.config.volumeThreshold) {
         return {
@@ -82,8 +82,9 @@ export class SentimentStrategyIntegration {
       let timeHorizon: 'short' | 'medium' | 'long' = 'short';
 
       // Extreme sentiment analysis
-      const extremeSentiment = Math.abs(sentimentData.sentiment.score) > this.config.extremeSentimentThreshold;
-      
+      const extremeSentiment =
+        Math.abs(sentimentData.sentiment.score) > this.config.extremeSentimentThreshold;
+
       if (extremeSentiment) {
         if (this.config.enableContrarian) {
           // Contrarian approach - fade extreme sentiment
@@ -145,7 +146,7 @@ export class SentimentStrategyIntegration {
         const combinedSignal = this.combineWithTechnicalSignals(
           { action, confidence, reasoning, riskLevel, timeHorizon },
           technicalSignals,
-          sentimentData
+          sentimentData,
         );
         return combinedSignal;
       }
@@ -177,24 +178,32 @@ export class SentimentStrategyIntegration {
    * Generate portfolio-wide sentiment adjustments
    */
   async generatePortfolioAdjustments(
-    portfolio: Array<{ symbol: string; currentWeight: number; currentValue: number }>
-  ): Promise<Array<{
-    symbol: string;
-    currentWeight: number;
-    suggestedWeight: number;
-    action: 'increase' | 'decrease' | 'maintain';
-    reason: string;
-  }>> {
-    const adjustments = [];
+    portfolio: Array<{ symbol: string; currentWeight: number; currentValue: number }>,
+  ): Promise<
+    Array<{
+      symbol: string;
+      currentWeight: number;
+      suggestedWeight: number;
+      action: 'increase' | 'decrease' | 'maintain';
+      reason: string;
+    }>
+  > {
+    const adjustments: Array<{
+      symbol: string;
+      currentWeight: number;
+      suggestedWeight: number;
+      action: 'increase' | 'decrease' | 'maintain';
+      reason: string;
+    }> = [];
 
     // Get market sentiment
     const marketSentiment = await this.sentimentService.getMarketSentiment();
-    
+
     // Analyze each position
     for (const position of portfolio) {
       try {
         const sentimentData = await this.sentimentService.getStockSentiment(position.symbol);
-        
+
         let suggestedWeight = position.currentWeight;
         let action: 'increase' | 'decrease' | 'maintain' = 'maintain';
         let reason = '';
@@ -211,11 +220,17 @@ export class SentimentStrategyIntegration {
         }
 
         // Market sentiment overlay
-        if (marketSentiment.overall.sentiment === 'bearish' && marketSentiment.overall.score < -30) {
+        if (
+          marketSentiment.overall.sentiment === 'bearish' &&
+          marketSentiment.overall.score < -30
+        ) {
           suggestedWeight *= 0.9;
           reason += '; Bearish market sentiment';
           if (action === 'maintain') action = 'decrease';
-        } else if (marketSentiment.overall.sentiment === 'bullish' && marketSentiment.overall.score > 30) {
+        } else if (
+          marketSentiment.overall.sentiment === 'bullish' &&
+          marketSentiment.overall.score > 30
+        ) {
           suggestedWeight *= 1.05;
           reason += '; Bullish market sentiment';
           if (action === 'maintain') action = 'increase';
@@ -249,12 +264,14 @@ export class SentimentStrategyIntegration {
     }
 
     // Normalize weights to sum to 100%
-    const totalSuggestedWeight = adjustments.reduce((sum, adj) => sum + adj.suggestedWeight, 0) +
-      portfolio.filter(p => !adjustments.find(a => a.symbol === p.symbol))
+    const totalSuggestedWeight =
+      adjustments.reduce((sum, adj) => sum + adj.suggestedWeight, 0) +
+      portfolio
+        .filter((p) => !adjustments.find((a) => a.symbol === p.symbol))
         .reduce((sum, p) => sum + p.currentWeight, 0);
 
     if (totalSuggestedWeight > 0) {
-      adjustments.forEach(adj => {
+      adjustments.forEach((adj) => {
         adj.suggestedWeight = (adj.suggestedWeight / totalSuggestedWeight) * 100;
       });
     }
@@ -272,7 +289,7 @@ export class SentimentStrategyIntegration {
   }> {
     try {
       const marketSentiment = await this.sentimentService.getMarketSentiment();
-      
+
       let regime: 'risk-on' | 'risk-off' | 'neutral' = 'neutral';
       let confidence = 50;
       const indicators: string[] = [];
@@ -293,8 +310,8 @@ export class SentimentStrategyIntegration {
         .map(([sector, data]) => ({ sector, sentiment: data.sentiment }))
         .sort((a, b) => b.sentiment - a.sentiment);
 
-      const topSectors = sectorSentiments.slice(0, 2).map(s => s.sector);
-      const bottomSectors = sectorSentiments.slice(-2).map(s => s.sector);
+      const topSectors = sectorSentiments.slice(0, 2).map((s) => s.sector);
+      const bottomSectors = sectorSentiments.slice(-2).map((s) => s.sector);
 
       if (topSectors.includes('tech') && topSectors.includes('consumer')) {
         regime = 'risk-on';
@@ -307,16 +324,18 @@ export class SentimentStrategyIntegration {
       }
 
       // Trending topics analysis
-      const fearTopics = marketSentiment.trendingTopics.filter(t => 
-        t.topic.toLowerCase().includes('crash') || 
-        t.topic.toLowerCase().includes('recession') ||
-        t.topic.toLowerCase().includes('bear')
+      const fearTopics = marketSentiment.trendingTopics.filter(
+        (t) =>
+          t.topic.toLowerCase().includes('crash') ||
+          t.topic.toLowerCase().includes('recession') ||
+          t.topic.toLowerCase().includes('bear'),
       );
 
-      const greedTopics = marketSentiment.trendingTopics.filter(t => 
-        t.topic.toLowerCase().includes('bull') || 
-        t.topic.toLowerCase().includes('moon') ||
-        t.topic.toLowerCase().includes('rally')
+      const greedTopics = marketSentiment.trendingTopics.filter(
+        (t) =>
+          t.topic.toLowerCase().includes('bull') ||
+          t.topic.toLowerCase().includes('moon') ||
+          t.topic.toLowerCase().includes('rally'),
       );
 
       if (fearTopics.length > greedTopics.length) {
@@ -356,9 +375,7 @@ export class SentimentStrategyIntegration {
   /**
    * Analyze sentiment trend
    */
-  private analyzeSentimentTrend(
-    data: Array<{ time: string; sentiment: number }>
-  ): {
+  private analyzeSentimentTrend(data: Array<{ time: string; sentiment: number }>): {
     improving: boolean;
     deteriorating: boolean;
     stable: boolean;
@@ -368,8 +385,8 @@ export class SentimentStrategyIntegration {
       return { improving: false, deteriorating: false, stable: true, changeRate: 0 };
     }
 
-    const recent = data.slice(-3).map(d => d.sentiment);
-    const older = data.slice(-6, -3).map(d => d.sentiment);
+    const recent = data.slice(-3).map((d) => d.sentiment);
+    const older = data.slice(-6, -3).map((d) => d.sentiment);
 
     const recentAvg = recent.reduce((a, b) => a + b, 0) / recent.length;
     const olderAvg = older.reduce((a, b) => a + b, 0) / older.length;
@@ -386,9 +403,7 @@ export class SentimentStrategyIntegration {
   /**
    * Analyze volume trend
    */
-  private analyzeVolumeTrend(
-    data: Array<{ time: string; volume: number }>
-  ): {
+  private analyzeVolumeTrend(data: Array<{ time: string; volume: number }>): {
     spiking: boolean;
     declining: boolean;
     averageVolume: number;
@@ -397,7 +412,7 @@ export class SentimentStrategyIntegration {
       return { spiking: false, declining: false, averageVolume: 0 };
     }
 
-    const volumes = data.map(d => d.volume);
+    const volumes = data.map((d) => d.volume);
     const averageVolume = volumes.reduce((a, b) => a + b, 0) / volumes.length;
     const latestVolume = volumes[volumes.length - 1];
 
@@ -414,7 +429,7 @@ export class SentimentStrategyIntegration {
   private combineWithTechnicalSignals(
     sentimentSignal: StrategySignal,
     technicalSignals: any,
-    sentimentData: any
+    sentimentData: any,
   ): StrategySignal {
     let { action, confidence, reasoning, riskLevel, timeHorizon } = sentimentSignal;
 
@@ -470,9 +485,9 @@ export class SentimentStrategyIntegration {
    */
   private calculatePositionSize(confidence: number, riskLevel: string): number {
     const baseSize = 5; // Base position size as percentage
-    
+
     let multiplier = confidence / 100;
-    
+
     switch (riskLevel) {
       case 'low':
         multiplier *= 1.2;

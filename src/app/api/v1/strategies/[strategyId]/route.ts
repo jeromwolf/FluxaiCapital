@@ -17,10 +17,7 @@ const updateStrategySchema = z.object({
 });
 
 // GET /api/v1/strategies/[strategyId] - Get a specific strategy
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { strategyId: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { strategyId: string } }) {
   try {
     const session = await getServerSession(authOptions);
     const { strategyId } = params;
@@ -41,52 +38,48 @@ export async function GET(
                 reputation: true,
                 followerCount: true,
                 followingCount: true,
-              }
-            }
-          }
+              },
+            },
+          },
         },
         _count: {
           select: {
             likes: true,
             comments: true,
             sharedStrategies: true,
-          }
+          },
         },
         // Include if user has liked
-        likes: session?.user?.id ? {
-          where: {
-            userId: session.user.id
-          },
-          select: { id: true }
-        } : false,
+        likes: session?.user?.id
+          ? {
+              where: {
+                userId: session.user.id,
+              },
+              select: { id: true },
+            }
+          : false,
         // Include recent performance
         performances: {
           orderBy: { date: 'desc' },
           take: 30,
-        }
-      }
+        },
+      },
     });
 
     if (!strategy) {
-      return NextResponse.json(
-        { error: 'Strategy not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Strategy not found' }, { status: 404 });
     }
 
     // Check if user has access to private strategy
     if (!strategy.isPublic && strategy.userId !== session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Increment view count if this is a shared strategy
     if (strategy.isPublic) {
       await prisma.sharedStrategy.updateMany({
         where: { strategyId },
-        data: { viewCount: { increment: 1 } }
+        data: { viewCount: { increment: 1 } },
       });
     }
 
@@ -97,9 +90,9 @@ export async function GET(
         where: {
           followerId_followingId: {
             followerId: session.user.id,
-            followingId: strategy.userId
-          }
-        }
+            followingId: strategy.userId,
+          },
+        },
       });
       isFollowing = !!follow;
     }
@@ -113,30 +106,21 @@ export async function GET(
         commentsCount: strategy._count.comments,
         sharesCount: strategy._count.sharedStrategies,
         isFollowing,
-      }
+      },
     });
   } catch (error) {
     console.error('Error fetching strategy:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch strategy' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch strategy' }, { status: 500 });
   }
 }
 
 // PUT /api/v1/strategies/[strategyId] - Update a strategy
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { strategyId: string } }
-) {
+export async function PUT(request: NextRequest, { params }: { params: { strategyId: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     const { strategyId } = params;
@@ -146,28 +130,28 @@ export async function PUT(
     // Check if user owns the strategy
     const strategy = await prisma.strategy.findUnique({
       where: { id: strategyId },
-      select: { userId: true }
+      select: { userId: true },
     });
 
     if (!strategy) {
-      return NextResponse.json(
-        { error: 'Strategy not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Strategy not found' }, { status: 404 });
     }
 
     if (strategy.userId !== session.user.id) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Update the strategy
     const updatedStrategy = await prisma.strategy.update({
       where: { id: strategyId },
       data: {
-        ...validatedData,
+        name: validatedData.name,
+        description: validatedData.description,
+        config: validatedData.config as any,
+        rules: validatedData.rules as any,
+        riskLevel: validatedData.riskLevel,
+        tags: validatedData.tags,
+        isPublic: validatedData.isPublic,
         version: { increment: 1 },
       },
       include: {
@@ -177,16 +161,16 @@ export async function PUT(
             name: true,
             email: true,
             image: true,
-          }
+          },
         },
         _count: {
           select: {
             likes: true,
             comments: true,
             sharedStrategies: true,
-          }
-        }
-      }
+          },
+        },
+      },
     });
 
     // Log activity
@@ -198,49 +182,40 @@ export async function PUT(
         metadata: {
           strategyId: updatedStrategy.id,
           version: updatedStrategy.version,
-        }
-      }
+        },
+      },
     });
 
     return NextResponse.json({
       strategy: {
         ...updatedStrategy,
-        tags: updatedStrategy.tags as string[],
-        likesCount: updatedStrategy._count.likes,
-        commentsCount: updatedStrategy._count.comments,
-        sharesCount: updatedStrategy._count.sharedStrategies,
-      }
+        tags: Array.isArray(updatedStrategy.tags) ? (updatedStrategy.tags as string[]) : [],
+        likesCount: '_count' in updatedStrategy ? updatedStrategy._count?.likes || 0 : 0,
+        commentsCount: '_count' in updatedStrategy ? updatedStrategy._count?.comments || 0 : 0,
+        sharesCount:
+          '_count' in updatedStrategy ? updatedStrategy._count?.sharedStrategies || 0 : 0,
+      },
     });
-
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
+        { error: 'Invalid request data', details: error.issues },
+        { status: 400 },
       );
     }
-    
+
     console.error('Error updating strategy:', error);
-    return NextResponse.json(
-      { error: 'Failed to update strategy' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to update strategy' }, { status: 500 });
   }
 }
 
 // DELETE /api/v1/strategies/[strategyId] - Delete a strategy
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { strategyId: string } }
-) {
+export async function DELETE(request: NextRequest, { params }: { params: { strategyId: string } }) {
   try {
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Authentication required' }, { status: 401 });
     }
 
     const { strategyId } = params;
@@ -248,29 +223,23 @@ export async function DELETE(
     // Check if user owns the strategy
     const strategy = await prisma.strategy.findUnique({
       where: { id: strategyId },
-      select: { 
+      select: {
         userId: true,
         name: true,
-      }
+      },
     });
 
     if (!strategy) {
-      return NextResponse.json(
-        { error: 'Strategy not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Strategy not found' }, { status: 404 });
     }
 
     if (strategy.userId !== session.user.id) {
-      return NextResponse.json(
-        { error: 'Access denied' },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     // Delete the strategy (cascade will handle related records)
     await prisma.strategy.delete({
-      where: { id: strategyId }
+      where: { id: strategyId },
     });
 
     // Log activity
@@ -281,27 +250,23 @@ export async function DELETE(
         action: `Deleted strategy: ${strategy.name}`,
         metadata: {
           strategyId,
-        }
-      }
+        },
+      },
     });
 
     // Update user profile strategy count if exists
     await prisma.userProfile.updateMany({
       where: { userId: session.user.id },
-      data: { 
-        strategyCount: { decrement: 1 }
-      }
+      data: {
+        strategyCount: { decrement: 1 },
+      },
     });
 
     return NextResponse.json({
-      message: 'Strategy deleted successfully'
+      message: 'Strategy deleted successfully',
     });
-
   } catch (error) {
     console.error('Error deleting strategy:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete strategy' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to delete strategy' }, { status: 500 });
   }
 }

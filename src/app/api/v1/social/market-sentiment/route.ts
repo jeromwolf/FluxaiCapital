@@ -11,22 +11,20 @@ export async function GET() {
     return NextResponse.json(marketSentiment);
   } catch (error) {
     console.error('Error fetching market sentiment:', error);
-    
+
     // Return mock data for development if API fails
     if (process.env.NODE_ENV === 'development') {
       return NextResponse.json(getMockMarketSentiment());
     }
 
-    return NextResponse.json(
-      { error: 'Failed to fetch market sentiment' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch market sentiment' }, { status: 500 });
   }
 }
 
 // Mock data for development
 function getMockMarketSentiment() {
-  const overallSentiment = Math.random() > 0.5 ? 'bullish' : Math.random() > 0.5 ? 'bearish' : 'neutral';
+  const overallSentiment =
+    Math.random() > 0.5 ? 'bullish' : Math.random() > 0.5 ? 'bearish' : 'neutral';
   const score = overallSentiment === 'bullish' ? 25 : overallSentiment === 'bearish' ? -15 : 5;
 
   return {

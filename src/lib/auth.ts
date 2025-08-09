@@ -1,9 +1,9 @@
-import { NextAuthOptions } from 'next-auth'
-import CredentialsProvider from 'next-auth/providers/credentials'
-import { PrismaAdapter } from '@auth/prisma-adapter'
-import prisma from '@/lib/prisma'
-import bcrypt from 'bcryptjs'
-import { AuditLogger } from '@/lib/security/audit'
+import { NextAuthOptions } from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { PrismaAdapter } from '@auth/prisma-adapter';
+import prisma from '@/lib/prisma';
+import bcrypt from 'bcryptjs';
+import { AuditLogger } from '@/lib/security/audit';
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma) as any,
@@ -31,34 +31,31 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error('이메일과 비밀번호를 입력해주세요.')
+          throw new Error('이메일과 비밀번호를 입력해주세요.');
         }
 
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email,
           },
-        })
+        });
 
         if (!user || !user.password) {
           // Log failed login attempt
-          await AuditLogger.logLogin(credentials.email, false)
-          throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.')
+          await AuditLogger.logLogin(credentials.email, false);
+          throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.');
         }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
+        const isPasswordValid = await bcrypt.compare(credentials.password, user.password);
 
         if (!isPasswordValid) {
           // Log failed login attempt
-          await AuditLogger.logLogin(user.id, false)
-          throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.')
+          await AuditLogger.logLogin(user.id, false);
+          throw new Error('이메일 또는 비밀번호가 일치하지 않습니다.');
         }
 
         // Log successful login
-        await AuditLogger.logLogin(user.id, true)
+        await AuditLogger.logLogin(user.id, true);
 
         return {
           id: user.id,
@@ -66,29 +63,29 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           role: user.role,
           image: user.image,
-        }
+        };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.role = user.role
+        token.id = user.id;
+        token.role = user.role;
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id as string
-        session.user.role = token.role as string
+        session.user.id = token.id as string;
+        session.user.role = token.role as any;
       }
-      return session
+      return session;
     },
   },
   pages: {
     signIn: '/api/auth/signin',
     error: '/api/auth/error',
   },
-  secret: process.env["NEXTAUTH_SECRET"],
-}
+  secret: process.env['NEXTAUTH_SECRET'],
+};

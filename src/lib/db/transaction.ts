@@ -42,11 +42,9 @@ export const transactionService = {
       if (data.type === TransactionType.BUY) {
         if (existingHolding) {
           // Update existing holding
-          const newQuantity =
-            Number(existingHolding.quantity) + data.quantity;
+          const newQuantity = Number(existingHolding.quantity) + data.quantity;
           const newTotalCost =
-            Number(existingHolding.quantity) *
-              Number(existingHolding.averagePrice) +
+            Number(existingHolding.quantity) * Number(existingHolding.averagePrice) +
             data.quantity * data.price;
           const newAveragePrice = newTotalCost / newQuantity;
 
@@ -89,8 +87,7 @@ export const transactionService = {
               marketValue: new Prisma.Decimal(newQuantity * data.price),
               realizedPnL: {
                 increment: new Prisma.Decimal(
-                  data.quantity *
-                    (data.price - Number(existingHolding.averagePrice))
+                  data.quantity * (data.price - Number(existingHolding.averagePrice)),
                 ),
               },
             },
@@ -119,7 +116,7 @@ export const transactionService = {
       endDate?: Date;
       type?: TransactionType;
       symbol?: string;
-    }
+    },
   ) {
     const where: Prisma.TransactionWhereInput = {
       portfolioId,
@@ -183,13 +180,16 @@ export const transactionService = {
       _count: true,
     });
 
-    return transactions.reduce((acc, tx) => {
-      acc[tx.type] = {
-        count: tx._count,
-        amount: Number(tx._sum.amount || 0),
-        fees: Number(tx._sum.fee || 0),
-      };
-      return acc;
-    }, {} as Record<TransactionType, { count: number; amount: number; fees: number }>);
+    return transactions.reduce(
+      (acc, tx) => {
+        acc[tx.type] = {
+          count: tx._count,
+          amount: Number(tx._sum.amount || 0),
+          fees: Number(tx._sum.fee || 0),
+        };
+        return acc;
+      },
+      {} as Record<TransactionType, { count: number; amount: number; fees: number }>,
+    );
   },
 };

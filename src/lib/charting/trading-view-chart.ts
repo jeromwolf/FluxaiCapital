@@ -5,18 +5,34 @@ export type ChartType = 'candlestick' | 'line' | 'bar' | 'area' | 'heikinashi';
 export type TimeFrame = '1m' | '5m' | '15m' | '30m' | '1h' | '4h' | '1d' | '1w' | '1M';
 
 // Technical indicator types
-export type IndicatorType = 'MA' | 'EMA' | 'RSI' | 'MACD' | 'BB' | 'VOLUME' | 'SMA' | 'WMA' | 'STOCH' | 'ATR';
+export type IndicatorType =
+  | 'MA'
+  | 'EMA'
+  | 'RSI'
+  | 'MACD'
+  | 'BB'
+  | 'VOLUME'
+  | 'SMA'
+  | 'WMA'
+  | 'STOCH'
+  | 'ATR';
 
 // Drawing tool types
 export type DrawingTool = 'trend' | 'horizontal' | 'vertical' | 'fib' | 'rect' | 'text' | 'arrow';
 
 // Chart pattern types
-export type ChartPattern = 
-  | 'double-top' | 'double-bottom'
-  | 'head-shoulders' | 'inverse-head-shoulders'
-  | 'triangle-ascending' | 'triangle-descending' | 'triangle-symmetrical'
-  | 'wedge-rising' | 'wedge-falling'
-  | 'flag' | 'pennant';
+export type ChartPattern =
+  | 'double-top'
+  | 'double-bottom'
+  | 'head-shoulders'
+  | 'inverse-head-shoulders'
+  | 'triangle-ascending'
+  | 'triangle-descending'
+  | 'triangle-symmetrical'
+  | 'wedge-rising'
+  | 'wedge-falling'
+  | 'flag'
+  | 'pennant';
 
 // Interfaces
 export interface ChartPoint {
@@ -66,7 +82,7 @@ export class TechnicalIndicators {
   // Simple Moving Average
   static SMA(data: number[], period: number): (number | null)[] {
     const result: (number | null)[] = [];
-    
+
     for (let i = 0; i < data.length; i++) {
       if (i < period - 1) {
         result.push(null);
@@ -75,7 +91,7 @@ export class TechnicalIndicators {
         result.push(sum / period);
       }
     }
-    
+
     return result;
   }
 
@@ -83,22 +99,25 @@ export class TechnicalIndicators {
   static EMA(data: number[], period: number): (number | null)[] {
     const result: (number | null)[] = [];
     const multiplier = 2 / (period + 1);
-    
+
     // First EMA is SMA
     const sma = this.SMA(data.slice(0, period), period);
-    if (sma[period - 1] === null) return result;
-    
+    const firstSMA = sma[period - 1];
+    if (firstSMA === null || firstSMA === undefined) return result;
+
     result.push(...new Array(period - 1).fill(null));
-    result.push(sma[period - 1]);
-    
+    result.push(firstSMA);
+
     for (let i = period; i < data.length; i++) {
       const prevEMA = result[i - 1];
-      if (prevEMA !== null) {
+      if (prevEMA !== null && prevEMA !== undefined) {
         const ema = (data[i] - prevEMA) * multiplier + prevEMA;
         result.push(ema);
+      } else {
+        result.push(null);
       }
     }
-    
+
     return result;
   }
 
@@ -106,7 +125,7 @@ export class TechnicalIndicators {
   static WMA(data: number[], period: number): (number | null)[] {
     const result: (number | null)[] = [];
     const weightSum = (period * (period + 1)) / 2;
-    
+
     for (let i = 0; i < data.length; i++) {
       if (i < period - 1) {
         result.push(null);
@@ -118,7 +137,7 @@ export class TechnicalIndicators {
         result.push(weightedSum / weightSum);
       }
     }
-    
+
     return result;
   }
 
@@ -127,48 +146,48 @@ export class TechnicalIndicators {
     const result: (number | null)[] = [];
     const gains: number[] = [];
     const losses: number[] = [];
-    
+
     // Calculate price changes
     for (let i = 1; i < data.length; i++) {
       const change = data[i] - data[i - 1];
       gains.push(change > 0 ? change : 0);
       losses.push(change < 0 ? -change : 0);
     }
-    
+
     // Not enough data
     if (gains.length < period) {
       return new Array(data.length).fill(null);
     }
-    
+
     // First RSI calculation
     result.push(null); // First data point has no RSI
-    
+
     let avgGain = gains.slice(0, period).reduce((a, b) => a + b, 0) / period;
     let avgLoss = losses.slice(0, period).reduce((a, b) => a + b, 0) / period;
-    
+
     for (let i = period; i < gains.length; i++) {
       avgGain = (avgGain * (period - 1) + gains[i]) / period;
       avgLoss = (avgLoss * (period - 1) + losses[i]) / period;
-      
+
       const rs = avgLoss === 0 ? 100 : avgGain / avgLoss;
-      const rsi = 100 - (100 / (1 + rs));
+      const rsi = 100 - 100 / (1 + rs);
       result.push(rsi);
     }
-    
+
     // Fill initial nulls
     while (result.length < data.length) {
       result.unshift(null);
     }
-    
+
     return result;
   }
 
   // MACD (Moving Average Convergence Divergence)
   static MACD(
-    data: number[], 
-    fastPeriod: number = 12, 
-    slowPeriod: number = 26, 
-    signalPeriod: number = 9
+    data: number[],
+    fastPeriod: number = 12,
+    slowPeriod: number = 26,
+    signalPeriod: number = 9,
   ): {
     macd: (number | null)[];
     signal: (number | null)[];
@@ -176,36 +195,49 @@ export class TechnicalIndicators {
   } {
     const fastEMA = this.EMA(data, fastPeriod);
     const slowEMA = this.EMA(data, slowPeriod);
-    
+
     const macd: (number | null)[] = [];
     for (let i = 0; i < data.length; i++) {
-      if (fastEMA[i] !== null && slowEMA[i] !== null) {
-        macd.push(fastEMA[i]! - slowEMA[i]!);
+      if (
+        fastEMA[i] !== null &&
+        fastEMA[i] !== undefined &&
+        slowEMA[i] !== null &&
+        slowEMA[i] !== undefined
+      ) {
+        macd.push((fastEMA[i] as number) - (slowEMA[i] as number));
       } else {
         macd.push(null);
       }
     }
-    
-    const signal = this.EMA(macd.filter(v => v !== null) as number[], signalPeriod);
-    const paddedSignal: (number | null)[] = [...new Array(data.length - signal.length).fill(null), ...signal];
-    
+
+    const signal = this.EMA(macd.filter((v) => v !== null) as number[], signalPeriod);
+    const paddedSignal: (number | null)[] = [
+      ...new Array(data.length - signal.length).fill(null),
+      ...signal,
+    ];
+
     const histogram: (number | null)[] = [];
     for (let i = 0; i < data.length; i++) {
-      if (macd[i] !== null && paddedSignal[i] !== null) {
-        histogram.push(macd[i]! - paddedSignal[i]!);
+      if (
+        macd[i] !== null &&
+        macd[i] !== undefined &&
+        paddedSignal[i] !== null &&
+        paddedSignal[i] !== undefined
+      ) {
+        histogram.push((macd[i] as number) - (paddedSignal[i] as number));
       } else {
         histogram.push(null);
       }
     }
-    
+
     return { macd, signal: paddedSignal, histogram };
   }
 
   // Bollinger Bands
   static BollingerBands(
-    data: number[], 
-    period: number = 20, 
-    standardDeviations: number = 2
+    data: number[],
+    period: number = 20,
+    standardDeviations: number = 2,
   ): {
     upper: (number | null)[];
     middle: (number | null)[];
@@ -214,39 +246,39 @@ export class TechnicalIndicators {
     const middle = this.SMA(data, period);
     const upper: (number | null)[] = [];
     const lower: (number | null)[] = [];
-    
+
     for (let i = 0; i < data.length; i++) {
-      if (i < period - 1 || middle[i] === null) {
+      if (i < period - 1 || middle[i] === null || middle[i] === undefined) {
         upper.push(null);
         lower.push(null);
       } else {
         const slice = data.slice(i - period + 1, i + 1);
-        const mean = middle[i]!;
+        const mean = middle[i] as number;
         const variance = slice.reduce((sum, val) => sum + Math.pow(val - mean, 2), 0) / period;
         const stdDev = Math.sqrt(variance);
-        
+
         upper.push(mean + standardDeviations * stdDev);
         lower.push(mean - standardDeviations * stdDev);
       }
     }
-    
+
     return { upper, middle, lower };
   }
 
   // Stochastic Oscillator
   static Stochastic(
-    high: number[], 
-    low: number[], 
-    close: number[], 
+    high: number[],
+    low: number[],
+    close: number[],
     period: number = 14,
     smoothK: number = 3,
-    smoothD: number = 3
+    smoothD: number = 3,
   ): {
     k: (number | null)[];
     d: (number | null)[];
   } {
     const k: (number | null)[] = [];
-    
+
     for (let i = 0; i < close.length; i++) {
       if (i < period - 1) {
         k.push(null);
@@ -254,7 +286,7 @@ export class TechnicalIndicators {
         const highestHigh = Math.max(...high.slice(i - period + 1, i + 1));
         const lowestLow = Math.min(...low.slice(i - period + 1, i + 1));
         const currentClose = close[i];
-        
+
         if (highestHigh === lowestLow) {
           k.push(50); // Middle value when range is 0
         } else {
@@ -262,22 +294,27 @@ export class TechnicalIndicators {
         }
       }
     }
-    
+
     // Smooth %K
-    const smoothedK = this.SMA(k.filter(v => v !== null) as number[], smoothK);
+    const smoothedK = this.SMA(k.filter((v) => v !== null) as number[], smoothK);
     const paddedK = [...new Array(close.length - smoothedK.length).fill(null), ...smoothedK];
-    
+
     // %D is SMA of %K
-    const d = this.SMA(paddedK.filter(v => v !== null) as number[], smoothD);
+    const d = this.SMA(paddedK.filter((v) => v !== null) as number[], smoothD);
     const paddedD = [...new Array(close.length - d.length).fill(null), ...d];
-    
+
     return { k: paddedK, d: paddedD };
   }
 
   // Average True Range
-  static ATR(high: number[], low: number[], close: number[], period: number = 14): (number | null)[] {
+  static ATR(
+    high: number[],
+    low: number[],
+    close: number[],
+    period: number = 14,
+  ): (number | null)[] {
     const tr: number[] = [];
-    
+
     // Calculate True Range
     for (let i = 0; i < high.length; i++) {
       if (i === 0) {
@@ -289,7 +326,7 @@ export class TechnicalIndicators {
         tr.push(Math.max(highLow, highClose, lowClose));
       }
     }
-    
+
     // Calculate ATR as EMA of TR
     return this.EMA(tr, period);
   }
@@ -309,13 +346,13 @@ export class PatternRecognition {
       endIndex: number;
       confidence: number;
     }> = [];
-    
+
     // Check for various patterns
     patterns.push(...this.findDoubleTopBottom(candles));
     patterns.push(...this.findHeadAndShoulders(candles));
     patterns.push(...this.findTriangles(candles));
     patterns.push(...this.findWedges(candles));
-    
+
     return patterns;
   }
 
@@ -331,10 +368,10 @@ export class PatternRecognition {
       endIndex: number;
       confidence: number;
     }> = [];
-    
-    const highs = candles.map(c => c.high);
-    const lows = candles.map(c => c.low);
-    
+
+    const highs = candles.map((c) => c.high);
+    const lows = candles.map((c) => c.low);
+
     // Look for double tops
     for (let i = 20; i < candles.length - 20; i++) {
       // Find first peak
@@ -346,15 +383,17 @@ export class PatternRecognition {
             const diff = Math.abs(highs[i] - highs[j]) / highs[i];
             if (diff < 0.02) {
               // Check for valley between peaks
-              const valleyIndex = lows.slice(i, j).reduce((minIdx, val, idx) => 
-                val < lows[i + minIdx] ? idx : minIdx, 0) + i;
-              
+              const valleyIndex =
+                lows
+                  .slice(i, j)
+                  .reduce((minIdx, val, idx) => (val < lows[i + minIdx] ? idx : minIdx), 0) + i;
+
               if (lows[valleyIndex] < highs[i] * 0.95) {
                 patterns.push({
                   pattern: 'double-top',
                   startIndex: i - 5,
                   endIndex: j + 5,
-                  confidence: 0.7 + (0.3 * (1 - diff))
+                  confidence: 0.7 + 0.3 * (1 - diff),
                 });
               }
             }
@@ -362,7 +401,7 @@ export class PatternRecognition {
         }
       }
     }
-    
+
     // Look for double bottoms (similar logic, inverted)
     for (let i = 20; i < candles.length - 20; i++) {
       if (lows[i] < lows[i - 1] && lows[i] < lows[i + 1]) {
@@ -370,15 +409,17 @@ export class PatternRecognition {
           if (lows[j] < lows[j - 1] && lows[j] < lows[j + 1]) {
             const diff = Math.abs(lows[i] - lows[j]) / lows[i];
             if (diff < 0.02) {
-              const peakIndex = highs.slice(i, j).reduce((maxIdx, val, idx) => 
-                val > highs[i + maxIdx] ? idx : maxIdx, 0) + i;
-              
+              const peakIndex =
+                highs
+                  .slice(i, j)
+                  .reduce((maxIdx, val, idx) => (val > highs[i + maxIdx] ? idx : maxIdx), 0) + i;
+
               if (highs[peakIndex] > lows[i] * 1.05) {
                 patterns.push({
                   pattern: 'double-bottom',
                   startIndex: i - 5,
                   endIndex: j + 5,
-                  confidence: 0.7 + (0.3 * (1 - diff))
+                  confidence: 0.7 + 0.3 * (1 - diff),
                 });
               }
             }
@@ -386,11 +427,11 @@ export class PatternRecognition {
         }
       }
     }
-    
+
     return patterns;
   }
 
-  private static findHeadAndShoulders(candles: MarketCandle[]): Array<{
+  private static findHeadAndShoulders(_candles: MarketCandle[]): Array<{
     pattern: ChartPattern;
     startIndex: number;
     endIndex: number;
@@ -400,7 +441,7 @@ export class PatternRecognition {
     return [];
   }
 
-  private static findTriangles(candles: MarketCandle[]): Array<{
+  private static findTriangles(_candles: MarketCandle[]): Array<{
     pattern: ChartPattern;
     startIndex: number;
     endIndex: number;
@@ -410,7 +451,7 @@ export class PatternRecognition {
     return [];
   }
 
-  private static findWedges(candles: MarketCandle[]): Array<{
+  private static findWedges(_candles: MarketCandle[]): Array<{
     pattern: ChartPattern;
     startIndex: number;
     endIndex: number;
@@ -423,7 +464,10 @@ export class PatternRecognition {
 
 // Fibonacci calculations
 export class FibonacciLevels {
-  static calculate(high: number, low: number): {
+  static calculate(
+    high: number,
+    low: number,
+  ): {
     level: number;
     price: number;
     label: string;
@@ -440,11 +484,11 @@ export class FibonacciLevels {
       { level: 1.618, label: '161.8%' },
       { level: 2.618, label: '261.8%' },
     ];
-    
+
     return levels.map(({ level, label }) => ({
       level,
       price: low + diff * level,
-      label
+      label,
     }));
   }
 }
@@ -453,9 +497,9 @@ export class FibonacciLevels {
 export class HeikinAshi {
   static convert(candles: MarketCandle[]): MarketCandle[] {
     if (candles.length === 0) return [];
-    
+
     const haCandles: MarketCandle[] = [];
-    
+
     // First candle
     const firstCandle = candles[0];
     haCandles.push({
@@ -464,29 +508,29 @@ export class HeikinAshi {
       close: (firstCandle.open + firstCandle.high + firstCandle.low + firstCandle.close) / 4,
       high: firstCandle.high,
       low: firstCandle.low,
-      volume: firstCandle.volume
+      volume: firstCandle.volume,
     });
-    
+
     // Subsequent candles
     for (let i = 1; i < candles.length; i++) {
       const current = candles[i];
       const prevHA = haCandles[i - 1];
-      
+
       const haClose = (current.open + current.high + current.low + current.close) / 4;
       const haOpen = (prevHA.open + prevHA.close) / 2;
       const haHigh = Math.max(current.high, haOpen, haClose);
       const haLow = Math.min(current.low, haOpen, haClose);
-      
+
       haCandles.push({
         timestamp: current.timestamp,
         open: haOpen,
         close: haClose,
         high: haHigh,
         low: haLow,
-        volume: current.volume
+        volume: current.volume,
       });
     }
-    
+
     return haCandles;
   }
 }
@@ -508,29 +552,33 @@ export class TimeFrameConverter {
     return map[timeframe];
   }
 
-  static aggregate(candles: MarketCandle[], fromTimeframe: TimeFrame, toTimeframe: TimeFrame): MarketCandle[] {
+  static aggregate(
+    candles: MarketCandle[],
+    fromTimeframe: TimeFrame,
+    toTimeframe: TimeFrame,
+  ): MarketCandle[] {
     const fromMs = this.getMilliseconds(fromTimeframe);
     const toMs = this.getMilliseconds(toTimeframe);
-    
+
     if (fromMs >= toMs) return candles; // Can't aggregate to smaller timeframe
-    
+
     const aggregated: MarketCandle[] = [];
     const ratio = Math.floor(toMs / fromMs);
-    
+
     for (let i = 0; i < candles.length; i += ratio) {
       const slice = candles.slice(i, i + ratio);
       if (slice.length === 0) continue;
-      
+
       aggregated.push({
         timestamp: slice[0].timestamp,
         open: slice[0].open,
-        high: Math.max(...slice.map(c => c.high)),
-        low: Math.min(...slice.map(c => c.low)),
+        high: Math.max(...slice.map((c) => c.high)),
+        low: Math.min(...slice.map((c) => c.low)),
         close: slice[slice.length - 1].close,
-        volume: slice.reduce((sum, c) => sum + c.volume, 0)
+        volume: slice.reduce((sum, c) => sum + c.volume, 0),
       });
     }
-    
+
     return aggregated;
   }
 }

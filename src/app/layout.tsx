@@ -1,38 +1,38 @@
-import type { Metadata } from "next";
-import { Inter, Noto_Sans_KR } from "next/font/google";
-import "./globals.css";
-import AuthProvider from "@/components/providers/AuthProvider";
-import { ThemeProvider } from "@/components/providers/theme-provider";
-import { Toaster } from "sonner";
+import type { Metadata } from 'next';
+import { Inter, Noto_Sans_KR } from 'next/font/google';
+import './globals.css';
+import AuthProvider from '@/components/providers/AuthProvider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
+import { Toaster } from 'sonner';
 
 const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-inter",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
 });
 
 const notoSansKR = Noto_Sans_KR({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-noto-sans-kr",
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-noto-sans-kr',
 });
 
 export const metadata: Metadata = {
-  title: "FLUX AI Capital - AI 기반 자산관리 플랫폼",
-  description: "AI와 데이터 기반의 전략적 자산관리 플랫폼",
-  metadataBase: new URL("https://flux.ai.kr"),
+  title: 'FLUX AI Capital - AI 기반 자산관리 플랫폼',
+  description: 'AI와 데이터 기반의 전략적 자산관리 플랫폼',
+  metadataBase: new URL('https://flux.ai.kr'),
   openGraph: {
-    title: "FLUX AI Capital",
-    description: "1억원에서 시작하는 AI 자산관리",
-    url: "https://flux.ai.kr",
-    siteName: "FLUX AI Capital",
-    locale: "ko_KR",
-    type: "website",
+    title: 'FLUX AI Capital',
+    description: '1억원에서 시작하는 AI 자산관리',
+    url: 'https://flux.ai.kr',
+    siteName: 'FLUX AI Capital',
+    locale: 'ko_KR',
+    type: 'website',
   },
   twitter: {
-    card: "summary_large_image",
-    title: "FLUX AI Capital",
-    description: "AI 기반 자산관리 플랫폼",
+    card: 'summary_large_image',
+    title: 'FLUX AI Capital',
+    description: 'AI 기반 자산관리 플랫폼',
   },
 };
 
@@ -51,9 +51,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AuthProvider>
-            <div className="relative flex min-h-screen flex-col">
-              {children}
-            </div>
+            <div className="relative flex min-h-screen flex-col">{children}</div>
           </AuthProvider>
           <Toaster position="top-right" richColors />
         </ThemeProvider>

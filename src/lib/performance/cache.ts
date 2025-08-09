@@ -12,7 +12,7 @@ class MemoryCache {
 
   get(key: string): any | null {
     const item = this.cache.get(key);
-    
+
     if (!item) {
       return null;
     }
@@ -62,18 +62,14 @@ export const CACHE_KEYS = {
 } as const;
 
 // Cache utilities
-export function getCachedData<T>(
-  key: string,
-  fetcher: () => Promise<T>,
-  ttl?: number
-): Promise<T> {
+export function getCachedData<T>(key: string, fetcher: () => Promise<T>, ttl?: number): Promise<T> {
   const cached = cache.get(key);
-  
+
   if (cached) {
     return Promise.resolve(cached);
   }
 
-  return fetcher().then(data => {
+  return fetcher().then((data) => {
     cache.set(key, data, ttl);
     return data;
   });
@@ -87,8 +83,8 @@ export function invalidateCache(pattern?: string): void {
   }
 
   // Invalidate all keys matching the pattern
-  const keys = Array.from((cache as any).cache.keys());
-  keys.forEach(key => {
+  const keys = Array.from((cache as any).cache.keys()) as string[];
+  keys.forEach((key: string) => {
     if (key.includes(pattern)) {
       cache.delete(key);
     }

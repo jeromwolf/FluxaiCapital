@@ -13,7 +13,7 @@ export function useSwipe({
   onSwipeRight,
   onSwipeUp,
   onSwipeDown,
-  threshold = 50
+  threshold = 50,
 }: SwipeHandlers) {
   const [touchStart, setTouchStart] = useState<{ x: number; y: number } | null>(null);
   const [touchEnd, setTouchEnd] = useState<{ x: number; y: number } | null>(null);
@@ -22,14 +22,14 @@ export function useSwipe({
     setTouchEnd(null);
     setTouchStart({
       x: e.targetTouches[0].clientX,
-      y: e.targetTouches[0].clientY
+      y: e.targetTouches[0].clientY,
     });
   };
 
   const onTouchMove = (e: React.TouchEvent) => {
     setTouchEnd({
       x: e.targetTouches[0].clientX,
-      y: e.targetTouches[0].clientY
+      y: e.targetTouches[0].clientY,
     });
   };
 
@@ -63,6 +63,6 @@ export function useSwipe({
   return {
     onTouchStart,
     onTouchMove,
-    onTouchEnd
+    onTouchEnd,
   };
 }

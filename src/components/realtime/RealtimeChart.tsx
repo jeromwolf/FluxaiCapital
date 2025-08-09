@@ -1,7 +1,16 @@
 'use client';
 
 import React from 'react';
-import { LineChart, Line, AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 import { cn } from '@/lib/utils';
 import { chartTheme } from '@/config/chart-theme';
 import { usePriceSubscription } from '@/hooks/useWebSocket';
@@ -24,27 +33,29 @@ export function RealtimeChart({
   type = 'area',
   showAxis = true,
   maxDataPoints = 100,
-  updateInterval = 1000
+  updateInterval = 1000,
 }: RealtimeChartProps) {
   const prices = usePriceSubscription([symbol]);
   const priceData = prices[symbol];
-  
-  const [chartData, setChartData] = React.useState<Array<{
-    time: string;
-    price: number;
-  }>>([]);
+
+  const [chartData, setChartData] = React.useState<
+    Array<{
+      time: string;
+      price: number;
+    }>
+  >([]);
 
   React.useEffect(() => {
     if (priceData) {
-      setChartData(prev => {
+      setChartData((prev) => {
         const newData = [
           ...prev,
           {
             time: new Date(priceData.timestamp).toLocaleTimeString('ko-KR'),
-            price: priceData.price
-          }
+            price: priceData.price,
+          },
         ].slice(-maxDataPoints);
-        
+
         return newData;
       });
     }
@@ -59,7 +70,9 @@ export function RealtimeChart({
   return (
     <ChartContainer
       title={`${symbol} 실시간 차트`}
-      subtitle={priceData ? `현재가: ${priceData.price.toLocaleString('ko-KR')} KRW` : '데이터 대기 중...'}
+      subtitle={
+        priceData ? `현재가: ${priceData.price.toLocaleString('ko-KR')} KRW` : '데이터 대기 중...'
+      }
       height={height}
       className={className}
       loading={!priceData}
@@ -67,14 +80,14 @@ export function RealtimeChart({
       <Chart data={chartData}>
         {showAxis && (
           <>
-            <XAxis 
-              dataKey="time" 
+            <XAxis
+              dataKey="time"
               stroke={chartTheme.colors.text.secondary}
               fontSize={12}
               tickLine={false}
               axisLine={false}
             />
-            <YAxis 
+            <YAxis
               stroke={chartTheme.colors.text.secondary}
               fontSize={12}
               tickLine={false}
@@ -84,19 +97,19 @@ export function RealtimeChart({
             />
           </>
         )}
-        
+
         <Tooltip
           contentStyle={{
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             border: 'none',
             borderRadius: '8px',
-            padding: '8px 12px'
+            padding: '8px 12px',
           }}
           labelStyle={{ color: '#fff', fontSize: '12px' }}
           itemStyle={{ color: '#fff', fontSize: '12px' }}
           formatter={(value: number) => value.toLocaleString('ko-KR')}
         />
-        
+
         <DataComponent
           type="monotone"
           dataKey="price"
@@ -124,7 +137,7 @@ export function MultiSymbolRealtimeChart({
   symbols,
   className,
   height = 400,
-  maxDataPoints = 100
+  maxDataPoints = 100,
 }: MultiSymbolRealtimeChartProps) {
   const prices = usePriceSubscription(symbols);
   const [chartData, setChartData] = React.useState<Array<any>>([]);
@@ -133,30 +146,30 @@ export function MultiSymbolRealtimeChart({
   React.useEffect(() => {
     const timestamp = Date.now();
     const dataPoint: any = {
-      time: new Date(timestamp).toLocaleTimeString('ko-KR')
+      time: new Date(timestamp).toLocaleTimeString('ko-KR'),
     };
 
     let hasData = false;
-    symbols.forEach(symbol => {
+    symbols.forEach((symbol) => {
       if (prices[symbol]) {
         // Normalize prices to percentage change from initial value
         if (!normalizedPrices[symbol]) {
-          setNormalizedPrices(prev => ({
+          setNormalizedPrices((prev) => ({
             ...prev,
-            [symbol]: prices[symbol].price
+            [symbol]: prices[symbol].price,
           }));
         }
-        
+
         const basePrice = normalizedPrices[symbol] || prices[symbol].price;
         const percentageChange = ((prices[symbol].price - basePrice) / basePrice) * 100;
-        
+
         dataPoint[symbol] = percentageChange;
         hasData = true;
       }
     });
 
     if (hasData) {
-      setChartData(prev => [...prev, dataPoint].slice(-maxDataPoints));
+      setChartData((prev) => [...prev, dataPoint].slice(-maxDataPoints));
     }
   }, [prices, symbols, normalizedPrices, maxDataPoints]);
 
@@ -165,7 +178,7 @@ export function MultiSymbolRealtimeChart({
     chartTheme.colors.secondary,
     chartTheme.colors.success,
     chartTheme.colors.warning,
-    chartTheme.colors.danger
+    chartTheme.colors.danger,
   ];
 
   return (
@@ -177,33 +190,33 @@ export function MultiSymbolRealtimeChart({
       loading={chartData.length === 0}
     >
       <LineChart data={chartData}>
-        <XAxis 
-          dataKey="time" 
+        <XAxis
+          dataKey="time"
           stroke={chartTheme.colors.text.secondary}
           fontSize={12}
           tickLine={false}
           axisLine={false}
         />
-        <YAxis 
+        <YAxis
           stroke={chartTheme.colors.text.secondary}
           fontSize={12}
           tickLine={false}
           axisLine={false}
           tickFormatter={(value) => `${value.toFixed(2)}%`}
         />
-        
+
         <Tooltip
           contentStyle={{
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             border: 'none',
             borderRadius: '8px',
-            padding: '8px 12px'
+            padding: '8px 12px',
           }}
           labelStyle={{ color: '#fff', fontSize: '12px' }}
           itemStyle={{ fontSize: '12px' }}
           formatter={(value: number) => `${value.toFixed(2)}%`}
         />
-        
+
         {symbols.map((symbol, index) => (
           <Line
             key={symbol}

@@ -54,9 +54,7 @@ export default function PortfolioList({ userId }: PortfolioListProps) {
       <div className="mb-8 grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">
-              총 포트폴리오 수
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">총 포트폴리오 수</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{portfolios.length}개</div>
@@ -64,25 +62,23 @@ export default function PortfolioList({ userId }: PortfolioListProps) {
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">
-              총 자산가치
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">총 자산가치</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ₩{totalValue.toLocaleString()}
-            </div>
+            <div className="text-2xl font-bold">₩{totalValue.toLocaleString()}</div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">
-              평균 수익률
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">평균 수익률</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              +{(portfolios.reduce((sum, p) => sum + p.totalReturn, 0) / portfolios.length).toFixed(1)}%
+              +
+              {(portfolios.reduce((sum, p) => sum + p.totalReturn, 0) / portfolios.length).toFixed(
+                1,
+              )}
+              %
             </div>
           </CardContent>
         </Card>
@@ -92,20 +88,16 @@ export default function PortfolioList({ userId }: PortfolioListProps) {
       <div className="space-y-4">
         <div className="flex justify-end">
           <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            새 포트폴리오
+            <Plus className="mr-2 h-4 w-4" />새 포트폴리오
           </Button>
         </div>
 
         {portfolios.length === 0 ? (
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-16">
-              <p className="mb-4 text-muted-foreground">
-                아직 생성된 포트폴리오가 없습니다
-              </p>
+              <p className="mb-4 text-muted-foreground">아직 생성된 포트폴리오가 없습니다</p>
               <Button onClick={() => setIsCreateDialogOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                첫 포트폴리오 만들기
+                <Plus className="mr-2 h-4 w-4" />첫 포트폴리오 만들기
               </Button>
             </CardContent>
           </Card>
@@ -120,12 +112,8 @@ export default function PortfolioList({ userId }: PortfolioListProps) {
                 <Card className="h-full cursor-pointer">
                   <CardHeader className="flex flex-row items-start justify-between space-y-0">
                     <div className="space-y-1">
-                      <CardTitle className="text-lg">
-                        {portfolio.name}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {portfolio.description}
-                      </p>
+                      <CardTitle className="text-lg">{portfolio.name}</CardTitle>
+                      <p className="text-sm text-muted-foreground">{portfolio.description}</p>
                     </div>
                     <Button
                       variant="ghost"
@@ -142,22 +130,16 @@ export default function PortfolioList({ userId }: PortfolioListProps) {
                   <CardContent>
                     <div className="space-y-3">
                       <div className="flex justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          총 가치
-                        </span>
+                        <span className="text-sm text-muted-foreground">총 가치</span>
                         <span className="font-semibold">
                           ₩{portfolio.totalValue.toLocaleString()}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          일간 수익률
-                        </span>
+                        <span className="text-sm text-muted-foreground">일간 수익률</span>
                         <span
                           className={`flex items-center gap-1 font-semibold ${
-                            portfolio.dailyReturn >= 0
-                              ? 'text-green-600'
-                              : 'text-red-600'
+                            portfolio.dailyReturn >= 0 ? 'text-green-600' : 'text-red-600'
                           }`}
                         >
                           {portfolio.dailyReturn >= 0 ? (
@@ -170,14 +152,10 @@ export default function PortfolioList({ userId }: PortfolioListProps) {
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          누적 수익률
-                        </span>
+                        <span className="text-sm text-muted-foreground">누적 수익률</span>
                         <span
                           className={`font-semibold ${
-                            portfolio.totalReturn >= 0
-                              ? 'text-green-600'
-                              : 'text-red-600'
+                            portfolio.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'
                           }`}
                         >
                           {portfolio.totalReturn >= 0 ? '+' : ''}
@@ -185,12 +163,8 @@ export default function PortfolioList({ userId }: PortfolioListProps) {
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-sm text-muted-foreground">
-                          보유 종목
-                        </span>
-                        <span className="font-semibold">
-                          {portfolio.holdings}개
-                        </span>
+                        <span className="text-sm text-muted-foreground">보유 종목</span>
+                        <span className="font-semibold">{portfolio.holdings}개</span>
                       </div>
                     </div>
                   </CardContent>

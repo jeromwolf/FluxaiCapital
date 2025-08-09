@@ -55,14 +55,14 @@ export function SearchBar({ className }: { className?: string }) {
     const searchResults: SearchResult[] = [];
 
     // 페이지 검색
-    searchablePages.forEach(page => {
+    searchablePages.forEach((page) => {
       if (page.title.toLowerCase().includes(lowercaseQuery)) {
         searchResults.push(page);
       }
     });
 
     // 주식 검색
-    stockSymbols.forEach(stock => {
+    stockSymbols.forEach((stock) => {
       if (
         stock.symbol.toLowerCase().includes(lowercaseQuery) ||
         stock.name.toLowerCase().includes(lowercaseQuery)
@@ -72,7 +72,7 @@ export function SearchBar({ className }: { className?: string }) {
           title: stock.symbol,
           subtitle: stock.name,
           url: `/stocks/${stock.symbol}`,
-          icon: <TrendingUp className="h-4 w-4" />
+          icon: <TrendingUp className="h-4 w-4" />,
         });
       }
     });
@@ -102,10 +102,10 @@ export function SearchBar({ className }: { className?: string }) {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex(prev => (prev + 1) % results.length);
+      setSelectedIndex((prev) => (prev + 1) % results.length);
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex(prev => (prev - 1 + results.length) % results.length);
+      setSelectedIndex((prev) => (prev - 1 + results.length) % results.length);
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (results[selectedIndex]) {
@@ -172,12 +172,10 @@ export function SearchBar({ className }: { className?: string }) {
               }}
               className={cn(
                 'w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-left',
-                selectedIndex === index && 'bg-gray-50 dark:bg-gray-700'
+                selectedIndex === index && 'bg-gray-50 dark:bg-gray-700',
               )}
             >
-              <div className="text-gray-400">
-                {result.icon}
-              </div>
+              <div className="text-gray-400">{result.icon}</div>
               <div className="flex-1 min-w-0">
                 <div className="font-medium text-gray-900 dark:text-gray-100 truncate">
                   {result.title}

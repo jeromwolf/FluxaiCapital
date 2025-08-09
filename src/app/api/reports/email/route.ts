@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     if (!portfolioId || !reportType || !email) {
       return NextResponse.json(
         { error: 'Portfolio ID, report type, and email are required' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -34,10 +34,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!portfolio) {
-      return NextResponse.json(
-        { error: 'Portfolio not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
     }
 
     // Generate PDF report
@@ -49,13 +46,13 @@ export async function POST(req: NextRequest) {
       email,
       portfolio.name,
       reportType,
-      pdfBuffer
+      pdfBuffer,
     );
 
     if (!emailResult.success) {
       return NextResponse.json(
         { error: 'Failed to send email: ' + emailResult.error },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -63,12 +60,8 @@ export async function POST(req: NextRequest) {
       success: true,
       message: 'Report sent successfully via email',
     });
-
   } catch (error) {
     console.error('Email report error:', error);
-    return NextResponse.json(
-      { error: 'Failed to send report via email' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to send report via email' }, { status: 500 });
   }
 }

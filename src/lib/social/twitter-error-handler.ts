@@ -11,7 +11,7 @@ export class TwitterApiError extends Error {
   constructor(
     message: string,
     public code: TwitterErrorCode,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
     this.name = 'TwitterApiError';
@@ -41,18 +41,15 @@ export class TwitterErrorHandler {
   /**
    * Wrap API calls with error handling and retry logic
    */
-  async handleApiCall<T>(
-    apiCall: () => Promise<T>,
-    mockData?: () => T
-  ): Promise<T> {
+  async handleApiCall<T>(apiCall: () => Promise<T>, mockData?: () => T): Promise<T> {
     let lastError: TwitterApiError | null = null;
-    
+
     for (let attempt = 0; attempt <= this.config.maxRetries; attempt++) {
       try {
         return await apiCall();
       } catch (error) {
         lastError = this.parseError(error);
-        
+
         // Log the error
         console.error(`Twitter API error (attempt ${attempt + 1}):`, lastError);
         this.config.onError(lastError);
@@ -64,7 +61,7 @@ export class TwitterErrorHandler {
 
         // Calculate backoff delay
         const delay = this.calculateBackoff(attempt);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
 
@@ -92,7 +89,7 @@ export class TwitterErrorHandler {
       return new TwitterApiError(
         firstError.message || 'Twitter API error',
         code,
-        error.data.errors
+        error.data.errors,
       );
     }
 
@@ -107,7 +104,7 @@ export class TwitterErrorHandler {
     return new TwitterApiError(
       error.message || 'Unknown Twitter API error',
       TwitterErrorCode.SERVER_ERROR,
-      error
+      error,
     );
   }
 
@@ -116,7 +113,8 @@ export class TwitterErrorHandler {
    */
   private mapTwitterErrorCode(type: string): TwitterErrorCode {
     const errorMap: Record<string, TwitterErrorCode> = {
-      'https://api.twitter.com/2/problems/rate-limit-exceeded': TwitterErrorCode.RATE_LIMIT_EXCEEDED,
+      'https://api.twitter.com/2/problems/rate-limit-exceeded':
+        TwitterErrorCode.RATE_LIMIT_EXCEEDED,
       'https://api.twitter.com/2/problems/not-authorized-for-resource': TwitterErrorCode.FORBIDDEN,
       'https://api.twitter.com/2/problems/resource-not-found': TwitterErrorCode.NOT_FOUND,
     };
@@ -129,7 +127,11 @@ export class TwitterErrorHandler {
    */
   private shouldRetry(error: TwitterApiError): boolean {
     // Don't retry on client errors (except rate limit)
-    if (error.code >= 400 && error.code < 500 && error.code !== TwitterErrorCode.RATE_LIMIT_EXCEEDED) {
+    if (
+      error.code >= 400 &&
+      error.code < 500 &&
+      error.code !== TwitterErrorCode.RATE_LIMIT_EXCEEDED
+    ) {
       return false;
     }
 
@@ -143,11 +145,11 @@ export class TwitterErrorHandler {
   private calculateBackoff(attempt: number): number {
     const baseDelay = this.config.retryDelay;
     const maxDelay = 60000; // 1 minute max
-    
+
     // Exponential backoff with jitter
     const exponentialDelay = Math.min(baseDelay * Math.pow(2, attempt), maxDelay);
     const jitter = Math.random() * 0.3 * exponentialDelay; // 30% jitter
-    
+
     return exponentialDelay + jitter;
   }
 

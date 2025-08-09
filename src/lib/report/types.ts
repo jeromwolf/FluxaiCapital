@@ -45,14 +45,14 @@ export interface ReportSection {
   configuration?: SectionConfiguration;
 }
 
-export type SectionType = 
-  | 'summary' 
-  | 'performance' 
-  | 'holdings' 
-  | 'transactions' 
-  | 'risk' 
-  | 'charts' 
-  | 'market' 
+export type SectionType =
+  | 'summary'
+  | 'performance'
+  | 'holdings'
+  | 'transactions'
+  | 'risk'
+  | 'charts'
+  | 'market'
   | 'custom';
 
 export interface SectionConfiguration {

@@ -3,18 +3,12 @@ import { SocialSentimentService } from '@/lib/social/social-sentiment-service';
 
 const sentimentService = new SocialSentimentService();
 
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { symbol: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { symbol: string } }) {
   try {
     const { symbol } = params;
-    
+
     if (!symbol) {
-      return NextResponse.json(
-        { error: 'Symbol is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Symbol is required' }, { status: 400 });
     }
 
     // Get company name from query params if provided
@@ -24,22 +18,19 @@ export async function GET(
     // Fetch sentiment data
     const sentimentData = await sentimentService.getStockSentiment(
       symbol.toUpperCase(),
-      companyName || undefined
+      companyName || undefined,
     );
 
     return NextResponse.json(sentimentData);
   } catch (error) {
     console.error('Error fetching stock sentiment:', error);
-    
+
     // Return mock data for development if API fails
     if (process.env.NODE_ENV === 'development') {
       return NextResponse.json(getMockStockSentiment(params.symbol));
     }
 
-    return NextResponse.json(
-      { error: 'Failed to fetch sentiment data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch sentiment data' }, { status: 500 });
   }
 }
 
@@ -112,8 +103,16 @@ function getMockStockSentiment(symbol: string) {
       },
     ],
     keywords: [
-      'earnings', 'momentum', 'breakout', 'support', 'resistance',
-      'bullish', 'volume', 'technical', 'valuation', 'guidance'
+      'earnings',
+      'momentum',
+      'breakout',
+      'support',
+      'resistance',
+      'bullish',
+      'volume',
+      'technical',
+      'valuation',
+      'guidance',
     ],
     lastUpdated: new Date(),
   };

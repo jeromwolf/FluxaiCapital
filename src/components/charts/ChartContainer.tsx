@@ -28,7 +28,7 @@ export function ChartContainer({
   title,
   subtitle,
   loading = false,
-  error
+  error,
 }: ChartContainerProps) {
   // const theme = getChartTheme(isDark); // Unused for now
 
@@ -38,18 +38,14 @@ export function ChartContainer({
         {(title || subtitle) && (
           <div className="mb-4">
             {title && (
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {title}
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
             )}
             {subtitle && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {subtitle}
-              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{subtitle}</p>
             )}
           </div>
         )}
-        <div 
+        <div
           className="flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700"
           style={{ height: typeof height === 'number' ? height : minHeight }}
         >
@@ -83,28 +79,29 @@ export function ChartContainer({
         {(title || subtitle) && (
           <div className="mb-4">
             {title && (
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {title}
-              </h3>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
             )}
             {subtitle && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                {subtitle}
-              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{subtitle}</p>
             )}
           </div>
         )}
-        <div 
+        <div
           className="flex items-center justify-center bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"
           style={{ height: typeof height === 'number' ? height : minHeight }}
         >
           <div className="text-center text-red-600 dark:text-red-400">
-            <svg className="h-8 w-8 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
+            <svg
+              className="h-8 w-8 mx-auto mb-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
             <p className="text-sm font-medium">차트 로딩 실패</p>
@@ -120,25 +117,14 @@ export function ChartContainer({
       {(title || subtitle) && (
         <div className="mb-4">
           {title && (
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              {title}
-            </h3>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</h3>
           )}
-          {subtitle && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              {subtitle}
-            </p>
-          )}
+          {subtitle && <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{subtitle}</p>}
         </div>
       )}
-      
+
       <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4">
-        <ResponsiveContainer
-          width={width}
-          height={height}
-          minHeight={minHeight}
-          aspect={aspect}
-        >
+        <ResponsiveContainer width={width} height={height} minHeight={minHeight} aspect={aspect}>
           {children as React.ReactElement}
         </ResponsiveContainer>
       </div>
@@ -147,12 +133,12 @@ export function ChartContainer({
 }
 
 // Loading skeleton for charts
-export function ChartSkeleton({ 
-  height = 400, 
-  className 
-}: { 
-  height?: number; 
-  className?: string; 
+export function ChartSkeleton({
+  height = 400,
+  className,
+}: {
+  height?: number;
+  className?: string;
 }) {
   return (
     <div className={cn('animate-pulse', className)}>

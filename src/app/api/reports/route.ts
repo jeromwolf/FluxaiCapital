@@ -9,10 +9,7 @@ export async function POST(req: NextRequest) {
     const { portfolioId, type, format = 'pdf' } = body;
 
     if (!portfolioId || !type) {
-      return NextResponse.json(
-        { error: 'Portfolio ID and type are required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Portfolio ID and type are required' }, { status: 400 });
     }
 
     // Get portfolio data
@@ -33,16 +30,13 @@ export async function POST(req: NextRequest) {
     });
 
     if (!portfolio) {
-      return NextResponse.json(
-        { error: 'Portfolio not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
     }
 
     if (format === 'pdf') {
       const convertedData = convertPortfolioForReport(portfolio);
       const pdfBuffer = await generatePDFReport(convertedData, type);
-      
+
       return new NextResponse(pdfBuffer as BodyInit, {
         headers: {
           'Content-Type': 'application/pdf',
@@ -51,17 +45,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json(
-      { error: 'Unsupported format' },
-      { status: 400 }
-    );
-
+    return NextResponse.json({ error: 'Unsupported format' }, { status: 400 });
   } catch (error) {
     console.error('Report generation error:', error);
-    return NextResponse.json(
-      { error: 'Failed to generate report' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to generate report' }, { status: 500 });
   }
 }
 
@@ -71,10 +58,7 @@ export async function GET(req: NextRequest) {
     const portfolioId = searchParams.get('portfolioId');
 
     if (!portfolioId) {
-      return NextResponse.json(
-        { error: 'Portfolio ID is required' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Portfolio ID is required' }, { status: 400 });
     }
 
     const portfolio = await prisma.portfolio.findUnique({
@@ -89,10 +73,7 @@ export async function GET(req: NextRequest) {
     });
 
     if (!portfolio) {
-      return NextResponse.json(
-        { error: 'Portfolio not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Portfolio not found' }, { status: 404 });
     }
 
     const reportTypes = [
@@ -132,12 +113,8 @@ export async function GET(req: NextRequest) {
       },
       reportTypes,
     });
-
   } catch (error) {
     console.error('Report API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to get report data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to get report data' }, { status: 500 });
   }
 }

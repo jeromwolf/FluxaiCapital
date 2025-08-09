@@ -11,10 +11,7 @@ export async function GET(request: NextRequest) {
     const marketDataService = createMarketDataService();
 
     if (!marketDataService.isDartAvailable()) {
-      return NextResponse.json(
-        { error: 'DART API is not configured' },
-        { status: 503 }
-      );
+      return NextResponse.json({ error: 'DART API is not configured' }, { status: 503 });
     }
 
     switch (action) {
@@ -44,10 +41,7 @@ export async function GET(request: NextRequest) {
         const fsDiv = searchParams.get('fsDiv') as 'CFS' | 'OFS' | undefined;
 
         if (!year || !reportCode) {
-          return NextResponse.json(
-            { error: 'year and reportCode are required' },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: 'year and reportCode are required' }, { status: 400 });
         }
 
         const statements = await marketDataService.getDartFinancialStatements({
@@ -93,10 +87,7 @@ export async function GET(request: NextRequest) {
       case 'search': {
         const query = searchParams.get('query');
         if (!query) {
-          return NextResponse.json(
-            { error: 'query parameter is required' },
-            { status: 400 }
-          );
+          return NextResponse.json({ error: 'query parameter is required' }, { status: 400 });
         }
 
         const results = await marketDataService.searchDartCompanies(query);
@@ -104,16 +95,10 @@ export async function GET(request: NextRequest) {
       }
 
       default:
-        return NextResponse.json(
-          { error: 'Invalid action parameter' },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Invalid action parameter' }, { status: 400 });
     }
   } catch (error) {
     console.error('DART API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch DART data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch DART data' }, { status: 500 });
   }
 }

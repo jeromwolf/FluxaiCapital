@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { 
-  DartDisclosure, 
-  DartFinancialStatement, 
+import {
+  DartDisclosure,
+  DartFinancialStatement,
   DartMajorShareholder,
-  DartCompanyInfo 
+  DartCompanyInfo,
 } from '@/lib/market-data/types';
 
 interface UseDartDataOptions {
@@ -44,16 +44,11 @@ export function useDartData({ stockCode, corpCode }: UseDartDataOptions): DartDa
       if (corpCode) params.append('corpCode', corpCode);
 
       // Fetch all data in parallel
-      const [
-        disclosuresRes,
-        companyRes,
-        shareholdersRes,
-        metricsRes
-      ] = await Promise.all([
+      const [disclosuresRes, companyRes, shareholdersRes, metricsRes] = await Promise.all([
         fetch(`/api/v1/market/dart?action=disclosures&${params}&pageCount=10`),
         fetch(`/api/v1/market/dart?action=company&${params}`),
         fetch(`/api/v1/market/dart?action=shareholders&${params}`),
-        fetch(`/api/v1/market/dart?action=metrics&${params}`)
+        fetch(`/api/v1/market/dart?action=metrics&${params}`),
       ]);
 
       // Check responses
@@ -62,16 +57,11 @@ export function useDartData({ stockCode, corpCode }: UseDartDataOptions): DartDa
       }
 
       // Parse responses
-      const [
-        disclosuresData,
-        companyData,
-        shareholdersData,
-        metricsData
-      ] = await Promise.all([
+      const [disclosuresData, companyData, shareholdersData, metricsData] = await Promise.all([
         disclosuresRes.json(),
         companyRes.json(),
         shareholdersRes.json(),
-        metricsRes.json()
+        metricsRes.json(),
       ]);
 
       setDisclosures(disclosuresData.data || []);
@@ -99,17 +89,19 @@ export function useDartData({ stockCode, corpCode }: UseDartDataOptions): DartDa
     companyInfo,
     loading,
     error,
-    refetch: fetchData
+    refetch: fetchData,
   };
 }
 
 // Hook for searching companies
 export function useDartSearch(query: string) {
-  const [results, setResults] = useState<Array<{
-    corpCode: string;
-    corpName: string;
-    stockCode?: string;
-  }>>([]);
+  const [results, setResults] = useState<
+    Array<{
+      corpCode: string;
+      corpName: string;
+      stockCode?: string;
+    }>
+  >([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -125,7 +117,7 @@ export function useDartSearch(query: string) {
 
       try {
         const response = await fetch(
-          `/api/v1/market/dart?action=search&query=${encodeURIComponent(query)}`
+          `/api/v1/market/dart?action=search&query=${encodeURIComponent(query)}`,
         );
 
         if (!response.ok) {

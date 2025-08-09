@@ -39,26 +39,24 @@ export function HoldingsTable({
   onRowClick,
   sortBy = 'weight',
   sortOrder = 'desc',
-  onSort
+  onSort,
 }: HoldingsTableProps) {
   const sortedHoldings = React.useMemo(() => {
     const sorted = [...holdings].sort((a, b) => {
       const aValue = a[sortBy];
       const bValue = b[sortBy];
-      
+
       if (typeof aValue === 'number' && typeof bValue === 'number') {
         return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
       }
-      
+
       if (typeof aValue === 'string' && typeof bValue === 'string') {
-        return sortOrder === 'asc' 
-          ? aValue.localeCompare(bValue)
-          : bValue.localeCompare(aValue);
+        return sortOrder === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
       }
-      
+
       return 0;
     });
-    
+
     return sorted;
   }, [holdings, sortBy, sortOrder]);
 
@@ -69,7 +67,12 @@ export function HoldingsTable({
 
   if (loading) {
     return (
-      <div className={cn('bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700', className)}>
+      <div
+        className={cn(
+          'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
+          className,
+        )}
+      >
         <div className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
@@ -86,18 +89,26 @@ export function HoldingsTable({
 
   if (holdings.length === 0) {
     return (
-      <div className={cn('bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700', className)}>
+      <div
+        className={cn(
+          'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
+          className,
+        )}
+      >
         <div className="p-12 text-center">
-          <p className="text-gray-500 dark:text-gray-400">
-            보유 자산이 없습니다
-          </p>
+          <p className="text-gray-500 dark:text-gray-400">보유 자산이 없습니다</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={cn('bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden', className)}>
+    <div
+      className={cn(
+        'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden',
+        className,
+      )}
+    >
       {/* Desktop Table */}
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full">
@@ -166,18 +177,19 @@ export function HoldingsTable({
           </thead>
           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
             {sortedHoldings.map((holding) => {
-              const { returnsText, percentageText, className: returnClass } = formatReturns(
-                holding.returns,
-                holding.percentage
-              );
-              
+              const {
+                returnsText,
+                percentageText,
+                className: returnClass,
+              } = formatReturns(holding.returns, holding.percentage);
+
               return (
                 <tr
                   key={holding.id}
                   onClick={() => onRowClick?.(holding)}
                   className={cn(
                     'hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors',
-                    onRowClick && 'cursor-pointer'
+                    onRowClick && 'cursor-pointer',
                   )}
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -185,9 +197,7 @@ export function HoldingsTable({
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         {holding.symbol}
                       </div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {holding.name}
-                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">{holding.name}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm text-gray-900 dark:text-gray-100">
@@ -202,13 +212,16 @@ export function HoldingsTable({
                         {holding.currentPrice.toLocaleString('ko-KR')}
                       </div>
                       {holding.change24h !== undefined && (
-                        <div className={cn(
-                          'text-xs',
-                          holding.change24h >= 0
-                            ? 'text-green-600 dark:text-green-400'
-                            : 'text-red-600 dark:text-red-400'
-                        )}>
-                          {holding.change24h >= 0 ? '+' : ''}{holding.change24h.toFixed(2)}%
+                        <div
+                          className={cn(
+                            'text-xs',
+                            holding.change24h >= 0
+                              ? 'text-green-600 dark:text-green-400'
+                              : 'text-red-600 dark:text-red-400',
+                          )}
+                        >
+                          {holding.change24h >= 0 ? '+' : ''}
+                          {holding.change24h.toFixed(2)}%
                         </div>
                       )}
                     </div>
@@ -227,10 +240,7 @@ export function HoldingsTable({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right">
                     {holding.priceHistory && holding.priceHistory.length > 0 ? (
-                      <SparklineChart
-                        data={holding.priceHistory}
-                        className="ml-auto"
-                      />
+                      <SparklineChart data={holding.priceHistory} className="ml-auto" />
                     ) : (
                       <div className="w-24 h-8 bg-gray-100 dark:bg-gray-700 rounded" />
                     )}
@@ -241,16 +251,31 @@ export function HoldingsTable({
           </tbody>
           <tfoot className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
             <tr>
-              <td colSpan={4} className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100">
+              <td
+                colSpan={4}
+                className="px-6 py-4 text-sm font-medium text-gray-900 dark:text-gray-100"
+              >
                 합계
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-gray-100">
                 {totalValue.toLocaleString('ko-KR')}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <div className={totalReturns >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}>
-                  <div>{totalReturns >= 0 ? '+' : ''}{totalReturns.toLocaleString('ko-KR')}</div>
-                  <div className="text-xs">{totalReturns >= 0 ? '+' : ''}{totalPercentage.toFixed(2)}%</div>
+                <div
+                  className={
+                    totalReturns >= 0
+                      ? 'text-green-600 dark:text-green-400'
+                      : 'text-red-600 dark:text-red-400'
+                  }
+                >
+                  <div>
+                    {totalReturns >= 0 ? '+' : ''}
+                    {totalReturns.toLocaleString('ko-KR')}
+                  </div>
+                  <div className="text-xs">
+                    {totalReturns >= 0 ? '+' : ''}
+                    {totalPercentage.toFixed(2)}%
+                  </div>
                 </div>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -266,18 +291,19 @@ export function HoldingsTable({
       <div className="lg:hidden">
         <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {sortedHoldings.map((holding) => {
-            const { returnsText, percentageText, className: returnClass } = formatReturns(
-              holding.returns,
-              holding.percentage
-            );
-            
+            const {
+              returnsText,
+              percentageText,
+              className: returnClass,
+            } = formatReturns(holding.returns, holding.percentage);
+
             return (
               <div
                 key={holding.id}
                 onClick={() => onRowClick?.(holding)}
                 className={cn(
                   'p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50',
-                  onRowClick && 'cursor-pointer'
+                  onRowClick && 'cursor-pointer',
                 )}
               >
                 <div className="flex items-start justify-between mb-2">
@@ -285,9 +311,7 @@ export function HoldingsTable({
                     <div className="font-medium text-gray-900 dark:text-gray-100">
                       {holding.symbol}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {holding.name}
-                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">{holding.name}</div>
                   </div>
                   <div className="text-right">
                     <div className="font-medium text-gray-900 dark:text-gray-100">
@@ -298,7 +322,7 @@ export function HoldingsTable({
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
                   <div className="text-sm">
                     <span className="text-gray-500 dark:text-gray-400">수익: </span>
@@ -306,40 +330,37 @@ export function HoldingsTable({
                       {returnsText} ({percentageText})
                     </span>
                   </div>
-                  
+
                   {holding.priceHistory && holding.priceHistory.length > 0 && (
-                    <TrendMiniChart
-                      data={holding.priceHistory}
-                      positive={holding.returns >= 0}
-                    />
+                    <TrendMiniChart data={holding.priceHistory} positive={holding.returns >= 0} />
                   )}
                 </div>
               </div>
             );
           })}
         </div>
-        
+
         {/* Mobile Summary */}
         <div className="p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              총 평가액
-            </span>
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">총 평가액</span>
             <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
               {totalValue.toLocaleString('ko-KR')} KRW
             </span>
           </div>
           <div className="flex justify-between items-center mt-2">
-            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-              총 수익
-            </span>
-            <span className={cn(
-              'text-lg font-bold',
-              totalReturns >= 0
-                ? 'text-green-600 dark:text-green-400'
-                : 'text-red-600 dark:text-red-400'
-            )}>
-              {totalReturns >= 0 ? '+' : ''}{totalReturns.toLocaleString('ko-KR')} ({totalReturns >= 0 ? '+' : ''}{totalPercentage.toFixed(2)}%)
+            <span className="text-sm font-medium text-gray-900 dark:text-gray-100">총 수익</span>
+            <span
+              className={cn(
+                'text-lg font-bold',
+                totalReturns >= 0
+                  ? 'text-green-600 dark:text-green-400'
+                  : 'text-red-600 dark:text-red-400',
+              )}
+            >
+              {totalReturns >= 0 ? '+' : ''}
+              {totalReturns.toLocaleString('ko-KR')} ({totalReturns >= 0 ? '+' : ''}
+              {totalPercentage.toFixed(2)}%)
             </span>
           </div>
         </div>
@@ -363,29 +384,30 @@ function SortableHeader({
   sortBy,
   sortOrder,
   onSort,
-  align = 'left'
+  align = 'left',
 }: SortableHeaderProps) {
   const isActive = sortBy === field;
-  
+
   return (
     <th
       className={cn(
         'px-6 py-3 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider',
         align === 'right' ? 'text-right' : 'text-left',
-        onSort && 'cursor-pointer hover:text-gray-700 dark:hover:text-gray-300'
+        onSort && 'cursor-pointer hover:text-gray-700 dark:hover:text-gray-300',
       )}
       onClick={() => onSort?.(field)}
     >
-      <div className={cn(
-        'inline-flex items-center gap-1',
-        align === 'right' && 'flex-row-reverse'
-      )}>
+      <div
+        className={cn('inline-flex items-center gap-1', align === 'right' && 'flex-row-reverse')}
+      >
         <span>{label}</span>
         {onSort && (
-          <span className={cn(
-            'transition-opacity',
-            isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50'
-          )}>
+          <span
+            className={cn(
+              'transition-opacity',
+              isActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-50',
+            )}
+          >
             {isActive && sortOrder === 'asc' ? '↑' : '↓'}
           </span>
         )}

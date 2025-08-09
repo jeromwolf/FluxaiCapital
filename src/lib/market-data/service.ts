@@ -3,10 +3,10 @@
  * Integrates multiple market data providers
  */
 
-import { 
-  MarketQuote, 
-  MarketCandle, 
-  MarketNews, 
+import {
+  MarketQuote,
+  MarketCandle,
+  MarketNews,
   TechnicalIndicator,
   MarketIndex,
   SectorPerformance,
@@ -15,7 +15,7 @@ import {
   DartDisclosure,
   DartFinancialStatement,
   DartMajorShareholder,
-  DartCompanyInfo
+  DartCompanyInfo,
 } from './types';
 
 import { AlphaVantageProvider } from './providers/alpha-vantage';
@@ -39,19 +39,13 @@ export class MarketDataService {
     // Initialize main provider based on config
     switch (this.config.provider) {
       case 'alphaVantage':
-        if (this.config.apiKey) {
-          this.providers.set('alphaVantage', new AlphaVantageProvider(this.config.apiKey));
-        }
+        this.providers.set('alphaVantage', new AlphaVantageProvider());
         break;
       case 'finnhub':
-        if (this.config.apiKey) {
-          this.providers.set('finnhub', new FinnhubProvider(this.config.apiKey));
-        }
+        this.providers.set('finnhub', new FinnhubProvider());
         break;
       case 'twelveData':
-        if (this.config.apiKey) {
-          this.providers.set('twelveData', new TwelveDataProvider(this.config.apiKey));
-        }
+        this.providers.set('twelveData', new TwelveDataProvider());
         break;
       case 'yahoo':
         this.providers.set('yahoo', new YahooFinanceProvider());
@@ -62,12 +56,13 @@ export class MarketDataService {
     }
 
     // Initialize DART provider if API key is available
-    if (process.env.DART_API_KEY) {
-      try {
+    try {
+      if (process.env.DART_API_KEY && process.env.DART_API_KEY.trim() !== '') {
         this.dartProvider = getDartProvider();
-      } catch (error) {
-        console.error('Failed to initialize DART provider:', error);
       }
+    } catch (error) {
+      console.warn('DART provider not available:', error);
+      // Don't throw, just log warning
     }
   }
 
@@ -91,7 +86,7 @@ export class MarketDataService {
   async getCandles(
     symbol: string,
     interval: '1min' | '5min' | '15min' | '30min' | '1hour' | '1day',
-    limit?: number
+    limit?: number,
   ): Promise<MarketCandle[]> {
     return this.getProvider().getCandles(symbol, interval, limit);
   }
@@ -104,7 +99,7 @@ export class MarketDataService {
     symbol: string,
     indicator: 'SMA' | 'EMA' | 'RSI' | 'MACD' | 'BB',
     interval: '1min' | '5min' | '15min' | '30min' | '1hour' | '1day',
-    timePeriod?: number
+    timePeriod?: number,
   ): Promise<TechnicalIndicator[]> {
     if (this.getProvider().getTechnicalIndicators) {
       return this.getProvider().getTechnicalIndicators(symbol, indicator, interval, timePeriod);
@@ -197,11 +192,13 @@ export class MarketDataService {
     return this.dartProvider.getKeyFinancialMetrics(params);
   }
 
-  async searchDartCompanies(query: string): Promise<Array<{
-    corpCode: string;
-    corpName: string;
-    stockCode?: string;
-  }>> {
+  async searchDartCompanies(query: string): Promise<
+    Array<{
+      corpCode: string;
+      corpName: string;
+      stockCode?: string;
+    }>
+  > {
     if (!this.dartProvider) {
       throw new Error('DART provider not initialized. Please configure DART_API_KEY.');
     }
@@ -209,17 +206,12 @@ export class MarketDataService {
   }
 
   getDartDocumentViewerUrl(rceptNo: string): string {
-    if (!this.dartProvider) {
-      throw new Error('DART provider not initialized. Please configure DART_API_KEY.');
-    }
-    return this.dartProvider.getDocumentViewerUrl(rceptNo);
+    // Static method - can call directly on class
+    return DartProvider.getDocumentViewerUrl(rceptNo);
   }
 
   // WebSocket methods
-  subscribeToQuotes(
-    symbols: string[],
-    callback: (quotes: MarketQuote[]) => void
-  ): () => void {
+  subscribeToQuotes(symbols: string[], callback: (quotes: MarketQuote[]) => void): () => void {
     if (this.getProvider().subscribeToQuotes) {
       return this.getProvider().subscribeToQuotes(symbols, callback);
     }

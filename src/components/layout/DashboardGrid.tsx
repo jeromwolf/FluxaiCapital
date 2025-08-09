@@ -10,11 +10,7 @@ interface DashboardGridProps {
   variant?: 'default' | 'compact' | 'wide';
 }
 
-export function DashboardGrid({ 
-  children, 
-  className,
-  variant = 'default' 
-}: DashboardGridProps) {
+export function DashboardGrid({ children, className, variant = 'default' }: DashboardGridProps) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const isLargeDesktop = useIsLargeDesktop();
@@ -26,7 +22,7 @@ export function DashboardGrid({
     variant === 'wide' && 'lg:grid-cols-16',
     isMobile && 'grid-cols-1 gap-4',
     isTablet && 'grid-cols-2 gap-4',
-    className
+    className,
   );
 
   return <div className={gridClasses}>{children}</div>;
@@ -54,7 +50,7 @@ export function GridItem({
   className,
   colSpan = { default: 12 },
   rowSpan = 1,
-  order
+  order,
 }: GridItemProps) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
@@ -83,34 +79,36 @@ export function GridItem({
     `lg:col-span-${span}`,
     rowSpan > 1 && `row-span-${rowSpan}`,
     orderValue !== undefined && `order-${orderValue}`,
-    className
+    className,
   );
 
   return <div className={itemClasses}>{children}</div>;
 }
 
 // Preset layouts for common dashboard patterns
-export function MetricsGrid({ children, className }: { children: React.ReactNode; className?: string }) {
+export function MetricsGrid({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className={cn(
-      'grid gap-4',
-      'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
-      className
-    )}>
+    <div className={cn('grid gap-4', 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4', className)}>
       {children}
     </div>
   );
 }
 
-export function TwoColumnLayout({ 
-  left, 
+export function TwoColumnLayout({
+  left,
   right,
   leftWidth = 8,
   rightWidth = 4,
   className,
-  reverseOnMobile = false
-}: { 
-  left: React.ReactNode; 
+  reverseOnMobile = false,
+}: {
+  left: React.ReactNode;
   right: React.ReactNode;
   leftWidth?: number;
   rightWidth?: number;
@@ -119,13 +117,13 @@ export function TwoColumnLayout({
 }) {
   return (
     <DashboardGrid className={className}>
-      <GridItem 
+      <GridItem
         colSpan={{ default: leftWidth, mobile: 12 }}
         order={reverseOnMobile ? { mobile: 2, desktop: 1 } : undefined}
       >
         {left}
       </GridItem>
-      <GridItem 
+      <GridItem
         colSpan={{ default: rightWidth, mobile: 12 }}
         order={reverseOnMobile ? { mobile: 1, desktop: 2 } : undefined}
       >
@@ -135,28 +133,22 @@ export function TwoColumnLayout({
   );
 }
 
-export function ThreeColumnLayout({ 
-  left, 
+export function ThreeColumnLayout({
+  left,
   center,
   right,
-  className
-}: { 
-  left: React.ReactNode; 
+  className,
+}: {
+  left: React.ReactNode;
   center: React.ReactNode;
   right: React.ReactNode;
   className?: string;
 }) {
   return (
     <DashboardGrid className={className}>
-      <GridItem colSpan={{ default: 3, tablet: 6, mobile: 12 }}>
-        {left}
-      </GridItem>
-      <GridItem colSpan={{ default: 6, tablet: 6, mobile: 12 }}>
-        {center}
-      </GridItem>
-      <GridItem colSpan={{ default: 3, tablet: 12, mobile: 12 }}>
-        {right}
-      </GridItem>
+      <GridItem colSpan={{ default: 3, tablet: 6, mobile: 12 }}>{left}</GridItem>
+      <GridItem colSpan={{ default: 6, tablet: 6, mobile: 12 }}>{center}</GridItem>
+      <GridItem colSpan={{ default: 3, tablet: 12, mobile: 12 }}>{right}</GridItem>
     </DashboardGrid>
   );
 }
@@ -181,17 +173,19 @@ export function DashboardWidget({
   className,
   noPadding = false,
   loading = false,
-  error
+  error,
 }: DashboardWidgetProps) {
   const isMobile = useIsMobile();
 
   if (loading) {
     return (
-      <div className={cn(
-        'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
-        !noPadding && (isMobile ? 'p-4' : 'p-6'),
-        className
-      )}>
+      <div
+        className={cn(
+          'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
+          !noPadding && (isMobile ? 'p-4' : 'p-6'),
+          className,
+        )}
+      >
         <div className="animate-pulse">
           <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-4" />
           <div className="space-y-3">
@@ -205,11 +199,13 @@ export function DashboardWidget({
 
   if (error) {
     return (
-      <div className={cn(
-        'bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-800',
-        !noPadding && (isMobile ? 'p-4' : 'p-6'),
-        className
-      )}>
+      <div
+        className={cn(
+          'bg-white dark:bg-gray-800 rounded-lg border border-red-200 dark:border-red-800',
+          !noPadding && (isMobile ? 'p-4' : 'p-6'),
+          className,
+        )}
+      >
         <div className="text-center text-red-600 dark:text-red-400">
           <p className="text-sm font-medium">오류 발생</p>
           <p className="text-xs mt-1">{error}</p>
@@ -219,27 +215,33 @@ export function DashboardWidget({
   }
 
   return (
-    <div className={cn(
-      'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
-      !noPadding && (isMobile ? 'p-4' : 'p-6'),
-      className
-    )}>
+    <div
+      className={cn(
+        'bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700',
+        !noPadding && (isMobile ? 'p-4' : 'p-6'),
+        className,
+      )}
+    >
       {(title || subtitle || action) && (
         <div className="flex items-start justify-between mb-4">
           <div>
             {title && (
-              <h3 className={cn(
-                'font-semibold text-gray-900 dark:text-gray-100',
-                isMobile ? 'text-base' : 'text-lg'
-              )}>
+              <h3
+                className={cn(
+                  'font-semibold text-gray-900 dark:text-gray-100',
+                  isMobile ? 'text-base' : 'text-lg',
+                )}
+              >
                 {title}
               </h3>
             )}
             {subtitle && (
-              <p className={cn(
-                'text-gray-600 dark:text-gray-400',
-                isMobile ? 'text-xs mt-0.5' : 'text-sm mt-1'
-              )}>
+              <p
+                className={cn(
+                  'text-gray-600 dark:text-gray-400',
+                  isMobile ? 'text-xs mt-0.5' : 'text-sm mt-1',
+                )}
+              >
                 {subtitle}
               </p>
             )}

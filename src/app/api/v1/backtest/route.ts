@@ -15,18 +15,14 @@ const backtestSchema = z.object({
 });
 
 // Generate mock historical data
-function generateMockPriceData(
-  symbols: string[],
-  startDate: Date,
-  endDate: Date
-) {
+function generateMockPriceData(symbols: string[], startDate: Date, endDate: Date) {
   const priceData: Array<{ date: Date; symbol: string; price: number }> = [];
   const basePrices: Record<string, number> = {
-    'AAPL': 150,
-    'MSFT': 300,
-    'GOOGL': 100,
-    'NVDA': 400,
-    'TSLA': 200,
+    AAPL: 150,
+    MSFT: 300,
+    GOOGL: 100,
+    NVDA: 400,
+    TSLA: 200,
     '005930': 70000,
     '035420': 200000,
   };
@@ -42,10 +38,11 @@ function generateMockPriceData(
         const randomChange = (Math.random() - 0.5) * 0.02; // +/- 1% daily change
         const volatility = symbol === 'TSLA' || symbol === 'NVDA' ? 1.5 : 1;
         const trend = symbol === 'NVDA' ? 0.0002 : 0; // NVDA has slight upward trend
-        
-        const previousPrice = priceData.filter(p => p.symbol === symbol).slice(-1)[0]?.price || basePrice;
+
+        const previousPrice =
+          priceData.filter((p) => p.symbol === symbol).slice(-1)[0]?.price || basePrice;
         const newPrice = previousPrice * (1 + randomChange * volatility + trend);
-        
+
         priceData.push({
           date: new Date(currentDate),
           symbol,
@@ -53,7 +50,7 @@ function generateMockPriceData(
         });
       }
     }
-    
+
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
@@ -72,16 +69,12 @@ export async function POST(request: NextRequest) {
     if (startDate >= endDate) {
       return NextResponse.json(
         { success: false, message: 'Start date must be before end date' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     // Generate mock price data (in real app, fetch from market data API)
-    const priceData = generateMockPriceData(
-      validatedData.symbols,
-      startDate,
-      endDate
-    );
+    const priceData = generateMockPriceData(validatedData.symbols, startDate, endDate);
 
     // Run backtest
     const engine = new BacktestEngine({
@@ -99,15 +92,15 @@ export async function POST(request: NextRequest) {
     // Format dates for JSON response
     const formattedResult = {
       ...result,
-      equityCurve: result.equityCurve.map(e => ({
+      equityCurve: result.equityCurve.map((e) => ({
         ...e,
         date: e.date.toISOString(),
       })),
-      trades: result.trades.map(t => ({
+      trades: result.trades.map((t) => ({
         ...t,
         date: t.date.toISOString(),
       })),
-      dailyReturns: result.dailyReturns.map(r => ({
+      dailyReturns: result.dailyReturns.map((r) => ({
         ...r,
         date: r.date.toISOString(),
       })),
@@ -121,28 +114,25 @@ export async function POST(request: NextRequest) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { success: false, message: 'Invalid data', errors: error.issues },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     console.error('Error running backtest:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         message: 'Failed to run backtest',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
 
 // GET /api/v1/backtest - Get available strategies
 export async function GET() {
-  const strategies = [
-    momentumStrategy,
-    meanReversionStrategy,
-  ];
+  const strategies = [momentumStrategy, meanReversionStrategy];
 
   return NextResponse.json({
     success: true,

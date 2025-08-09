@@ -12,32 +12,32 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 interface PageProps {
-  params: Promise<{ symbol: string }>
+  params: Promise<{ symbol: string }>;
 }
 
 export default function StockDetailPage({ params }: PageProps) {
   const { symbol } = use(params);
   const [interval, setInterval] = React.useState<'1m' | '5m' | '1h' | '1d'>('1h');
   const [isFavorite, setIsFavorite] = React.useState(false);
-  
+
   const { price, isLoading: priceLoading } = useMarketPrice(symbol);
   const { candles, isLoading: candlesLoading } = useMarketCandles(symbol, interval);
   const { ticker } = useRealtimePrice(symbol);
-  
+
   const isLoading = priceLoading || candlesLoading;
-  
+
   // Calculate returns data from candles
   const returnsData = React.useMemo(() => {
     if (!candles || candles.length === 0) return [];
-    
+
     const firstClose = candles[0].close;
-    return candles.map(candle => ({
+    return candles.map((candle: any) => ({
       date: new Date(candle.timestamp),
       value: candle.close,
       returns: ((candle.close - firstClose) / firstClose) * 100,
     }));
   }, [candles]);
-  
+
   if (!price && isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -45,7 +45,7 @@ export default function StockDetailPage({ params }: PageProps) {
       </div>
     );
   }
-  
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
@@ -58,18 +58,12 @@ export default function StockDetailPage({ params }: PageProps) {
           <span>/</span>
           <span>{symbol}</span>
         </div>
-        
+
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                {symbol}
-              </h1>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsFavorite(!isFavorite)}
-              >
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{symbol}</h1>
+              <Button variant="ghost" size="icon" onClick={() => setIsFavorite(!isFavorite)}>
                 {isFavorite ? (
                   <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
                 ) : (
@@ -77,65 +71,62 @@ export default function StockDetailPage({ params }: PageProps) {
                 )}
               </Button>
             </div>
-            {price && (
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                {price.name}
-              </p>
-            )}
+            {price && <p className="text-gray-600 dark:text-gray-400 mt-1">{price.name}</p>}
           </div>
-          
+
           {/* Real-time Price Ticker */}
           <div className="text-right">
             <PriceTicker symbol={symbol} variant="detailed" />
           </div>
         </div>
       </div>
-      
+
       {/* Price Info Cards */}
       {price && (
         <div className="grid gap-4 md:grid-cols-4 mb-8">
           <ResponsiveCard className="p-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">거래량</p>
-            <p className="text-lg font-semibold mt-1">
-              {price.volume.toLocaleString()}
-            </p>
+            <p className="text-lg font-semibold mt-1">{price.volume.toLocaleString()}</p>
           </ResponsiveCard>
-          
+
           <ResponsiveCard className="p-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">24시간 최고</p>
             <p className="text-lg font-semibold text-red-600 dark:text-red-400 mt-1">
               {price.high24h?.toLocaleString()} {price.currency}
             </p>
           </ResponsiveCard>
-          
+
           <ResponsiveCard className="p-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">24시간 최저</p>
             <p className="text-lg font-semibold text-blue-600 dark:text-blue-400 mt-1">
               {price.low24h?.toLocaleString()} {price.currency}
             </p>
           </ResponsiveCard>
-          
+
           <ResponsiveCard className="p-4">
             <p className="text-sm text-gray-600 dark:text-gray-400">변동률</p>
-            <p className={cn(
-              "text-lg font-semibold mt-1",
-              price.changePercent >= 0 
-                ? "text-green-600 dark:text-green-400"
-                : "text-red-600 dark:text-red-400"
-            )}>
-              {price.changePercent >= 0 ? '+' : ''}{price.changePercent.toFixed(2)}%
+            <p
+              className={cn(
+                'text-lg font-semibold mt-1',
+                price.changePercent >= 0
+                  ? 'text-green-600 dark:text-green-400'
+                  : 'text-red-600 dark:text-red-400',
+              )}
+            >
+              {price.changePercent >= 0 ? '+' : ''}
+              {price.changePercent.toFixed(2)}%
             </p>
           </ResponsiveCard>
         </div>
       )}
-      
+
       {/* Charts */}
       <Tabs defaultValue="candle" className="space-y-6">
         <TabsList>
           <TabsTrigger value="candle">캔들 차트</TabsTrigger>
           <TabsTrigger value="returns">수익률 차트</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="candle" className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold">가격 차트</h2>
@@ -152,7 +143,7 @@ export default function StockDetailPage({ params }: PageProps) {
               ))}
             </div>
           </div>
-          
+
           <ResponsiveCard className="p-6">
             {candlesLoading ? (
               <div className="flex items-center justify-center h-[400px]">
@@ -163,7 +154,7 @@ export default function StockDetailPage({ params }: PageProps) {
             )}
           </ResponsiveCard>
         </TabsContent>
-        
+
         <TabsContent value="returns" className="space-y-4">
           <ResponsiveCard className="p-6">
             {candlesLoading ? (
@@ -171,12 +162,7 @@ export default function StockDetailPage({ params }: PageProps) {
                 <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
               </div>
             ) : (
-              <ReturnsChart
-                data={returnsData}
-                height={400}
-                title="누적 수익률"
-                variant="area"
-              />
+              <ReturnsChart data={returnsData} height={400} title="누적 수익률" variant="area" />
             )}
           </ResponsiveCard>
         </TabsContent>

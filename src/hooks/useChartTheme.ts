@@ -126,11 +126,11 @@ export function useChartTheme(): ChartTheme {
     };
 
     checkTheme();
-    
+
     // Listen for theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => checkTheme();
-    
+
     mediaQuery.addEventListener('change', handleChange);
     window.addEventListener('storage', handleChange);
 
@@ -139,7 +139,7 @@ export function useChartTheme(): ChartTheme {
       window.removeEventListener('storage', handleChange);
     };
   }, []);
-  
+
   return useMemo(() => {
     return isDark ? darkTheme : lightTheme;
   }, [isDark]);

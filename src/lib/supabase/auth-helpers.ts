@@ -11,7 +11,7 @@ export async function getUser() {
 
 export async function requireAuth() {
   // 개발 환경에서는 로그인 우회
-  if (process.env["NODE_ENV"] === 'development') {
+  if (process.env['NODE_ENV'] === 'development') {
     return {
       id: 'dev-user-123',
       email: 'dev@flux.ai.kr',

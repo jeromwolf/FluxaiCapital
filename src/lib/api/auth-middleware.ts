@@ -14,14 +14,15 @@ export interface AuthContext {
  * Supports both session-based auth and API key auth
  */
 export async function authenticateRequest(
-  req: NextRequest
+  req: NextRequest,
 ): Promise<{ authenticated: boolean; context?: AuthContext; error?: string }> {
   // Check for API key first
-  const apiKey = req.headers.get('x-api-key') || req.headers.get('authorization')?.replace('Bearer ', '');
-  
+  const apiKey =
+    req.headers.get('x-api-key') || req.headers.get('authorization')?.replace('Bearer ', '');
+
   if (apiKey) {
     const validatedKey = await ApiKeyManager.validateApiKey(apiKey);
-    
+
     if (!validatedKey) {
       return {
         authenticated: false,
@@ -41,7 +42,7 @@ export async function authenticateRequest(
 
   // Fall back to session auth
   const session = await getServerSession(authOptions);
-  
+
   if (!session?.user?.id) {
     return {
       authenticated: false,
@@ -72,7 +73,7 @@ export function hasPermission(context: AuthContext, permission: string): boolean
  */
 export function withAuth(
   handler: (req: NextRequest, context: AuthContext) => Promise<NextResponse>,
-  requiredPermission?: string
+  requiredPermission?: string,
 ) {
   return async (req: NextRequest) => {
     const { authenticated, context, error } = await authenticateRequest(req);

@@ -1,6 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+export const dynamic = 'force-dynamic';
+
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 import { Loader2, Code2 } from 'lucide-react';
@@ -13,26 +15,39 @@ const testAccounts = [
     email: 'admin@flux.ai.kr',
     password: 'admin123',
     role: '관리자',
-    description: '모든 기능 접근 가능'
+    description: '모든 기능 접근 가능',
   },
   {
     email: 'user@flux.ai.kr',
     password: 'user123',
     role: '일반 사용자',
-    description: '기본 포트폴리오 기능'
+    description: '기본 포트폴리오 기능',
   },
   {
     email: 'test@flux.ai.kr',
     password: 'test123',
     role: '테스트 계정',
-    description: '제한된 기능'
-  }
+    description: '제한된 기능',
+  },
 ];
 
 export default function DevLoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isDevEnv, setIsDevEnv] = useState<boolean | null>(null);
+
+  // 개발 환경 체크를 클라이언트에서 실행
+  useEffect(() => {
+    setIsDevEnv(process.env.NODE_ENV === 'development');
+  }, []);
+
+  // 개발 환경이 아닌 경우 리다이렉트
+  useEffect(() => {
+    if (isDevEnv === false) {
+      router.push('/login');
+    }
+  }, [isDevEnv, router]);
 
   const handleQuickLogin = async (email: string, password: string) => {
     setIsLoading(email);
@@ -58,9 +73,8 @@ export default function DevLoginPage() {
     }
   };
 
-  // 개발 환경이 아닌 경우 리다이렉트
-  if (process.env["NODE_ENV"] !== 'development') {
-    router.push('/login');
+  // 환경 체크 중이거나 개발 환경이 아닌 경우
+  if (isDevEnv === null || isDevEnv === false) {
     return null;
   }
 
@@ -72,21 +86,17 @@ export default function DevLoginPage() {
             <Code2 className="h-8 w-8 text-primary" />
             <CardTitle className="text-2xl">개발자 모드 로그인</CardTitle>
           </div>
-          <CardDescription>
-            테스트용 계정으로 빠르게 로그인하세요
-          </CardDescription>
+          <CardDescription>테스트용 계정으로 빠르게 로그인하세요</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {error && (
-            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-              {error}
-            </div>
+            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">{error}</div>
           )}
 
           <div className="space-y-3">
             {testAccounts.map((account) => (
-              <Card 
-                key={account.email} 
+              <Card
+                key={account.email}
                 className="cursor-pointer hover:border-primary transition-colors"
                 onClick={() => handleQuickLogin(account.email, account.password)}
               >
@@ -97,11 +107,7 @@ export default function DevLoginPage() {
                       <div className="text-sm text-muted-foreground">{account.email}</div>
                       <div className="text-xs text-muted-foreground">{account.description}</div>
                     </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={isLoading === account.email}
-                    >
+                    <Button variant="outline" size="sm" disabled={isLoading === account.email}>
                       {isLoading === account.email ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -125,17 +131,12 @@ export default function DevLoginPage() {
                 <li>• 사용자: user@flux.ai.kr / user123</li>
                 <li>• 테스트: test@flux.ai.kr / test123</li>
               </ul>
-              <p className="text-xs mt-4">
-                ⚠️ 이 페이지는 개발 환경에서만 접근 가능합니다.
-              </p>
+              <p className="text-xs mt-4">⚠️ 이 페이지는 개발 환경에서만 접근 가능합니다.</p>
             </div>
           </div>
 
           <div className="flex justify-center pt-4">
-            <Button
-              variant="ghost"
-              onClick={() => router.push('/login')}
-            >
+            <Button variant="ghost" onClick={() => router.push('/login')}>
               일반 로그인으로 돌아가기
             </Button>
           </div>

@@ -7,31 +7,22 @@ import { sendVerificationEmail } from '@/lib/email/verification';
 export async function POST(request: NextRequest) {
   try {
     const { email } = await request.json();
-    
+
     if (!email) {
-      return NextResponse.json(
-        { error: '이메일이 필요합니다.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '이메일이 필요합니다.' }, { status: 400 });
     }
 
     // Find user
     const user = await prisma.user.findUnique({
-      where: { email }
+      where: { email },
     });
 
     if (!user) {
-      return NextResponse.json(
-        { error: '사용자를 찾을 수 없습니다.' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: '사용자를 찾을 수 없습니다.' }, { status: 404 });
     }
 
     if (user.emailVerified) {
-      return NextResponse.json(
-        { message: '이미 인증된 이메일입니다.' },
-        { status: 200 }
-      );
+      return NextResponse.json({ message: '이미 인증된 이메일입니다.' }, { status: 200 });
     }
 
     // Generate verification token
@@ -44,22 +35,16 @@ export async function POST(request: NextRequest) {
         identifier: email,
         token,
         expires,
-      }
+      },
     });
 
     // Send verification email
     await sendVerificationEmail(email, token);
 
-    return NextResponse.json(
-      { message: '인증 이메일이 발송되었습니다.' },
-      { status: 200 }
-    );
+    return NextResponse.json({ message: '인증 이메일이 발송되었습니다.' }, { status: 200 });
   } catch (error) {
     console.error('Email verification error:', error);
-    return NextResponse.json(
-      { error: '이메일 발송 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: '이메일 발송 중 오류가 발생했습니다.' }, { status: 500 });
   }
 }
 
@@ -70,54 +55,42 @@ export async function GET(request: NextRequest) {
     const token = searchParams.get('token');
 
     if (!token) {
-      return NextResponse.json(
-        { error: '토큰이 필요합니다.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '토큰이 필요합니다.' }, { status: 400 });
     }
 
     // Find verification token
     const verificationToken = await prisma.verificationToken.findUnique({
-      where: { token }
+      where: { token },
     });
 
     if (!verificationToken) {
-      return NextResponse.json(
-        { error: '유효하지 않은 토큰입니다.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '유효하지 않은 토큰입니다.' }, { status: 400 });
     }
 
     if (verificationToken.expires < new Date()) {
       // Delete expired token
       await prisma.verificationToken.delete({
-        where: { token }
+        where: { token },
       });
 
-      return NextResponse.json(
-        { error: '만료된 토큰입니다.' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: '만료된 토큰입니다.' }, { status: 400 });
     }
 
     // Update user email verification status
     await prisma.user.update({
       where: { email: verificationToken.identifier },
-      data: { emailVerified: new Date() }
+      data: { emailVerified: new Date() },
     });
 
     // Delete used token
     await prisma.verificationToken.delete({
-      where: { token }
+      where: { token },
     });
 
     // Redirect to success page
     return NextResponse.redirect(new URL('/login?verified=true', request.url));
   } catch (error) {
     console.error('Email verification error:', error);
-    return NextResponse.json(
-      { error: '이메일 인증 중 오류가 발생했습니다.' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: '이메일 인증 중 오류가 발생했습니다.' }, { status: 500 });
   }
 }

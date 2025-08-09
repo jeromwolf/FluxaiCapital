@@ -1,10 +1,18 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { DartDisclosureWidget } from '@/components/market/DartDisclosureWidget';
 import { Search } from 'lucide-react';
 
@@ -27,9 +35,9 @@ export default function DisclosuresPage() {
 
   const handleSearch = () => {
     // In a real implementation, this would search for the stock
-    const stock = popularStocks.find(s => 
-      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.code.includes(searchQuery)
+    const stock = popularStocks.find(
+      (s) =>
+        s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.code.includes(searchQuery),
     );
     if (stock) {
       setSelectedStock(stock);
@@ -54,7 +62,7 @@ export default function DisclosuresPage() {
             <Select
               value={selectedStock.code}
               onValueChange={(value) => {
-                const stock = popularStocks.find(s => s.code === value);
+                const stock = popularStocks.find((s) => s.code === value);
                 if (stock) setSelectedStock(stock);
               }}
             >
@@ -90,10 +98,7 @@ export default function DisclosuresPage() {
         </CardContent>
       </Card>
 
-      <DartDisclosureWidget 
-        stockCode={selectedStock.code} 
-        corpName={selectedStock.name}
-      />
+      <DartDisclosureWidget stockCode={selectedStock.code} corpName={selectedStock.name} />
 
       <Card>
         <CardContent className="pt-6">

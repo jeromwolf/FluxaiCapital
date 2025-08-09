@@ -2,14 +2,14 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { Period } from '@/components/dashboard/PeriodTabs';
-import { 
-  filterDataByPeriod, 
+import {
+  filterDataByPeriod,
   calculatePeriodReturns,
   getDataGranularityForPeriod,
   aggregateDataByGranularity,
   isDataStaleForPeriod,
   DataPoint,
-  PortfolioData
+  PortfolioData,
 } from '@/lib/utils/period-filters';
 
 interface UsePeriodDataOptions<T> {
@@ -38,7 +38,7 @@ export function usePeriodData<T extends DataPoint>({
   valueField = 'value' as keyof T,
   autoRefresh = false,
   refreshInterval = 60000, // 1 minute default
-  onDataStale
+  onDataStale,
 }: UsePeriodDataOptions<T>): UsePeriodDataReturn<T> {
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(new Date());
@@ -57,13 +57,13 @@ export function usePeriodData<T extends DataPoint>({
   // Calculate returns if data is portfolio data
   const returns = useMemo(() => {
     if (!data || data.length === 0) return null;
-    
+
     // Check if data has the required fields for portfolio data
     const firstItem = data[0];
     if ('totalValue' in firstItem && 'date' in firstItem) {
       return calculatePeriodReturns(data as unknown as PortfolioData[], period);
     }
-    
+
     return null;
   }, [data, period]);
 
@@ -98,7 +98,7 @@ export function usePeriodData<T extends DataPoint>({
     returns,
     isLoading,
     isStale,
-    refresh
+    refresh,
   };
 }
 
@@ -110,17 +110,17 @@ interface UsePeriodSeriesOptions {
 
 export function usePeriodSeries<T extends DataPoint>({
   period,
-  autoRefresh = false
+  autoRefresh = false,
 }: UsePeriodSeriesOptions) {
   const [series, setSeries] = useState<Record<string, T[]>>({});
   const [isLoading, setIsLoading] = useState<Record<string, boolean>>({});
 
   const addSeries = (key: string, data: T[]) => {
-    setSeries(prev => ({ ...prev, [key]: data }));
+    setSeries((prev) => ({ ...prev, [key]: data }));
   };
 
   const removeSeries = (key: string) => {
-    setSeries(prev => {
+    setSeries((prev) => {
       const newSeries = { ...prev };
       delete newSeries[key];
       return newSeries;
@@ -133,10 +133,13 @@ export function usePeriodSeries<T extends DataPoint>({
   };
 
   const getAllFilteredSeries = (): Record<string, T[]> => {
-    return Object.entries(series).reduce((acc, [key, data]) => {
-      acc[key] = filterDataByPeriod(data, period);
-      return acc;
-    }, {} as Record<string, T[]>);
+    return Object.entries(series).reduce(
+      (acc, [key, data]) => {
+        acc[key] = filterDataByPeriod(data, period);
+        return acc;
+      },
+      {} as Record<string, T[]>,
+    );
   };
 
   return {
@@ -145,6 +148,6 @@ export function usePeriodSeries<T extends DataPoint>({
     addSeries,
     removeSeries,
     getFilteredSeries,
-    getAllFilteredSeries
+    getAllFilteredSeries,
   };
 }

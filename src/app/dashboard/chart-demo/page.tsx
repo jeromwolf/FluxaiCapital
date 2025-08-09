@@ -9,7 +9,7 @@ import { MarketCandle } from '@/lib/market/types';
 export default function ChartDemoPage() {
   const [symbol, setSymbol] = React.useState('BTCUSDT');
   const [timeframe, setTimeframe] = React.useState<TimeFrame>('1h');
-  
+
   // Use the chart data hook
   const { candles, loading, error, refresh } = useChartData({
     symbol,
@@ -22,11 +22,11 @@ export default function ChartDemoPage() {
   const handleDataRequest = async (
     newTimeframe: TimeFrame,
     from: number,
-    to: number
+    to: number,
   ): Promise<MarketCandle[]> => {
     // This would normally fetch from your API
     // For now, we'll generate mock data
-    const count = Math.floor((to - from) / (getTimeframeMs(newTimeframe)));
+    const count = Math.floor((to - from) / getTimeframeMs(newTimeframe));
     return generateMockCandles(symbol, newTimeframe, count, from);
   };
 
@@ -49,24 +49,24 @@ export default function ChartDemoPage() {
     symbol: string,
     timeframe: TimeFrame,
     count: number,
-    startTime: number
+    startTime: number,
   ): MarketCandle[] => {
     const candles: MarketCandle[] = [];
     const intervalMs = getTimeframeMs(timeframe);
-    
+
     let basePrice = symbol.includes('BTC') ? 45000 : symbol.includes('ETH') ? 3000 : 100;
-    
+
     for (let i = 0; i < count; i++) {
-      const timestamp = startTime + (i * intervalMs);
+      const timestamp = startTime + i * intervalMs;
       const volatility = 0.002;
-      
+
       const open = basePrice;
       const change = (Math.random() - 0.5) * 2 * volatility;
       const high = open * (1 + Math.abs(change) + Math.random() * volatility);
       const low = open * (1 - Math.abs(change) - Math.random() * volatility);
       const close = open * (1 + change);
       const volume = Math.random() * 1000000;
-      
+
       candles.push({
         timestamp,
         open,
@@ -75,10 +75,10 @@ export default function ChartDemoPage() {
         close,
         volume,
       });
-      
+
       basePrice = close;
     }
-    
+
     return candles;
   };
 
@@ -119,8 +119,10 @@ export default function ChartDemoPage() {
                 onChange={(e) => setSymbol(e.target.value)}
                 className="px-4 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700"
               >
-                {symbols.map(s => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
+                {symbols.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
                 ))}
               </select>
               <button
@@ -155,7 +157,7 @@ export default function ChartDemoPage() {
               <li>• 영역 차트</li>
             </ul>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2">기술적 지표</h3>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
@@ -168,7 +170,7 @@ export default function ChartDemoPage() {
               <li>• ATR</li>
             </ul>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2">그리기 도구</h3>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
@@ -179,7 +181,7 @@ export default function ChartDemoPage() {
               <li>• 텍스트 주석</li>
             </ul>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2">시간 프레임</h3>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
@@ -188,7 +190,7 @@ export default function ChartDemoPage() {
               <li>• 1일, 1주, 1개월</li>
             </ul>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2">인터랙티브 기능</h3>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
@@ -198,7 +200,7 @@ export default function ChartDemoPage() {
               <li>• 차트 패턴 인식</li>
             </ul>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-4">
             <h3 className="font-semibold mb-2">성능 최적화</h3>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">

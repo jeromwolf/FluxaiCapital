@@ -25,11 +25,14 @@ interface MarketSentimentData {
     score: number;
     momentum: 'increasing' | 'decreasing' | 'stable';
   };
-  sectors: Record<string, {
-    sentiment: number;
-    volume: number;
-    topStocks: string[];
-  }>;
+  sectors: Record<
+    string,
+    {
+      sentiment: number;
+      volume: number;
+      topStocks: string[];
+    }
+  >;
 }
 
 interface SentimentAlert {
@@ -53,10 +56,10 @@ export function useSocialSentiment(symbols?: string[]) {
     try {
       const response = await fetch(`/api/v1/social/sentiment/${symbol}`);
       if (!response.ok) throw new Error('Failed to fetch sentiment data');
-      
+
       const data = await response.json();
-      setSentimentData(prev => ({ ...prev, [symbol]: data }));
-      
+      setSentimentData((prev) => ({ ...prev, [symbol]: data }));
+
       // Check for alerts
       checkForAlerts(data);
     } catch (err) {
@@ -70,7 +73,7 @@ export function useSocialSentiment(symbols?: string[]) {
     try {
       const response = await fetch('/api/v1/social/market-sentiment');
       if (!response.ok) throw new Error('Failed to fetch market sentiment');
-      
+
       const data = await response.json();
       setMarketSentiment(data);
     } catch (err) {
@@ -96,9 +99,10 @@ export function useSocialSentiment(symbols?: string[]) {
     }
 
     // Check for volume spikes
-    const avgVolume = data.trends.hourly.reduce((sum, t) => sum + t.volume, 0) / data.trends.hourly.length;
+    const avgVolume =
+      data.trends.hourly.reduce((sum, t) => sum + t.volume, 0) / data.trends.hourly.length;
     const latestVolume = data.trends.hourly[data.trends.hourly.length - 1]?.volume || 0;
-    
+
     if (latestVolume > avgVolume * 2) {
       newAlerts.push({
         id: `${data.symbol}-volume-${Date.now()}`,
@@ -123,89 +127,94 @@ export function useSocialSentiment(symbols?: string[]) {
     }
 
     if (newAlerts.length > 0) {
-      setAlerts(prev => [...newAlerts, ...prev].slice(0, 50)); // Keep last 50 alerts
+      setAlerts((prev) => [...newAlerts, ...prev].slice(0, 50)); // Keep last 50 alerts
     }
   }, []);
 
   // Get sentiment signal for trading strategy
-  const getSentimentSignal = useCallback((symbol: string): {
-    signal: 'buy' | 'sell' | 'hold';
-    strength: number;
-    reasoning: string[];
-  } => {
-    const data = sentimentData[symbol];
-    if (!data) {
-      return { signal: 'hold', strength: 0, reasoning: ['No sentiment data available'] };
-    }
+  const getSentimentSignal = useCallback(
+    (
+      symbol: string,
+    ): {
+      signal: 'buy' | 'sell' | 'hold';
+      strength: number;
+      reasoning: string[];
+    } => {
+      const data = sentimentData[symbol];
+      if (!data) {
+        return { signal: 'hold', strength: 0, reasoning: ['No sentiment data available'] };
+      }
 
-    const reasoning: string[] = [];
-    let buySignals = 0;
-    let sellSignals = 0;
+      const reasoning: string[] = [];
+      let buySignals = 0;
+      let sellSignals = 0;
 
-    // Analyze sentiment score
-    if (data.sentiment.score > 50) {
-      buySignals += 2;
-      reasoning.push('Strong bullish sentiment');
-    } else if (data.sentiment.score > 20) {
-      buySignals += 1;
-      reasoning.push('Moderate bullish sentiment');
-    } else if (data.sentiment.score < -50) {
-      sellSignals += 2;
-      reasoning.push('Strong bearish sentiment');
-    } else if (data.sentiment.score < -20) {
-      sellSignals += 1;
-      reasoning.push('Moderate bearish sentiment');
-    }
+      // Analyze sentiment score
+      if (data.sentiment.score > 50) {
+        buySignals += 2;
+        reasoning.push('Strong bullish sentiment');
+      } else if (data.sentiment.score > 20) {
+        buySignals += 1;
+        reasoning.push('Moderate bullish sentiment');
+      } else if (data.sentiment.score < -50) {
+        sellSignals += 2;
+        reasoning.push('Strong bearish sentiment');
+      } else if (data.sentiment.score < -20) {
+        sellSignals += 1;
+        reasoning.push('Moderate bearish sentiment');
+      }
 
-    // Analyze volume trends
-    const recentVolumes = data.trends.hourly.slice(-6).map(t => t.volume);
-    const volumeTrend = recentVolumes[recentVolumes.length - 1] - recentVolumes[0];
-    
-    if (volumeTrend > 0 && data.sentiment.score > 0) {
-      buySignals += 1;
-      reasoning.push('Increasing volume with positive sentiment');
-    } else if (volumeTrend > 0 && data.sentiment.score < 0) {
-      sellSignals += 1;
-      reasoning.push('Increasing volume with negative sentiment');
-    }
+      // Analyze volume trends
+      const recentVolumes = data.trends.hourly.slice(-6).map((t) => t.volume);
+      const volumeTrend = recentVolumes[recentVolumes.length - 1] - recentVolumes[0];
 
-    // Analyze sentiment momentum
-    const recentSentiments = data.trends.hourly.slice(-6).map(t => t.sentiment);
-    const sentimentTrend = recentSentiments[recentSentiments.length - 1] - recentSentiments[0];
-    
-    if (sentimentTrend > 10) {
-      buySignals += 1;
-      reasoning.push('Improving sentiment momentum');
-    } else if (sentimentTrend < -10) {
-      sellSignals += 1;
-      reasoning.push('Deteriorating sentiment momentum');
-    }
+      if (volumeTrend > 0 && data.sentiment.score > 0) {
+        buySignals += 1;
+        reasoning.push('Increasing volume with positive sentiment');
+      } else if (volumeTrend > 0 && data.sentiment.score < 0) {
+        sellSignals += 1;
+        reasoning.push('Increasing volume with negative sentiment');
+      }
 
-    // High confidence adds weight
-    if (data.sentiment.confidence > 80) {
-      if (buySignals > sellSignals) buySignals += 1;
-      if (sellSignals > buySignals) sellSignals += 1;
-      reasoning.push('High confidence in sentiment analysis');
-    }
+      // Analyze sentiment momentum
+      const recentSentiments = data.trends.hourly.slice(-6).map((t) => t.sentiment);
+      const sentimentTrend = recentSentiments[recentSentiments.length - 1] - recentSentiments[0];
 
-    // Determine signal
-    let signal: 'buy' | 'sell' | 'hold';
-    let strength: number;
+      if (sentimentTrend > 10) {
+        buySignals += 1;
+        reasoning.push('Improving sentiment momentum');
+      } else if (sentimentTrend < -10) {
+        sellSignals += 1;
+        reasoning.push('Deteriorating sentiment momentum');
+      }
 
-    if (buySignals > sellSignals && buySignals >= 3) {
-      signal = 'buy';
-      strength = Math.min(buySignals / 5, 1) * 100;
-    } else if (sellSignals > buySignals && sellSignals >= 3) {
-      signal = 'sell';
-      strength = Math.min(sellSignals / 5, 1) * 100;
-    } else {
-      signal = 'hold';
-      strength = 50;
-      reasoning.push('Mixed or neutral signals');
-    }
+      // High confidence adds weight
+      if (data.sentiment.confidence > 80) {
+        if (buySignals > sellSignals) buySignals += 1;
+        if (sellSignals > buySignals) sellSignals += 1;
+        reasoning.push('High confidence in sentiment analysis');
+      }
 
-    return { signal, strength, reasoning };
-  }, [sentimentData]);
+      // Determine signal
+      let signal: 'buy' | 'sell' | 'hold';
+      let strength: number;
+
+      if (buySignals > sellSignals && buySignals >= 3) {
+        signal = 'buy';
+        strength = Math.min(buySignals / 5, 1) * 100;
+      } else if (sellSignals > buySignals && sellSignals >= 3) {
+        signal = 'sell';
+        strength = Math.min(sellSignals / 5, 1) * 100;
+      } else {
+        signal = 'hold';
+        strength = 50;
+        reasoning.push('Mixed or neutral signals');
+      }
+
+      return { signal, strength, reasoning };
+    },
+    [sentimentData],
+  );
 
   // Get sentiment-based portfolio adjustments
   const getPortfolioAdjustments = useCallback((): Array<{
@@ -270,11 +279,31 @@ export function useSocialSentiment(symbols?: string[]) {
   // Helper function to map symbols to sectors
   const getSectorForSymbol = (symbol: string): string | null => {
     const sectorMap: Record<string, string> = {
-      AAPL: 'tech', MSFT: 'tech', GOOGL: 'tech', META: 'tech', NVDA: 'tech',
-      JPM: 'finance', BAC: 'finance', GS: 'finance', MS: 'finance', WFC: 'finance',
-      XOM: 'energy', CVX: 'energy', COP: 'energy', SLB: 'energy', EOG: 'energy',
-      JNJ: 'healthcare', UNH: 'healthcare', PFE: 'healthcare', ABBV: 'healthcare', TMO: 'healthcare',
-      AMZN: 'consumer', TSLA: 'consumer', WMT: 'consumer', HD: 'consumer', MCD: 'consumer',
+      AAPL: 'tech',
+      MSFT: 'tech',
+      GOOGL: 'tech',
+      META: 'tech',
+      NVDA: 'tech',
+      JPM: 'finance',
+      BAC: 'finance',
+      GS: 'finance',
+      MS: 'finance',
+      WFC: 'finance',
+      XOM: 'energy',
+      CVX: 'energy',
+      COP: 'energy',
+      SLB: 'energy',
+      EOG: 'energy',
+      JNJ: 'healthcare',
+      UNH: 'healthcare',
+      PFE: 'healthcare',
+      ABBV: 'healthcare',
+      TMO: 'healthcare',
+      AMZN: 'consumer',
+      TSLA: 'consumer',
+      WMT: 'consumer',
+      HD: 'consumer',
+      MCD: 'consumer',
     };
     return sectorMap[symbol] || null;
   };
@@ -296,7 +325,7 @@ export function useSocialSentiment(symbols?: string[]) {
 
         // Fetch individual symbol sentiment
         if (symbols && symbols.length > 0) {
-          await Promise.all(symbols.map(symbol => fetchSymbolSentiment(symbol)));
+          await Promise.all(symbols.map((symbol) => fetchSymbolSentiment(symbol)));
         }
       } catch (err) {
         console.error('Error fetching sentiment data:', err);
@@ -327,7 +356,7 @@ export function useSocialSentiment(symbols?: string[]) {
       setLoading(true);
       await fetchMarketSentiment();
       if (symbols) {
-        await Promise.all(symbols.map(symbol => fetchSymbolSentiment(symbol)));
+        await Promise.all(symbols.map((symbol) => fetchSymbolSentiment(symbol)));
       }
       setLoading(false);
     }, [symbols, fetchMarketSentiment, fetchSymbolSentiment]),

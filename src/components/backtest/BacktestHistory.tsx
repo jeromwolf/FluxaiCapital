@@ -102,7 +102,7 @@ export default function BacktestHistory({ userId }: BacktestHistoryProps) {
           <CardContent>
             <div className="text-2xl font-bold">{backtests.length}개</div>
             <p className="text-xs text-muted-foreground">
-              성공 {backtests.filter(b => b.status === 'completed').length}개
+              성공 {backtests.filter((b) => b.status === 'completed').length}개
             </p>
           </CardContent>
         </Card>
@@ -114,11 +114,13 @@ export default function BacktestHistory({ userId }: BacktestHistoryProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              +{Math.max(...backtests.filter(b => b.status === 'completed').map(b => b.totalReturn)).toFixed(2)}%
+              +
+              {Math.max(
+                ...backtests.filter((b) => b.status === 'completed').map((b) => b.totalReturn),
+              ).toFixed(2)}
+              %
             </div>
-            <p className="text-xs text-muted-foreground">
-              Moving Average Strategy
-            </p>
+            <p className="text-xs text-muted-foreground">Moving Average Strategy</p>
           </CardContent>
         </Card>
 
@@ -129,15 +131,14 @@ export default function BacktestHistory({ userId }: BacktestHistoryProps) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {(backtests
-                .filter(b => b.status === 'completed')
-                .reduce((sum, b) => sum + b.sharpeRatio, 0) / 
-                backtests.filter(b => b.status === 'completed').length
+              {(
+                backtests
+                  .filter((b) => b.status === 'completed')
+                  .reduce((sum, b) => sum + b.sharpeRatio, 0) /
+                backtests.filter((b) => b.status === 'completed').length
               ).toFixed(2)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              리스크 대비 수익
-            </p>
+            <p className="text-xs text-muted-foreground">리스크 대비 수익</p>
           </CardContent>
         </Card>
       </div>
@@ -170,18 +171,19 @@ export default function BacktestHistory({ userId }: BacktestHistoryProps) {
                   <TableCell>{backtest.strategy}</TableCell>
                   <TableCell className="text-sm">{backtest.period}</TableCell>
                   <TableCell>
-                    <span className={`flex items-center gap-1 ${
-                      backtest.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'
-                    }`}>
+                    <span
+                      className={`flex items-center gap-1 ${
+                        backtest.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'
+                      }`}
+                    >
                       {backtest.totalReturn >= 0 ? (
                         <TrendingUp className="h-3 w-3" />
                       ) : (
                         <TrendingDown className="h-3 w-3" />
                       )}
-                      {backtest.status === 'completed' 
+                      {backtest.status === 'completed'
                         ? `${backtest.totalReturn >= 0 ? '+' : ''}${backtest.totalReturn.toFixed(2)}%`
-                        : '-'
-                      }
+                        : '-'}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -189,10 +191,9 @@ export default function BacktestHistory({ userId }: BacktestHistoryProps) {
                   </TableCell>
                   <TableCell>
                     <span className="text-red-600">
-                      {backtest.status === 'completed' 
+                      {backtest.status === 'completed'
                         ? `${backtest.maxDrawdown.toFixed(2)}%`
-                        : '-'
-                      }
+                        : '-'}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -200,14 +201,20 @@ export default function BacktestHistory({ userId }: BacktestHistoryProps) {
                   </TableCell>
                   <TableCell className="text-sm">{backtest.createdAt}</TableCell>
                   <TableCell>
-                    <span className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
-                      backtest.status === 'completed'
-                        ? 'bg-green-100 text-green-800'
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-1 text-xs font-medium ${
+                        backtest.status === 'completed'
+                          ? 'bg-green-100 text-green-800'
+                          : backtest.status === 'failed'
+                            ? 'bg-red-100 text-red-800'
+                            : 'bg-yellow-100 text-yellow-800'
+                      }`}
+                    >
+                      {backtest.status === 'completed'
+                        ? '완료'
                         : backtest.status === 'failed'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {backtest.status === 'completed' ? '완료' : backtest.status === 'failed' ? '실패' : '실행중'}
+                          ? '실패'
+                          : '실행중'}
                     </span>
                   </TableCell>
                   <TableCell>

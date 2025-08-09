@@ -14,24 +14,17 @@ interface UseWebSocketOptions {
 }
 
 export function useWebSocket(options: UseWebSocketOptions = {}) {
-  const {
-    autoConnect = true,
-    onPrice,
-    onPortfolio,
-    onAlert,
-    onError,
-    onStatusChange
-  } = options;
+  const { autoConnect = true, onPrice, onPortfolio, onAlert, onError, onStatusChange } = options;
 
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>({
     connected: false,
-    reconnecting: false
+    reconnecting: false,
   });
-  
+
   const [lastPriceUpdate, setLastPriceUpdate] = useState<PriceUpdate | null>(null);
   const [lastPortfolioUpdate, setLastPortfolioUpdate] = useState<PortfolioUpdate | null>(null);
   const [alerts, setAlerts] = useState<Alert[]>([]);
-  
+
   const wsClientRef = useRef<WebSocketClient | null>(null);
   const unsubscribersRef = useRef<(() => void)[]>([]);
 
@@ -46,35 +39,35 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
       wsClient.subscribe('status', (status: ConnectionStatus) => {
         setConnectionStatus(status);
         onStatusChange?.(status);
-      })
+      }),
     );
 
     unsubscribers.push(
       wsClient.subscribe('price', (data: PriceUpdate) => {
         setLastPriceUpdate(data);
         onPrice?.(data);
-      })
+      }),
     );
 
     unsubscribers.push(
       wsClient.subscribe('portfolio', (data: PortfolioUpdate) => {
         setLastPortfolioUpdate(data);
         onPortfolio?.(data);
-      })
+      }),
     );
 
     unsubscribers.push(
       wsClient.subscribe('alert', (data: Alert) => {
-        setAlerts(prev => [data, ...prev].slice(0, 50)); // Keep last 50 alerts
+        setAlerts((prev) => [data, ...prev].slice(0, 50)); // Keep last 50 alerts
         onAlert?.(data);
-      })
+      }),
     );
 
     unsubscribers.push(
       wsClient.subscribe('error', (error: any) => {
         console.error('WebSocket error:', error);
         onError?.(error);
-      })
+      }),
     );
 
     unsubscribersRef.current = unsubscribers;
@@ -86,7 +79,7 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
 
     // Cleanup
     return () => {
-      unsubscribersRef.current.forEach(unsubscribe => unsubscribe());
+      unsubscribersRef.current.forEach((unsubscribe) => unsubscribe());
       unsubscribersRef.current = [];
       // Don't disconnect here as other components might be using it
     };
@@ -109,10 +102,8 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
   }, []);
 
   const markAlertAsRead = useCallback((alertId: string) => {
-    setAlerts(prev => 
-      prev.map(alert => 
-        alert.id === alertId ? { ...alert, read: true } : alert
-      )
+    setAlerts((prev) =>
+      prev.map((alert) => (alert.id === alertId ? { ...alert, read: true } : alert)),
     );
   }, []);
 
@@ -122,48 +113,48 @@ export function useWebSocket(options: UseWebSocketOptions = {}) {
     isConnected: connectionStatus.connected,
     connect,
     disconnect,
-    
+
     // Data
     lastPriceUpdate,
     lastPortfolioUpdate,
     alerts,
-    unreadAlertCount: alerts.filter(a => !a.read).length,
-    
+    unreadAlertCount: alerts.filter((a) => !a.read).length,
+
     // Actions
     sendMessage,
     clearAlerts,
-    markAlertAsRead
+    markAlertAsRead,
   };
 }
 
 // Hook for subscribing to specific symbols
 export function usePriceSubscription(symbols: string[]) {
   const [prices, setPrices] = useState<Record<string, PriceUpdate>>({});
-  
+
   const { isConnected, sendMessage } = useWebSocket({
     onPrice: (update) => {
       if (symbols.includes(update.symbol)) {
-        setPrices(prev => ({
+        setPrices((prev) => ({
           ...prev,
-          [update.symbol]: update
+          [update.symbol]: update,
         }));
       }
-    }
+    },
   });
 
   useEffect(() => {
     if (isConnected && symbols.length > 0) {
       // Subscribe to price updates for specific symbols
-      sendMessage('subscribe', { 
-        type: 'price', 
-        symbols 
+      sendMessage('subscribe', {
+        type: 'price',
+        symbols,
       });
 
       // Unsubscribe on cleanup
       return () => {
-        sendMessage('unsubscribe', { 
-          type: 'price', 
-          symbols 
+        sendMessage('unsubscribe', {
+          type: 'price',
+          symbols,
         });
       };
     }
@@ -180,13 +171,13 @@ export function usePortfolioSubscription() {
   const { isConnected } = useWebSocket({
     onPortfolio: (update) => {
       setPortfolio(update);
-      setHistory(prev => [...prev, update].slice(-100)); // Keep last 100 updates
-    }
+      setHistory((prev) => [...prev, update].slice(-100)); // Keep last 100 updates
+    },
   });
 
   return {
     portfolio,
     history,
-    isConnected
+    isConnected,
   };
 }

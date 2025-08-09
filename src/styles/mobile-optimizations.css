@@ -5,15 +5,15 @@
   .safe-area-top {
     padding-top: max(0px, env(safe-area-inset-top));
   }
-  
+
   .safe-area-bottom {
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
-  
+
   .safe-area-left {
     padding-left: max(0px, env(safe-area-inset-left));
   }
-  
+
   .safe-area-right {
     padding-right: max(0px, env(safe-area-inset-right));
   }
@@ -70,23 +70,23 @@
   html {
     font-size: 14px;
   }
-  
+
   h1 {
     font-size: 1.75rem;
   }
-  
+
   h2 {
     font-size: 1.5rem;
   }
-  
+
   h3 {
     font-size: 1.25rem;
   }
-  
+
   .text-xs {
     font-size: 0.75rem;
   }
-  
+
   .text-sm {
     font-size: 0.875rem;
   }
@@ -94,11 +94,11 @@
 
 /* Mobile-optimized inputs */
 @media (max-width: 640px) {
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="tel"],
+  input[type='text'],
+  input[type='email'],
+  input[type='password'],
+  input[type='number'],
+  input[type='tel'],
   textarea,
   select {
     font-size: 16px; /* Prevents zoom on iOS */
@@ -152,7 +152,9 @@
   bottom: 0;
   height: 2px;
   background-color: currentColor;
-  transition: transform 0.3s ease-out, width 0.3s ease-out;
+  transition:
+    transform 0.3s ease-out,
+    width 0.3s ease-out;
 }
 
 /* Mobile-specific grid adjustments */
@@ -160,11 +162,11 @@
   .mobile-grid-2 {
     grid-template-columns: repeat(2, 1fr);
   }
-  
+
   .mobile-grid-3 {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .mobile-stack {
     display: flex;
     flex-direction: column;
@@ -178,7 +180,7 @@
     max-width: 100%;
     height: auto;
   }
-  
+
   .mobile-full-width {
     width: 100vw;
     margin-left: calc(-50vw + 50%);
@@ -194,7 +196,7 @@
   .mobile-only {
     display: block;
   }
-  
+
   .desktop-only {
     display: none;
   }

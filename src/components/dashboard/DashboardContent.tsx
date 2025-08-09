@@ -22,26 +22,18 @@ export default function DashboardContent({ userId }: DashboardContentProps) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              총 자산가치
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">총 자산가치</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              ₩{stats.totalValue.toLocaleString()}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              초기 자금 대비 +{stats.totalReturn}%
-            </p>
+            <div className="text-2xl font-bold">₩{stats.totalValue.toLocaleString()}</div>
+            <p className="text-xs text-muted-foreground">초기 자금 대비 +{stats.totalReturn}%</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              일간 수익률
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">일간 수익률</CardTitle>
             {stats.dailyChange >= 0 ? (
               <TrendingUp className="h-4 w-4 text-green-600" />
             ) : (
@@ -49,48 +41,37 @@ export default function DashboardContent({ userId }: DashboardContentProps) {
             )}
           </CardHeader>
           <CardContent>
-            <div className={`text-2xl font-bold ${
-              stats.dailyChange >= 0 ? 'text-green-600' : 'text-red-600'
-            }`}>
-              {stats.dailyChange >= 0 ? '+' : ''}{stats.dailyChange}%
+            <div
+              className={`text-2xl font-bold ${
+                stats.dailyChange >= 0 ? 'text-green-600' : 'text-red-600'
+              }`}
+            >
+              {stats.dailyChange >= 0 ? '+' : ''}
+              {stats.dailyChange}%
             </div>
-            <p className="text-xs text-muted-foreground">
-              전일 대비
-            </p>
+            <p className="text-xs text-muted-foreground">전일 대비</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              월간 수익률
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">월간 수익률</CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              +{stats.monthlyReturn}%
-            </div>
-            <p className="text-xs text-muted-foreground">
-              최근 30일
-            </p>
+            <div className="text-2xl font-bold text-green-600">+{stats.monthlyReturn}%</div>
+            <p className="text-xs text-muted-foreground">최근 30일</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              누적 수익률
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">누적 수익률</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              +{stats.totalReturn}%
-            </div>
-            <p className="text-xs text-muted-foreground">
-              전체 기간
-            </p>
+            <div className="text-2xl font-bold text-green-600">+{stats.totalReturn}%</div>
+            <p className="text-xs text-muted-foreground">전체 기간</p>
           </CardContent>
         </Card>
       </div>
@@ -126,9 +107,7 @@ export default function DashboardContent({ userId }: DashboardContentProps) {
           <CardTitle>최근 거래</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center text-muted-foreground py-8">
-            거래 내역이 없습니다
-          </div>
+          <div className="text-center text-muted-foreground py-8">거래 내역이 없습니다</div>
         </CardContent>
       </Card>
     </div>

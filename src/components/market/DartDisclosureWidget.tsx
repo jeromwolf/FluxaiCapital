@@ -6,22 +6,22 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { 
-  FileText, 
-  TrendingUp, 
-  Users, 
-  Building2, 
+import {
+  FileText,
+  TrendingUp,
+  Users,
+  Building2,
   Calendar,
   ExternalLink,
   AlertCircle,
-  Loader2
+  Loader2,
 } from 'lucide-react';
 import { useDartData } from '@/hooks/useDartData';
-import { 
-  DartDisclosure, 
-  DartFinancialStatement, 
+import {
+  DartDisclosure,
+  DartFinancialStatement,
   DartMajorShareholder,
-  DartCompanyInfo 
+  DartCompanyInfo,
 } from '@/lib/market-data/types';
 
 interface DartDisclosureWidgetProps {
@@ -31,16 +31,9 @@ interface DartDisclosureWidgetProps {
 
 export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidgetProps) {
   const [activeTab, setActiveTab] = useState('disclosures');
-  
-  const {
-    disclosures,
-    financials,
-    shareholders,
-    companyInfo,
-    loading,
-    error,
-    refetch
-  } = useDartData({ stockCode });
+
+  const { disclosures, financials, shareholders, companyInfo, loading, error, refetch } =
+    useDartData({ stockCode });
 
   const formatNumber = (num: number | undefined) => {
     if (num === undefined) return '-';
@@ -68,7 +61,6 @@ export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidg
     return <Badge variant="outline">기타</Badge>;
   };
 
-
   return (
     <Card className="w-full">
       <CardHeader>
@@ -77,17 +69,8 @@ export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidg
             <FileText className="h-5 w-5" />
             {corpName || '기업'} 공시정보
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={refetch}
-            disabled={loading}
-          >
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              '새로고침'
-            )}
+          <Button variant="ghost" size="sm" onClick={refetch} disabled={loading}>
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : '새로고침'}
           </Button>
         </div>
       </CardHeader>
@@ -108,9 +91,7 @@ export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidg
             ) : error ? (
               <div className="text-center py-8 text-muted-foreground">{error}</div>
             ) : disclosures.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                최근 공시가 없습니다.
-              </div>
+              <div className="text-center py-8 text-muted-foreground">최근 공시가 없습니다.</div>
             ) : (
               <div className="space-y-3">
                 {disclosures.map((disclosure) => (
@@ -187,15 +168,11 @@ export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidg
                   <div className="space-y-2">
                     <div className="flex justify-between">
                       <span className="text-sm text-muted-foreground">ROE</span>
-                      <span className="text-sm font-medium">
-                        {formatPercent(financials.roe)}
-                      </span>
+                      <span className="text-sm font-medium">{formatPercent(financials.roe)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-muted-foreground">ROA</span>
-                      <span className="text-sm font-medium">
-                        {formatPercent(financials.roa)}
-                      </span>
+                      <span className="text-sm font-medium">{formatPercent(financials.roa)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-sm text-muted-foreground">부채비율</span>
@@ -215,9 +192,7 @@ export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidg
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : shareholders.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
-                주주 정보가 없습니다.
-              </div>
+              <div className="text-center py-8 text-muted-foreground">주주 정보가 없습니다.</div>
             ) : (
               <div className="space-y-3">
                 <h4 className="text-sm font-medium flex items-center gap-2">
@@ -255,9 +230,7 @@ export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidg
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
               </div>
             ) : !companyInfo ? (
-              <div className="text-center py-8 text-muted-foreground">
-                기업 정보가 없습니다.
-              </div>
+              <div className="text-center py-8 text-muted-foreground">기업 정보가 없습니다.</div>
             ) : (
               <div className="space-y-4">
                 <h4 className="text-sm font-medium flex items-center gap-2">
@@ -290,9 +263,9 @@ export function DartDisclosureWidget({ stockCode, corpName }: DartDisclosureWidg
                   {companyInfo.hm_url && (
                     <div className="col-span-2">
                       <p className="text-xs text-muted-foreground">홈페이지</p>
-                      <a 
-                        href={companyInfo.hm_url} 
-                        target="_blank" 
+                      <a
+                        href={companyInfo.hm_url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm text-primary hover:underline"
                       >

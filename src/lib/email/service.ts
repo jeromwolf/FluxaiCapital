@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer';
 
 // Development email configuration (console logging)
 const createTestTransporter = () => {
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     streamTransport: true,
     newline: 'unix',
     buffer: true,
@@ -11,11 +11,11 @@ const createTestTransporter = () => {
 
 // Production email configuration (SendGrid)
 const createProductionTransporter = () => {
-  return nodemailer.createTransporter({
+  return nodemailer.createTransport({
     service: 'SendGrid',
     auth: {
       user: 'apikey',
-      pass: process.env["SENDGRID_API_KEY"],
+      pass: process.env['SENDGRID_API_KEY'],
     },
   });
 };
@@ -35,22 +35,25 @@ export class EmailService {
   private transporter: any;
 
   constructor() {
-    this.transporter = process.env["NODE_ENV"] === 'production'
-      ? createProductionTransporter()
-      : createTestTransporter();
+    this.transporter =
+      process.env['NODE_ENV'] === 'production'
+        ? createProductionTransporter()
+        : createTestTransporter();
   }
 
-  async sendEmail(options: EmailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
+  async sendEmail(
+    options: EmailOptions,
+  ): Promise<{ success: boolean; messageId?: string; error?: string }> {
     try {
       const mailOptions = {
-        from: process.env["EMAIL_FROM"] || 'noreply@flux.ai.kr',
+        from: process.env['EMAIL_FROM'] || 'noreply@flux.ai.kr',
         to: options.to,
         subject: options.subject,
         html: options.html,
         attachments: options.attachments,
       };
 
-      if (process.env["NODE_ENV"] === 'development') {
+      if (process.env['NODE_ENV'] === 'development') {
         console.log('📧 [DEV] Email would be sent:');
         console.log(`To: ${mailOptions.to}`);
         console.log(`Subject: ${mailOptions.subject}`);
@@ -61,25 +64,24 @@ export class EmailService {
 
       const result = await this.transporter.sendMail(mailOptions);
       return { success: true, messageId: result.messageId };
-
     } catch (error) {
       console.error('Email sending error:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }
 
   async sendReportEmail(
-    recipient: string, 
-    portfolioName: string, 
-    reportType: string, 
-    pdfBuffer: Buffer
+    recipient: string,
+    portfolioName: string,
+    reportType: string,
+    pdfBuffer: Buffer,
   ): Promise<{ success: boolean; error?: string }> {
     const reportTypeNames: Record<string, string> = {
       daily: '일일 리포트',
-      weekly: '주간 리포트', 
+      weekly: '주간 리포트',
       monthly: '월간 리포트',
       performance: '성과 분석 리포트',
     };
@@ -184,11 +186,13 @@ export class EmailService {
       to: recipient,
       subject: `[FLUX AI Capital] ${portfolioName} ${reportTypeName} - ${today}`,
       html,
-      attachments: [{
-        filename: `${portfolioName}-${reportType}-${new Date().toISOString().split('T')[0]}.pdf`,
-        content: pdfBuffer,
-        contentType: 'application/pdf',
-      }],
+      attachments: [
+        {
+          filename: `${portfolioName}-${reportType}-${new Date().toISOString().split('T')[0]}.pdf`,
+          content: pdfBuffer,
+          contentType: 'application/pdf',
+        },
+      ],
     });
 
     return result;

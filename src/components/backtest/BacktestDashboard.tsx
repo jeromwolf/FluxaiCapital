@@ -32,62 +32,44 @@ export default function BacktestDashboard({ userId }: BacktestDashboardProps) {
       <div className="mb-8 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              총 백테스트
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">총 백테스트</CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalBacktests}개</div>
-            <p className="text-xs text-muted-foreground">
-              실행한 백테스트 수
-            </p>
+            <p className="text-xs text-muted-foreground">실행한 백테스트 수</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              최고 전략
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">최고 전략</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.bestStrategy}</div>
-            <p className="text-xs text-muted-foreground">
-              +{stats.bestReturn}% 수익률
-            </p>
+            <p className="text-xs text-muted-foreground">+{stats.bestReturn}% 수익률</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              평균 수익률
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">평균 수익률</CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">
-              +{stats.avgReturn}%
-            </div>
-            <p className="text-xs text-muted-foreground">
-              모든 전략 평균
-            </p>
+            <div className="text-2xl font-bold text-green-600">+{stats.avgReturn}%</div>
+            <p className="text-xs text-muted-foreground">모든 전략 평균</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              백테스트 상태
-            </CardTitle>
+            <CardTitle className="text-sm font-medium">백테스트 상태</CardTitle>
             <Settings className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {isRunning ? '실행 중' : '대기'}
-            </div>
+            <div className="text-2xl font-bold">{isRunning ? '실행 중' : '대기'}</div>
             <p className="text-xs text-muted-foreground">
               {isRunning ? '백테스트 진행 중...' : '설정 후 실행'}
             </p>
@@ -123,22 +105,15 @@ export default function BacktestDashboard({ userId }: BacktestDashboardProps) {
         </div>
 
         <TabsContent value="config" className="space-y-4">
-          <BacktestConfig 
-            userId={userId}
-            isRunning={isRunning}
-          />
+          <BacktestConfig userId={userId} isRunning={isRunning} />
         </TabsContent>
 
         <TabsContent value="results" className="space-y-4">
-          <BacktestResults 
-            result={currentResult}
-          />
+          <BacktestResults result={currentResult} />
         </TabsContent>
 
         <TabsContent value="history" className="space-y-4">
-          <BacktestHistory 
-            userId={userId}
-          />
+          <BacktestHistory userId={userId} />
         </TabsContent>
       </Tabs>
     </>

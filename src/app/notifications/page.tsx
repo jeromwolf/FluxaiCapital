@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import React, { useState } from 'react';
 import { Bell, Check, X, TrendingUp, TrendingDown, AlertCircle, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -69,28 +71,23 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
   const handleMarkAsRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(notif =>
-        notif.id === id ? { ...notif, read: true } : notif
-      )
+    setNotifications((prev) =>
+      prev.map((notif) => (notif.id === id ? { ...notif, read: true } : notif)),
     );
   };
 
   const handleMarkAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(notif => ({ ...notif, read: true }))
-    );
+    setNotifications((prev) => prev.map((notif) => ({ ...notif, read: true })));
   };
 
   const handleDelete = (id: string) => {
-    setNotifications(prev => prev.filter(notif => notif.id !== id));
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
   };
 
-  const filteredNotifications = filter === 'unread' 
-    ? notifications.filter(n => !n.read)
-    : notifications;
+  const filteredNotifications =
+    filter === 'unread' ? notifications.filter((n) => !n.read) : notifications;
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
   const getNotificationIcon = (type: NotificationType) => {
     switch (type) {
@@ -120,18 +117,14 @@ export default function NotificationsPage() {
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            알림
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">알림</h1>
           {unreadCount > 0 && (
             <span className="px-3 py-1 bg-blue-100 text-blue-700 dark:bg-blue-900/20 dark:text-blue-400 rounded-full text-sm font-medium">
               {unreadCount}개 안읽음
             </span>
           )}
         </div>
-        <p className="text-gray-600 dark:text-gray-400">
-          중요한 알림과 업데이트를 확인하세요
-        </p>
+        <p className="text-gray-600 dark:text-gray-400">중요한 알림과 업데이트를 확인하세요</p>
       </div>
 
       {/* 필터 및 액션 버튼 */}
@@ -152,13 +145,9 @@ export default function NotificationsPage() {
             안읽음
           </Button>
         </div>
-        
+
         {unreadCount > 0 && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleMarkAllAsRead}
-          >
+          <Button variant="ghost" size="sm" onClick={handleMarkAllAsRead}>
             모두 읽음으로 표시
           </Button>
         )}
@@ -179,24 +168,23 @@ export default function NotificationsPage() {
               key={notification.id}
               className={cn(
                 'p-4 transition-all',
-                !notification.read && 'border-l-4 border-blue-500'
+                !notification.read && 'border-l-4 border-blue-500',
               )}
             >
               <div className="flex items-start gap-4">
-                <div className={cn(
-                  'p-2 rounded-lg',
-                  getNotificationColor(notification.priority)
-                )}>
+                <div className={cn('p-2 rounded-lg', getNotificationColor(notification.priority))}>
                   {getNotificationIcon(notification.type)}
                 </div>
-                
+
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1">
-                      <h3 className={cn(
-                        'font-medium text-gray-900 dark:text-gray-100',
-                        !notification.read && 'font-semibold'
-                      )}>
+                      <h3
+                        className={cn(
+                          'font-medium text-gray-900 dark:text-gray-100',
+                          !notification.read && 'font-semibold',
+                        )}
+                      >
                         {notification.title}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
@@ -206,7 +194,7 @@ export default function NotificationsPage() {
                         {format(notification.time, 'PPP p', { locale: ko })}
                       </p>
                     </div>
-                    
+
                     <div className="flex items-center gap-1">
                       {!notification.read && (
                         <Button
@@ -228,7 +216,7 @@ export default function NotificationsPage() {
                       </Button>
                     </div>
                   </div>
-                  
+
                   {notification.actionUrl && (
                     <a
                       href={notification.actionUrl}

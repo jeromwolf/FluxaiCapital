@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { useTranslations } from 'next-intl';
-import { 
-  Home, 
-  PieChart, 
-  BarChart3, 
-  FileText, 
+import {
+  Home,
+  PieChart,
+  BarChart3,
+  FileText,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -17,7 +17,7 @@ import {
   Bell,
   HelpCircle,
   Activity,
-  Newspaper
+  Newspaper,
 } from 'lucide-react';
 
 interface NavItem {
@@ -62,10 +62,12 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   };
 
   return (
-    <aside className={cn(
-      'fixed left-0 top-0 z-20 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300',
-      isCollapsed ? 'w-20' : 'w-64'
-    )}>
+    <aside
+      className={cn(
+        'fixed left-0 top-0 z-20 h-full bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300',
+        isCollapsed ? 'w-20' : 'w-64',
+      )}
+    >
       {/* Logo */}
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
         <Link href="/dashboard" className="flex items-center space-x-3">
@@ -74,16 +76,12 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
           </div>
           {!isCollapsed && (
             <div>
-              <h1 className="font-bold text-gray-900 dark:text-gray-100">
-                FLUX AI
-              </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                Capital Management
-              </p>
+              <h1 className="font-bold text-gray-900 dark:text-gray-100">FLUX AI</h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Capital Management</p>
             </div>
           )}
         </Link>
-        
+
         <button
           onClick={handleToggle}
           className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -112,13 +110,10 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                   'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors group',
                   isActive
                     ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300',
                 )}
               >
-                <Icon className={cn(
-                  'flex-shrink-0',
-                  isCollapsed ? 'w-6 h-6' : 'w-5 h-5'
-                )} />
+                <Icon className={cn('flex-shrink-0', isCollapsed ? 'w-6 h-6' : 'w-5 h-5')} />
                 {!isCollapsed && (
                   <>
                     <span className="font-medium">{t(item.titleKey)}</span>
@@ -135,9 +130,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         </div>
 
         {/* Divider */}
-        {!isCollapsed && (
-          <div className="my-4 border-t border-gray-200 dark:border-gray-700" />
-        )}
+        {!isCollapsed && <div className="my-4 border-t border-gray-200 dark:border-gray-700" />}
 
         {/* Secondary Navigation */}
         <div className="space-y-1">
@@ -153,13 +146,10 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                   'flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors group',
                   isActive
                     ? 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
-                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400'
+                    : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400',
                 )}
               >
-                <Icon className={cn(
-                  'flex-shrink-0',
-                  isCollapsed ? 'w-6 h-6' : 'w-5 h-5'
-                )} />
+                <Icon className={cn('flex-shrink-0', isCollapsed ? 'w-6 h-6' : 'w-5 h-5')} />
                 {!isCollapsed && (
                   <>
                     <span className="font-medium">{t(item.titleKey)}</span>
@@ -185,9 +175,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
               <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {t('common.user')}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                user@example.com
-              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">user@example.com</p>
             </div>
           </div>
         </div>
@@ -195,9 +183,7 @@ export function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
 
       {/* Tooltips for collapsed state */}
       {isCollapsed && (
-        <div className="hidden group-hover:block">
-          {/* Implement tooltips here */}
-        </div>
+        <div className="hidden group-hover:block">{/* Implement tooltips here */}</div>
       )}
     </aside>
   );

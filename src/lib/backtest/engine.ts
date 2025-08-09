@@ -36,24 +36,24 @@ export class BacktestEngine {
   async run(priceData: PriceData[]): Promise<BacktestResult> {
     // Group price data by symbol
     const pricesBySymbol = this.groupPricesBySymbol(priceData);
-    
+
     // Get all unique dates
-    const dates = [...new Set(priceData.map(p => p.date.toISOString()))].sort();
-    
+    const dates = [...new Set(priceData.map((p) => p.date.toISOString()))].sort();
+
     let previousValue = this.config.initialCapital;
 
     for (const dateStr of dates) {
       const date = new Date(dateStr);
-      
+
       // Update current prices
       this.updatePositionPrices(pricesBySymbol, date);
-      
+
       // Generate signals and execute trades
       for (const symbol of this.config.symbols) {
         const prices = this.getPriceHistory(pricesBySymbol, symbol, date);
         if (prices.length > 0) {
           const signal = this.generateSignal(prices);
-          
+
           if (signal === 'BUY' && !this.positions.has(symbol)) {
             this.executeBuy(symbol, prices[prices.length - 1], date);
           } else if (signal === 'SELL' && this.positions.has(symbol)) {
@@ -61,28 +61,28 @@ export class BacktestEngine {
           }
         }
       }
-      
+
       // Record equity curve
       const currentValue = this.getPortfolioValue();
       const drawdown = this.maxEquity > 0 ? (this.maxEquity - currentValue) / this.maxEquity : 0;
-      
+
       this.equityCurve.push({
         date,
         value: currentValue,
         drawdown,
       });
-      
+
       // Record daily returns
       if (previousValue > 0) {
         const dailyReturn = (currentValue - previousValue) / previousValue;
         this.dailyReturns.push({ date, return: dailyReturn });
       }
-      
+
       // Update max equity
       if (currentValue > this.maxEquity) {
         this.maxEquity = currentValue;
       }
-      
+
       previousValue = currentValue;
     }
 
@@ -100,44 +100,42 @@ export class BacktestEngine {
 
   private groupPricesBySymbol(priceData: PriceData[]): Map<string, PriceData[]> {
     const grouped = new Map<string, PriceData[]>();
-    
+
     for (const data of priceData) {
       if (!grouped.has(data.symbol)) {
         grouped.set(data.symbol, []);
       }
       grouped.get(data.symbol)!.push(data);
     }
-    
+
     // Sort by date
     for (const [symbol, prices] of grouped) {
       prices.sort((a, b) => a.date.getTime() - b.date.getTime());
     }
-    
+
     return grouped;
   }
 
   private getPriceHistory(
     pricesBySymbol: Map<string, PriceData[]>,
     symbol: string,
-    currentDate: Date
+    currentDate: Date,
   ): number[] {
     const symbolPrices = pricesBySymbol.get(symbol) || [];
-    return symbolPrices
-      .filter(p => p.date <= currentDate)
-      .map(p => p.price);
+    return symbolPrices.filter((p) => p.date <= currentDate).map((p) => p.price);
   }
 
   private updatePositionPrices(pricesBySymbol: Map<string, PriceData[]>, date: Date) {
     for (const [symbol, position] of this.positions) {
       const symbolPrices = pricesBySymbol.get(symbol) || [];
-      const currentPriceData = symbolPrices.find(p => 
-        p.date.toDateString() === date.toDateString()
+      const currentPriceData = symbolPrices.find(
+        (p) => p.date.toDateString() === date.toDateString(),
       );
-      
+
       if (currentPriceData) {
         position.currentPrice = currentPriceData.price;
         position.marketValue = position.quantity * position.currentPrice;
-        position.unrealizedPnL = position.marketValue - (position.quantity * position.averagePrice);
+        position.unrealizedPnL = position.marketValue - position.quantity * position.averagePrice;
       }
     }
   }
@@ -201,7 +199,7 @@ export class BacktestEngine {
 
     this.cash += netProceeds;
 
-    const realizedPnL = netProceeds - (position.quantity * position.averagePrice);
+    const realizedPnL = netProceeds - position.quantity * position.averagePrice;
 
     const trade: BacktestTrade = {
       date,
@@ -234,23 +232,26 @@ export class BacktestEngine {
     // Calculate annualized return
     const days = this.equityCurve.length;
     const years = days / 252; // Trading days
-    const annualizedReturn = years > 0 ? (Math.pow(finalValue / initialCapital, 1 / years) - 1) * 100 : 0;
+    const annualizedReturn =
+      years > 0 ? (Math.pow(finalValue / initialCapital, 1 / years) - 1) * 100 : 0;
 
     // Calculate Sharpe ratio
-    const avgReturn = this.dailyReturns.reduce((sum, r) => sum + r.return, 0) / this.dailyReturns.length;
+    const avgReturn =
+      this.dailyReturns.reduce((sum, r) => sum + r.return, 0) / this.dailyReturns.length;
     const stdDev = Math.sqrt(
-      this.dailyReturns.reduce((sum, r) => sum + Math.pow(r.return - avgReturn, 2), 0) / this.dailyReturns.length
+      this.dailyReturns.reduce((sum, r) => sum + Math.pow(r.return - avgReturn, 2), 0) /
+        this.dailyReturns.length,
     );
     const sharpeRatio = stdDev > 0 ? (avgReturn * Math.sqrt(252)) / stdDev : 0;
 
     // Calculate max drawdown
-    const maxDrawdown = Math.max(...this.equityCurve.map(e => e.drawdown)) * 100;
+    const maxDrawdown = Math.max(...this.equityCurve.map((e) => e.drawdown)) * 100;
 
     // Calculate win rate
-    const sellTrades = this.trades.filter(t => t.type === 'SELL');
+    const sellTrades = this.trades.filter((t) => t.type === 'SELL');
     const winningTrades = sellTrades.filter((trade, index) => {
-      const buyIndex = this.trades.findIndex(t => 
-        t.symbol === trade.symbol && t.type === 'BUY' && t.date < trade.date
+      const buyIndex = this.trades.findIndex(
+        (t) => t.symbol === trade.symbol && t.type === 'BUY' && t.date < trade.date,
       );
       if (buyIndex >= 0) {
         const buyTrade = this.trades[buyIndex];
@@ -260,14 +261,14 @@ export class BacktestEngine {
     }).length;
 
     const winRate = sellTrades.length > 0 ? (winningTrades / sellTrades.length) * 100 : 0;
-    
+
     // Calculate profit factor
     let grossProfits = 0;
     let grossLosses = 0;
-    
+
     sellTrades.forEach((trade, index) => {
-      const buyIndex = this.trades.findIndex(t => 
-        t.symbol === trade.symbol && t.type === 'BUY' && t.date < trade.date
+      const buyIndex = this.trades.findIndex(
+        (t) => t.symbol === trade.symbol && t.type === 'BUY' && t.date < trade.date,
       );
       if (buyIndex >= 0) {
         const buyTrade = this.trades[buyIndex];
@@ -279,7 +280,7 @@ export class BacktestEngine {
         }
       }
     });
-    
+
     const profitFactor = grossLosses > 0 ? grossProfits / grossLosses : 0;
 
     return {

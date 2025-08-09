@@ -6,7 +6,20 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TrendingUp, TrendingDown, Activity, Users, MessageSquare, BarChart3 } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 
 interface SentimentData {
   symbol: string;
@@ -41,11 +54,14 @@ interface MarketSentimentData {
     score: number;
     momentum: 'increasing' | 'decreasing' | 'stable';
   };
-  sectors: Record<string, {
-    sentiment: number;
-    volume: number;
-    topStocks: string[];
-  }>;
+  sectors: Record<
+    string,
+    {
+      sentiment: number;
+      volume: number;
+      topStocks: string[];
+    }
+  >;
   trendingTopics: Array<{
     topic: string;
     sentiment: number;
@@ -73,7 +89,7 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
   const fetchSentimentData = async () => {
     try {
       setLoading(true);
-      
+
       if (symbol) {
         const response = await fetch(`/api/v1/social/sentiment/${symbol}`);
         const data = await response.json();
@@ -120,9 +136,7 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
     return (
       <Card className={className}>
         <CardContent className="flex items-center justify-center h-96">
-          <div className="animate-pulse text-muted-foreground">
-            Loading sentiment data...
-          </div>
+          <div className="animate-pulse text-muted-foreground">Loading sentiment data...</div>
         </CardContent>
       </Card>
     );
@@ -134,17 +148,12 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>Social Sentiment - {symbol}</span>
-            <Badge 
-              variant="outline" 
-              className={getSentimentColor(sentimentData.sentiment.current)}
-            >
+            <Badge variant="outline" className={getSentimentColor(sentimentData.sentiment.current)}>
               {getSentimentIcon(sentimentData.sentiment.current)}
               <span className="ml-1 capitalize">{sentimentData.sentiment.current}</span>
             </Badge>
           </CardTitle>
-          <CardDescription>
-            Real-time sentiment analysis from social media
-          </CardDescription>
+          <CardDescription>Real-time sentiment analysis from social media</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -164,10 +173,7 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
                       {sentimentData.sentiment.score > 0 ? '+' : ''}
                       {sentimentData.sentiment.score.toFixed(1)}
                     </div>
-                    <Progress 
-                      value={50 + sentimentData.sentiment.score / 2} 
-                      className="flex-1"
-                    />
+                    <Progress value={50 + sentimentData.sentiment.score / 2} className="flex-1" />
                   </div>
                 </div>
                 <div className="space-y-2">
@@ -176,10 +182,7 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
                     <div className="text-2xl font-bold">
                       {sentimentData.sentiment.confidence.toFixed(0)}%
                     </div>
-                    <Progress 
-                      value={sentimentData.sentiment.confidence} 
-                      className="flex-1"
-                    />
+                    <Progress value={sentimentData.sentiment.confidence} className="flex-1" />
                   </div>
                 </div>
               </div>
@@ -231,25 +234,27 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={sentimentData.trends.hourly}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis 
-                        dataKey="time" 
-                        tickFormatter={(time) => new Date(time).toLocaleTimeString([], { hour: '2-digit' })}
+                      <XAxis
+                        dataKey="time"
+                        tickFormatter={(time) =>
+                          new Date(time).toLocaleTimeString([], { hour: '2-digit' })
+                        }
                       />
                       <YAxis yAxisId="left" />
                       <YAxis yAxisId="right" orientation="right" />
                       <Tooltip />
-                      <Line 
+                      <Line
                         yAxisId="left"
-                        type="monotone" 
-                        dataKey="sentiment" 
-                        stroke="#8884d8" 
+                        type="monotone"
+                        dataKey="sentiment"
+                        stroke="#8884d8"
                         name="Sentiment"
                       />
-                      <Line 
+                      <Line
                         yAxisId="right"
-                        type="monotone" 
-                        dataKey="volume" 
-                        stroke="#82ca9d" 
+                        type="monotone"
+                        dataKey="volume"
+                        stroke="#82ca9d"
                         name="Volume"
                       />
                     </LineChart>
@@ -263,17 +268,15 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={sentimentData.trends.daily}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis 
-                        dataKey="time" 
-                        tickFormatter={(time) => new Date(time).toLocaleDateString([], { weekday: 'short' })}
+                      <XAxis
+                        dataKey="time"
+                        tickFormatter={(time) =>
+                          new Date(time).toLocaleDateString([], { weekday: 'short' })
+                        }
                       />
                       <YAxis />
                       <Tooltip />
-                      <Bar 
-                        dataKey="sentiment" 
-                        fill={(entry: any) => entry.sentiment > 0 ? '#22c55e' : '#ef4444'}
-                        name="Sentiment"
-                      />
+                      <Bar dataKey="sentiment" fill="#3b82f6" name="Sentiment" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -285,10 +288,7 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
                 <div key={tweet.id} className="border rounded-lg p-4 space-y-2">
                   <div className="flex items-center justify-between">
                     <div className="font-medium">@{tweet.author}</div>
-                    <Badge 
-                      variant="outline" 
-                      className={getSentimentColor(tweet.sentiment)}
-                    >
+                    <Badge variant="outline" className={getSentimentColor(tweet.sentiment)}>
                       {tweet.sentiment}
                     </Badge>
                   </div>
@@ -322,17 +322,15 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
             <span>Market Sentiment</span>
-            <Badge 
-              variant="outline" 
+            <Badge
+              variant="outline"
               className={getSentimentColor(marketSentiment.overall.sentiment)}
             >
               {getSentimentIcon(marketSentiment.overall.sentiment)}
               <span className="ml-1 capitalize">{marketSentiment.overall.sentiment}</span>
             </Badge>
           </CardTitle>
-          <CardDescription>
-            Overall market sentiment from social media
-          </CardDescription>
+          <CardDescription>Overall market sentiment from social media</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-2">
@@ -342,10 +340,7 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
                 {marketSentiment.overall.momentum}
               </span>
             </div>
-            <Progress 
-              value={50 + marketSentiment.overall.score / 2} 
-              className="h-3"
-            />
+            <Progress value={50 + marketSentiment.overall.score / 2} className="h-3" />
             <div className="flex justify-between text-xs text-muted-foreground">
               <span>Bearish</span>
               <span>Neutral</span>
@@ -359,17 +354,20 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
               <div key={sector} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm capitalize">{sector}</span>
-                  <span className={`text-sm font-medium ${
-                    data.sentiment > 0 ? 'text-green-500' : 
-                    data.sentiment < 0 ? 'text-red-500' : 'text-gray-500'
-                  }`}>
-                    {data.sentiment > 0 ? '+' : ''}{data.sentiment.toFixed(1)}
+                  <span
+                    className={`text-sm font-medium ${
+                      data.sentiment > 0
+                        ? 'text-green-500'
+                        : data.sentiment < 0
+                          ? 'text-red-500'
+                          : 'text-gray-500'
+                    }`}
+                  >
+                    {data.sentiment > 0 ? '+' : ''}
+                    {data.sentiment.toFixed(1)}
                   </span>
                 </div>
-                <Progress 
-                  value={50 + data.sentiment / 2} 
-                  className="h-2"
-                />
+                <Progress value={50 + data.sentiment / 2} className="h-2" />
                 <div className="flex gap-1">
                   {data.topStocks.map((stock) => (
                     <Badge key={stock} variant="outline" className="text-xs">
@@ -388,14 +386,18 @@ export function SocialSentiment({ symbol, className }: SocialSentimentProps) {
                 <div key={index} className="flex items-center justify-between">
                   <span className="text-sm">{topic.topic}</span>
                   <div className="flex items-center gap-2">
-                    <Badge 
-                      variant="outline" 
+                    <Badge
+                      variant="outline"
                       className={getSentimentColor(
-                        topic.sentiment > 10 ? 'bullish' : 
-                        topic.sentiment < -10 ? 'bearish' : 'neutral'
+                        topic.sentiment > 10
+                          ? 'bullish'
+                          : topic.sentiment < -10
+                            ? 'bearish'
+                            : 'neutral',
                       )}
                     >
-                      {topic.sentiment > 0 ? '+' : ''}{topic.sentiment.toFixed(0)}
+                      {topic.sentiment > 0 ? '+' : ''}
+                      {topic.sentiment.toFixed(0)}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
                       {(topic.volume / 1000).toFixed(1)}K

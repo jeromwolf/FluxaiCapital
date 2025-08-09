@@ -3,7 +3,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { MobileNavigation } from './MobileNavigation';
+// import { MobileNavigation } from './MobileNavigation';
 import { useIsMobile } from '@/hooks/useMediaQuery';
 import { FloatingActionButton } from '@/components/ui/mobile-optimized';
 import { Plus } from 'lucide-react';
@@ -19,18 +19,18 @@ export function MobileOptimizedLayout({
   children,
   showFab = false,
   fabAction,
-  fabLabel
+  fabLabel,
 }: MobileOptimizedLayoutProps) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
-  
+
   // Hide bottom navigation on certain pages
   const hideBottomNav = pathname === '/login' || pathname === '/register';
-  
+
   // Calculate safe area for iOS devices
   const [safeAreaInsets, setSafeAreaInsets] = React.useState({
     top: 0,
-    bottom: 0
+    bottom: 0,
   });
 
   React.useEffect(() => {
@@ -53,16 +53,16 @@ export function MobileOptimizedLayout({
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main Content */}
-      <main 
+      <main
         className={cn(
-          "flex-1 overflow-y-auto",
-          !hideBottomNav && "pb-16" // Add padding for bottom navigation
+          'flex-1 overflow-y-auto',
+          !hideBottomNav && 'pb-16', // Add padding for bottom navigation
         )}
         style={{
           paddingTop: `env(safe-area-inset-top, ${safeAreaInsets.top}px)`,
-          paddingBottom: !hideBottomNav 
-            ? `calc(4rem + env(safe-area-inset-bottom, ${safeAreaInsets.bottom}px))` 
-            : `env(safe-area-inset-bottom, ${safeAreaInsets.bottom}px)`
+          paddingBottom: !hideBottomNav
+            ? `calc(4rem + env(safe-area-inset-bottom, ${safeAreaInsets.bottom}px))`
+            : `env(safe-area-inset-bottom, ${safeAreaInsets.bottom}px)`,
         }}
       >
         {children}
@@ -75,12 +75,12 @@ export function MobileOptimizedLayout({
           icon={<Plus className="w-5 h-5" />}
           label={fabLabel}
           position="bottom-right"
-          className={!hideBottomNav ? "mb-16" : ""}
+          className={!hideBottomNav ? 'mb-16' : ''}
         />
       )}
 
       {/* Bottom Navigation */}
-      {!hideBottomNav && <MobileNavigation />}
+      {/* {!hideBottomNav && <MobileNavigation />} */}
     </div>
   );
 }

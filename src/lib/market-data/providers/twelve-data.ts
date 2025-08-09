@@ -1,7 +1,7 @@
 // Twelve Data API Provider for Korean stocks
 import { MarketQuote } from '../types';
 
-const TWELVE_DATA_API_KEY = process.env.TWELVE_DATA_API_KEY!;
+const TWELVE_DATA_API_KEY = process.env.TWELVE_DATA_API_KEY || 'demo';
 const TWELVE_DATA_BASE_URL = 'https://api.twelvedata.com';
 
 interface TwelveDataQuote {
@@ -50,7 +50,7 @@ export class TwelveDataProvider {
   async getQuote(symbol: string): Promise<MarketQuote> {
     try {
       const response = await fetch(
-        `${TWELVE_DATA_BASE_URL}/quote?symbol=${symbol}&apikey=${this.apiKey}`
+        `${TWELVE_DATA_BASE_URL}/quote?symbol=${symbol}&apikey=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -63,7 +63,7 @@ export class TwelveDataProvider {
         symbol: data.symbol,
         name: data.name,
         price: parseFloat(data.close),
-        currency: data.currency,
+        currency: (data.currency as 'KRW' | 'USD' | 'EUR' | 'JPY') || 'USD',
         previousClose: parseFloat(data.previous_close),
         change: parseFloat(data.change),
         changePercent: parseFloat(data.percent_change),
@@ -89,7 +89,7 @@ export class TwelveDataProvider {
     try {
       const symbolsStr = symbols.join(',');
       const response = await fetch(
-        `${TWELVE_DATA_BASE_URL}/quote?symbol=${symbolsStr}&apikey=${this.apiKey}`
+        `${TWELVE_DATA_BASE_URL}/quote?symbol=${symbolsStr}&apikey=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -97,15 +97,15 @@ export class TwelveDataProvider {
       }
 
       const data = await response.json();
-      
+
       // Handle both single quote and multiple quotes response
       const quotes = Array.isArray(data) ? data : [data];
-      
+
       return quotes.map((quote: TwelveDataQuote) => ({
         symbol: quote.symbol,
         name: quote.name,
         price: parseFloat(quote.close),
-        currency: quote.currency,
+        currency: (quote.currency as 'KRW' | 'USD' | 'EUR' | 'JPY') || 'USD',
         previousClose: parseFloat(quote.previous_close),
         change: parseFloat(quote.change),
         changePercent: parseFloat(quote.percent_change),
@@ -124,11 +124,11 @@ export class TwelveDataProvider {
   async getTimeSeries(
     symbol: string,
     interval: '1min' | '5min' | '15min' | '30min' | '1h' | '1day' | '1week' | '1month' = '1day',
-    outputSize: number = 30
+    outputSize: number = 30,
   ) {
     try {
       const response = await fetch(
-        `${TWELVE_DATA_BASE_URL}/time_series?symbol=${symbol}&interval=${interval}&outputsize=${outputSize}&apikey=${this.apiKey}`
+        `${TWELVE_DATA_BASE_URL}/time_series?symbol=${symbol}&interval=${interval}&outputsize=${outputSize}&apikey=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -137,7 +137,7 @@ export class TwelveDataProvider {
 
       const data: TwelveDataTimeSeries = await response.json();
 
-      return data.values.map(value => ({
+      return data.values.map((value) => ({
         timestamp: new Date(value.datetime),
         open: parseFloat(value.open),
         high: parseFloat(value.high),
@@ -155,10 +155,10 @@ export class TwelveDataProvider {
     symbol: string,
     indicator: 'sma' | 'ema' | 'rsi' | 'macd' | 'bbands' | 'stoch',
     interval: string = '1day',
-    timePeriod?: number
+    timePeriod?: number,
   ) {
     let url = `${TWELVE_DATA_BASE_URL}/${indicator}?symbol=${symbol}&interval=${interval}&apikey=${this.apiKey}`;
-    
+
     if (timePeriod) {
       url += `&time_period=${timePeriod}`;
     }
@@ -180,7 +180,7 @@ export class TwelveDataProvider {
   async getMarketMovers(outputSize: number = 10) {
     try {
       const response = await fetch(
-        `${TWELVE_DATA_BASE_URL}/market_movers?outputsize=${outputSize}&apikey=${this.apiKey}`
+        `${TWELVE_DATA_BASE_URL}/market_movers?outputsize=${outputSize}&apikey=${this.apiKey}`,
       );
 
       if (!response.ok) {
@@ -188,7 +188,7 @@ export class TwelveDataProvider {
       }
 
       const data = await response.json();
-      
+
       return {
         gainers: data.gainers || [],
         losers: data.losers || [],
@@ -202,7 +202,7 @@ export class TwelveDataProvider {
 
   async searchSymbols(keywords: string, exchange?: string) {
     let url = `${TWELVE_DATA_BASE_URL}/symbol_search?symbol=${keywords}&apikey=${this.apiKey}`;
-    
+
     if (exchange) {
       url += `&exchange=${exchange}`;
     }
@@ -215,7 +215,7 @@ export class TwelveDataProvider {
       }
 
       const data = await response.json();
-      
+
       return data.data || [];
     } catch (error) {
       console.error('Error searching symbols:', error);
@@ -226,14 +226,16 @@ export class TwelveDataProvider {
   // WebSocket connection for real-time data
   connectWebSocket(symbols: string[], onMessage: (data: any) => void): () => void {
     const ws = new WebSocket(`wss://ws.twelvedata.com/v1/quotes/price?apikey=${this.apiKey}`);
-    
+
     ws.onopen = () => {
-      ws.send(JSON.stringify({
-        action: 'subscribe',
-        params: {
-          symbols: symbols.join(',')
-        }
-      }));
+      ws.send(
+        JSON.stringify({
+          action: 'subscribe',
+          params: {
+            symbols: symbols.join(','),
+          },
+        }),
+      );
     };
 
     ws.onmessage = (event) => {
@@ -250,12 +252,14 @@ export class TwelveDataProvider {
     // Return unsubscribe function
     return () => {
       if (ws.readyState === WebSocket.OPEN) {
-        ws.send(JSON.stringify({
-          action: 'unsubscribe',
-          params: {
-            symbols: symbols.join(',')
-          }
-        }));
+        ws.send(
+          JSON.stringify({
+            action: 'unsubscribe',
+            params: {
+              symbols: symbols.join(','),
+            },
+          }),
+        );
         ws.close();
       }
     };

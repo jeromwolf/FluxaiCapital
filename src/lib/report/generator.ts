@@ -1,4 +1,13 @@
-import { Report, ReportData, ReportTemplate, PortfolioSummary, PerformanceData, HoldingData, TransactionData, RiskData } from './types';
+import {
+  Report,
+  ReportData,
+  ReportTemplate,
+  PortfolioSummary,
+  PerformanceData,
+  HoldingData,
+  TransactionData,
+  RiskData,
+} from './types';
 
 export class ReportGenerator {
   private template: ReportTemplate;
@@ -6,12 +15,7 @@ export class ReportGenerator {
   private startDate: Date;
   private endDate: Date;
 
-  constructor(
-    template: ReportTemplate,
-    portfolioId: string,
-    startDate: Date,
-    endDate: Date
-  ) {
+  constructor(template: ReportTemplate, portfolioId: string, startDate: Date, endDate: Date) {
     this.template = template;
     this.portfolioId = portfolioId;
     this.startDate = startDate;
@@ -30,7 +34,7 @@ export class ReportGenerator {
     };
 
     // 템플릿에 따라 시장 데이터 추가
-    if (this.template.sections.some(section => section.type === 'market')) {
+    if (this.template.sections.some((section) => section.type === 'market')) {
       reportData.marketData = await this.getMarketData();
     }
 
@@ -237,7 +241,7 @@ export class ReportGenerator {
     return {
       type: 'pie' as const,
       title: '자산 구성',
-      data: holdings.map(holding => ({
+      data: holdings.map((holding) => ({
         name: holding.symbol,
         value: holding.weight,
       })),
@@ -269,7 +273,8 @@ export class ReportGenerator {
         end: this.endDate,
         label: this.getPeriodLabel(),
       },
-      disclaimer: '본 리포트는 투자 참고용으로만 사용되어야 하며, 투자 결정의 근거로 사용되어서는 안 됩니다.',
+      disclaimer:
+        '본 리포트는 투자 참고용으로만 사용되어야 하며, 투자 결정의 근거로 사용되어서는 안 됩니다.',
       watermark: 'FLUX AI Capital',
     };
   }

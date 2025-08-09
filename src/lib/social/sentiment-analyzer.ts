@@ -18,14 +18,76 @@ interface MarketSentiment {
 // Financial sentiment lexicon
 const FINANCIAL_LEXICON = {
   positive: {
-    strong: ['bullish', 'surge', 'soar', 'moon', 'breakout', 'rally', 'boom', 'explosive', 'skyrocket', 'parabolic'],
-    moderate: ['buy', 'long', 'growth', 'profit', 'gain', 'uptrend', 'support', 'accumulation', 'green', 'positive'],
-    weak: ['hope', 'potential', 'opportunity', 'maybe', 'could', 'possibly', 'recovery', 'stabilize'],
+    strong: [
+      'bullish',
+      'surge',
+      'soar',
+      'moon',
+      'breakout',
+      'rally',
+      'boom',
+      'explosive',
+      'skyrocket',
+      'parabolic',
+    ],
+    moderate: [
+      'buy',
+      'long',
+      'growth',
+      'profit',
+      'gain',
+      'uptrend',
+      'support',
+      'accumulation',
+      'green',
+      'positive',
+    ],
+    weak: [
+      'hope',
+      'potential',
+      'opportunity',
+      'maybe',
+      'could',
+      'possibly',
+      'recovery',
+      'stabilize',
+    ],
   },
   negative: {
-    strong: ['bearish', 'crash', 'plunge', 'collapse', 'dump', 'selloff', 'panic', 'catastrophe', 'bubble', 'bankrupt'],
-    moderate: ['sell', 'short', 'loss', 'decline', 'downtrend', 'resistance', 'red', 'negative', 'concern', 'risk'],
-    weak: ['worry', 'uncertain', 'volatile', 'caution', 'might', 'possibly', 'correction', 'pullback'],
+    strong: [
+      'bearish',
+      'crash',
+      'plunge',
+      'collapse',
+      'dump',
+      'selloff',
+      'panic',
+      'catastrophe',
+      'bubble',
+      'bankrupt',
+    ],
+    moderate: [
+      'sell',
+      'short',
+      'loss',
+      'decline',
+      'downtrend',
+      'resistance',
+      'red',
+      'negative',
+      'concern',
+      'risk',
+    ],
+    weak: [
+      'worry',
+      'uncertain',
+      'volatile',
+      'caution',
+      'might',
+      'possibly',
+      'correction',
+      'pullback',
+    ],
   },
   neutral: ['hold', 'wait', 'watch', 'sideways', 'consolidation', 'range', 'stable', 'flat'],
 };
@@ -43,7 +105,8 @@ export class SentimentAnalyzer {
 
   constructor() {
     this.tokenizer = new natural.WordTokenizer();
-    this.sentiment = new natural.SentimentAnalyzer('English');
+    // SentimentAnalyzer requires 3 parameters: language, stemmer, type
+    this.sentiment = new natural.SentimentAnalyzer('English', natural.PorterStemmer, 'afinn');
   }
 
   /**
@@ -53,7 +116,7 @@ export class SentimentAnalyzer {
     // Clean and tokenize text
     const cleanText = this.preprocessText(text);
     const tokens = this.tokenizer.tokenize(cleanText);
-    
+
     if (!tokens || tokens.length === 0) {
       return {
         sentiment: 'neutral',
@@ -65,19 +128,19 @@ export class SentimentAnalyzer {
 
     // Get base sentiment score
     const baseScore = this.sentiment.getSentiment(tokens);
-    
+
     // Apply financial lexicon adjustments
     const lexiconAdjustment = this.applyFinancialLexicon(text, tokens);
-    
+
     // Apply emoji sentiment
     const emojiAdjustment = this.analyzeEmojis(text);
-    
+
     // Combine scores with weights
-    const finalScore = (baseScore * 0.4) + (lexiconAdjustment * 0.4) + (emojiAdjustment * 0.2);
-    
+    const finalScore = baseScore * 0.4 + lexiconAdjustment * 0.4 + emojiAdjustment * 0.2;
+
     // Extract keywords
     const keywords = this.extractKeywords(tokens);
-    
+
     // Determine sentiment category and confidence
     const { sentiment, confidence } = this.categorize(finalScore);
 
@@ -103,8 +166,8 @@ export class SentimentAnalyzer {
       };
     }
 
-    const sentiments = texts.map(text => this.analyzeSentiment(text));
-    
+    const sentiments = texts.map((text) => this.analyzeSentiment(text));
+
     let bullishCount = 0;
     let bearishCount = 0;
     let neutralCount = 0;
@@ -147,9 +210,7 @@ export class SentimentAnalyzer {
   /**
    * Detect sentiment trends over time
    */
-  detectSentimentTrend(
-    timeSeriesData: Array<{ time: string; sentiment: SentimentResult }>
-  ): {
+  detectSentimentTrend(timeSeriesData: Array<{ time: string; sentiment: SentimentResult }>): {
     trend: 'improving' | 'declining' | 'stable';
     changeRate: number;
     volatility: number;
@@ -158,7 +219,7 @@ export class SentimentAnalyzer {
       return { trend: 'stable', changeRate: 0, volatility: 0 };
     }
 
-    const scores = timeSeriesData.map(d => d.sentiment.score);
+    const scores = timeSeriesData.map((d) => d.sentiment.score);
     const recentScores = scores.slice(-5); // Last 5 data points
     const olderScores = scores.slice(0, 5); // First 5 data points
 
@@ -168,7 +229,8 @@ export class SentimentAnalyzer {
 
     // Calculate volatility
     const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
-    const variance = scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length;
+    const variance =
+      scores.reduce((sum, score) => sum + Math.pow(score - mean, 2), 0) / scores.length;
     const volatility = Math.sqrt(variance);
 
     let trend: 'improving' | 'declining' | 'stable';
@@ -189,16 +251,16 @@ export class SentimentAnalyzer {
   private preprocessText(text: string): string {
     // Convert to lowercase but preserve cashtags and tickers
     let processed = text.toLowerCase();
-    
+
     // Remove URLs
     processed = processed.replace(/https?:\/\/\S+/g, '');
-    
+
     // Remove mentions but keep the context
     processed = processed.replace(/@\w+/g, '');
-    
+
     // Keep hashtags as they often contain sentiment
     processed = processed.replace(/#(\w+)/g, '$1');
-    
+
     return processed;
   }
 
@@ -281,16 +343,59 @@ export class SentimentAnalyzer {
    */
   private extractKeywords(tokens: string[]): string[] {
     const stopWords = new Set([
-      'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
-      'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
-      'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could',
-      'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these',
-      'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'them', 'their',
+      'the',
+      'a',
+      'an',
+      'and',
+      'or',
+      'but',
+      'in',
+      'on',
+      'at',
+      'to',
+      'for',
+      'of',
+      'with',
+      'by',
+      'from',
+      'is',
+      'are',
+      'was',
+      'were',
+      'be',
+      'been',
+      'have',
+      'has',
+      'had',
+      'do',
+      'does',
+      'did',
+      'will',
+      'would',
+      'could',
+      'should',
+      'may',
+      'might',
+      'must',
+      'can',
+      'this',
+      'that',
+      'these',
+      'those',
+      'i',
+      'you',
+      'he',
+      'she',
+      'it',
+      'we',
+      'they',
+      'them',
+      'their',
     ]);
 
     const keywords = tokens
-      .filter(token => token.length > 2 && !stopWords.has(token))
-      .filter(token => /^[a-z0-9]+$/i.test(token));
+      .filter((token) => token.length > 2 && !stopWords.has(token))
+      .filter((token) => /^[a-z0-9]+$/i.test(token));
 
     // Count frequency
     const frequency: Record<string, number> = {};
@@ -308,12 +413,12 @@ export class SentimentAnalyzer {
   /**
    * Categorize sentiment based on score
    */
-  private categorize(score: number): { 
-    sentiment: 'positive' | 'negative' | 'neutral'; 
-    confidence: number 
+  private categorize(score: number): {
+    sentiment: 'positive' | 'negative' | 'neutral';
+    confidence: number;
   } {
     const absScore = Math.abs(score);
-    
+
     if (score > 0.1) {
       return {
         sentiment: 'positive',
@@ -340,7 +445,7 @@ export class SentimentAnalyzer {
     prices: string[];
     percentages: string[];
   } {
-    const tickers = (text.match(/\$[A-Z]{1,5}\b/g) || []).map(t => t.substring(1));
+    const tickers = (text.match(/\$[A-Z]{1,5}\b/g) || []).map((t) => t.substring(1));
     const prices = text.match(/\$[\d,]+\.?\d*/g) || [];
     const percentages = text.match(/[+-]?\d+\.?\d*%/g) || [];
 

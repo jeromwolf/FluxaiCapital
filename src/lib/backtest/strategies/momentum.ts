@@ -11,12 +11,12 @@ export const momentumStrategy: BacktestStrategy = {
     maxPositions: 10,
     stopLoss: 0.05, // 5% stop loss
     takeProfit: 0.15, // 15% take profit
-  }
+  },
 };
 
 export function calculateMomentumSignal(
   prices: number[],
-  lookbackPeriod: number
+  lookbackPeriod: number,
 ): 'BUY' | 'SELL' | 'HOLD' {
   if (prices.length < lookbackPeriod + 1) {
     return 'HOLD';
@@ -25,7 +25,8 @@ export function calculateMomentumSignal(
   const currentPrice = prices[prices.length - 1];
   const ma = prices.slice(-lookbackPeriod).reduce((a, b) => a + b, 0) / lookbackPeriod;
   const previousPrice = prices[prices.length - 2];
-  const previousMA = prices.slice(-lookbackPeriod - 1, -1).reduce((a, b) => a + b, 0) / lookbackPeriod;
+  const previousMA =
+    prices.slice(-lookbackPeriod - 1, -1).reduce((a, b) => a + b, 0) / lookbackPeriod;
 
   // Buy signal: price crosses above MA
   if (previousPrice <= previousMA && currentPrice > ma) {

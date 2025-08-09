@@ -47,9 +47,7 @@ export default function BacktestResults({ result }: BacktestResultsProps) {
         <div className="text-center">
           <BarChart3 className="mx-auto h-12 w-12 text-muted-foreground" />
           <h3 className="mt-4 text-lg font-medium">백테스트 결과가 없습니다</h3>
-          <p className="text-muted-foreground">
-            설정 탭에서 백테스트를 실행하세요
-          </p>
+          <p className="text-muted-foreground">설정 탭에서 백테스트를 실행하세요</p>
         </div>
       </div>
     );

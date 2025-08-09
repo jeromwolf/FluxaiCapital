@@ -29,10 +29,10 @@ interface AddTransactionDialogProps {
   trigger?: React.ReactNode;
 }
 
-export function AddTransactionDialog({ 
-  portfolioId, 
+export function AddTransactionDialog({
+  portfolioId,
   onSuccess,
-  trigger 
+  trigger,
 }: AddTransactionDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -48,12 +48,12 @@ export function AddTransactionDialog({
 
   // Get current market price when symbol changes
   const { price: marketPrice } = useMarketPrice(
-    transaction.symbol && transaction.type === 'BUY' ? transaction.symbol : null
+    transaction.symbol && transaction.type === 'BUY' ? transaction.symbol : null,
   );
 
   React.useEffect(() => {
     if (marketPrice && !transaction.price) {
-      setTransaction(prev => ({ ...prev, price: marketPrice.price.toString() }));
+      setTransaction((prev) => ({ ...prev, price: marketPrice.price.toString() }));
     }
   }, [marketPrice, transaction.price]);
 
@@ -114,9 +114,7 @@ export function AddTransactionDialog({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>새 거래 추가</DialogTitle>
-          <DialogDescription>
-            포트폴리오에 새로운 거래를 기록합니다
-          </DialogDescription>
+          <DialogDescription>포트폴리오에 새로운 거래를 기록합니다</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -158,7 +156,9 @@ export function AddTransactionDialog({
                 <Input
                   placeholder="예: AAPL, 005930"
                   value={transaction.symbol}
-                  onChange={(e) => setTransaction({ ...transaction, symbol: e.target.value.toUpperCase() })}
+                  onChange={(e) =>
+                    setTransaction({ ...transaction, symbol: e.target.value.toUpperCase() })
+                  }
                 />
                 {marketPrice && (
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -228,7 +228,9 @@ export function AddTransactionDialog({
               <div className="flex justify-between text-sm">
                 <span>거래 금액</span>
                 <span className="font-medium">
-                  {(parseFloat(transaction.quantity) * parseFloat(transaction.price)).toLocaleString()}
+                  {(
+                    parseFloat(transaction.quantity) * parseFloat(transaction.price)
+                  ).toLocaleString()}
                 </span>
               </div>
               <div className="flex justify-between text-sm">
@@ -255,7 +257,8 @@ export function AddTransactionDialog({
               onClick={handleSubmit}
               disabled={
                 isSubmitting ||
-                (isStockTransaction && (!transaction.symbol || !transaction.quantity || !transaction.price)) ||
+                (isStockTransaction &&
+                  (!transaction.symbol || !transaction.quantity || !transaction.price)) ||
                 (requiresAmount && !transaction.price)
               }
             >

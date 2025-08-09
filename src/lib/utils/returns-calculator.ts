@@ -1,8 +1,5 @@
 import { Period } from '@/components/dashboard/PeriodTabs';
-import { 
-  differenceInDays,
-  parseISO 
-} from 'date-fns';
+import { differenceInDays, parseISO } from 'date-fns';
 
 export interface PriceData {
   date: string;
@@ -38,11 +35,11 @@ export interface PortfolioReturns {
  */
 export function calculateSimpleReturns(
   initialValue: number,
-  finalValue: number
+  finalValue: number,
 ): { returns: number; percentage: number } {
   const returns = finalValue - initialValue;
   const percentage = initialValue > 0 ? (returns / initialValue) * 100 : 0;
-  
+
   return { returns, percentage };
 }
 
@@ -53,17 +50,17 @@ export function calculateAnnualizedReturns(
   initialValue: number,
   finalValue: number,
   startDate: string | Date,
-  endDate: string | Date
+  endDate: string | Date,
 ): number {
   const start = typeof startDate === 'string' ? parseISO(startDate) : startDate;
   const end = typeof endDate === 'string' ? parseISO(endDate) : endDate;
-  
+
   const days = differenceInDays(end, start);
   if (days <= 0 || initialValue <= 0) return 0;
-  
+
   const totalReturn = (finalValue - initialValue) / initialValue;
   const annualizedReturn = Math.pow(1 + totalReturn, 365 / days) - 1;
-  
+
   return annualizedReturn * 100;
 }
 
@@ -72,21 +69,21 @@ export function calculateAnnualizedReturns(
  */
 export function calculateDailyReturns(priceData: PriceData[]): number[] {
   if (priceData.length < 2) return [];
-  
+
   const returns: number[] = [];
-  
+
   for (let i = 1; i < priceData.length; i++) {
     const previousPrice = priceData[i - 1]?.price;
     const currentPrice = priceData[i]?.price;
-    
+
     if (!previousPrice || !currentPrice) continue;
-    
+
     if (previousPrice > 0) {
       const dailyReturn = ((currentPrice - previousPrice) / previousPrice) * 100;
       returns.push(dailyReturn);
     }
   }
-  
+
   return returns;
 }
 
@@ -95,11 +92,11 @@ export function calculateDailyReturns(priceData: PriceData[]): number[] {
  */
 export function calculateVolatility(returns: number[]): number {
   if (returns.length < 2) return 0;
-  
+
   const mean = returns.reduce((sum, r) => sum + r, 0) / returns.length;
-  const squaredDiffs = returns.map(r => Math.pow(r - mean, 2));
+  const squaredDiffs = returns.map((r) => Math.pow(r - mean, 2));
   const variance = squaredDiffs.reduce((sum, d) => sum + d, 0) / (returns.length - 1);
-  
+
   // Annualized volatility (assuming daily returns)
   return Math.sqrt(variance * 252);
 }
@@ -110,7 +107,7 @@ export function calculateVolatility(returns: number[]): number {
 export function calculateSharpeRatio(
   returns: number,
   volatility: number,
-  riskFreeRate: number = 2.5 // Default 2.5% risk-free rate
+  riskFreeRate: number = 2.5, // Default 2.5% risk-free rate
 ): number {
   if (volatility === 0) return 0;
   return (returns - riskFreeRate) / volatility;
@@ -127,19 +124,19 @@ export function calculateMaxDrawdown(priceData: PriceData[]): {
   if (priceData.length < 2) {
     return { maxDrawdown: 0, maxDrawdownStart: '', maxDrawdownEnd: '' };
   }
-  
+
   let maxDrawdown = 0;
   let peak = priceData[0]?.price || 0;
   let maxDrawdownStart = priceData[0]?.date || '';
   let maxDrawdownEnd = priceData[0]?.date || '';
   let currentPeakDate = priceData[0]?.date || '';
-  
+
   for (let i = 1; i < priceData.length; i++) {
     const currentPrice = priceData[i]?.price;
     const currentDate = priceData[i]?.date;
-    
+
     if (!currentPrice || !currentDate) continue;
-    
+
     if (currentPrice > peak) {
       peak = currentPrice;
       currentPeakDate = currentDate;
@@ -152,7 +149,7 @@ export function calculateMaxDrawdown(priceData: PriceData[]): {
       }
     }
   }
-  
+
   return { maxDrawdown, maxDrawdownStart, maxDrawdownEnd };
 }
 
@@ -161,8 +158,8 @@ export function calculateMaxDrawdown(priceData: PriceData[]): {
  */
 export function calculateWinRate(returns: number[]): number {
   if (returns.length === 0) return 0;
-  
-  const positiveReturns = returns.filter(r => r > 0).length;
+
+  const positiveReturns = returns.filter((r) => r > 0).length;
   return (positiveReturns / returns.length) * 100;
 }
 
@@ -178,23 +175,21 @@ export function calculatePositionReturns(position: {
   const value = position.quantity * position.currentPrice;
   const returns = value - cost;
   const percentage = cost > 0 ? (returns / cost) * 100 : 0;
-  
+
   return {
     ...position,
     symbol: '', // To be filled by caller
     cost,
     value,
     returns,
-    percentage
+    percentage,
   };
 }
 
 /**
  * Calculate portfolio returns from positions
  */
-export function calculatePortfolioReturnsFromPositions(
-  positions: PositionData[]
-): {
+export function calculatePortfolioReturnsFromPositions(positions: PositionData[]): {
   totalValue: number;
   totalCost: number;
   totalReturns: number;
@@ -204,12 +199,12 @@ export function calculatePortfolioReturnsFromPositions(
   const totalCost = positions.reduce((sum, p) => sum + p.cost, 0);
   const totalReturns = totalValue - totalCost;
   const percentageReturns = totalCost > 0 ? (totalReturns / totalCost) * 100 : 0;
-  
+
   return {
     totalValue,
     totalCost,
     totalReturns,
-    percentageReturns
+    percentageReturns,
   };
 }
 
@@ -217,7 +212,7 @@ export function calculatePortfolioReturnsFromPositions(
  * Calculate returns for each period
  */
 export function calculateReturnsForAllPeriods(
-  priceData: PriceData[]
+  priceData: PriceData[],
 ): Record<Period, { returns: number; percentage: number }> {
   if (priceData.length === 0) {
     return {
@@ -227,10 +222,10 @@ export function calculateReturnsForAllPeriods(
       '3M': { returns: 0, percentage: 0 },
       '6M': { returns: 0, percentage: 0 },
       '1Y': { returns: 0, percentage: 0 },
-      'ALL': { returns: 0, percentage: 0 }
+      ALL: { returns: 0, percentage: 0 },
     };
   }
-  
+
   const latestData = priceData[priceData.length - 1];
   if (!latestData) {
     return {
@@ -240,10 +235,10 @@ export function calculateReturnsForAllPeriods(
       '3M': { returns: 0, percentage: 0 },
       '6M': { returns: 0, percentage: 0 },
       '1Y': { returns: 0, percentage: 0 },
-      'ALL': { returns: 0, percentage: 0 }
+      ALL: { returns: 0, percentage: 0 },
     };
   }
-  
+
   const latestPrice = latestData.price;
   const periods: Period[] = ['1D', '1W', '1M', '3M', '6M', '1Y', 'ALL'];
   const daysMap: Record<Period, number> = {
@@ -253,23 +248,23 @@ export function calculateReturnsForAllPeriods(
     '3M': 90,
     '6M': 180,
     '1Y': 365,
-    'ALL': priceData.length
+    ALL: priceData.length,
   };
-  
+
   const results: Record<Period, { returns: number; percentage: number }> = {} as any;
-  
+
   for (const period of periods) {
     const days = daysMap[period];
     const index = Math.max(0, priceData.length - days);
     const startData = priceData[index];
-    
+
     if (!startData) {
       results[period] = { returns: 0, percentage: 0 };
     } else {
       results[period] = calculateSimpleReturns(startData.price, latestPrice);
     }
   }
-  
+
   return results;
 }
 
@@ -279,7 +274,7 @@ export function calculateReturnsForAllPeriods(
 export function formatReturns(
   returns: number,
   percentage: number,
-  locale: string = 'ko-KR'
+  locale: string = 'ko-KR',
 ): {
   returnsText: string;
   percentageText: string;
@@ -287,13 +282,11 @@ export function formatReturns(
 } {
   const isPositive = returns >= 0;
   const sign = isPositive ? '+' : '';
-  
+
   return {
     returnsText: `${sign}${returns.toLocaleString(locale)}`,
     percentageText: `${sign}${percentage.toFixed(2)}%`,
-    className: isPositive 
-      ? 'text-green-600 dark:text-green-400' 
-      : 'text-red-600 dark:text-red-400'
+    className: isPositive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400',
   };
 }
 

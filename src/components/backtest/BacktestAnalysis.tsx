@@ -61,10 +61,38 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
       },
     },
     periodAnalysis: [
-      { period: 'Q1 2023', return: 8.5, volatility: 10.2, maxDrawdown: -3.1, trades: 12, winRate: 66.7 },
-      { period: 'Q2 2023', return: 6.3, volatility: 12.5, maxDrawdown: -5.2, trades: 15, winRate: 60.0 },
-      { period: 'Q3 2023', return: 4.8, volatility: 9.8, maxDrawdown: -2.8, trades: 11, winRate: 72.7 },
-      { period: 'Q4 2023', return: 3.9, volatility: 11.3, maxDrawdown: -8.2, trades: 9, winRate: 77.8 },
+      {
+        period: 'Q1 2023',
+        return: 8.5,
+        volatility: 10.2,
+        maxDrawdown: -3.1,
+        trades: 12,
+        winRate: 66.7,
+      },
+      {
+        period: 'Q2 2023',
+        return: 6.3,
+        volatility: 12.5,
+        maxDrawdown: -5.2,
+        trades: 15,
+        winRate: 60.0,
+      },
+      {
+        period: 'Q3 2023',
+        return: 4.8,
+        volatility: 9.8,
+        maxDrawdown: -2.8,
+        trades: 11,
+        winRate: 72.7,
+      },
+      {
+        period: 'Q4 2023',
+        return: 3.9,
+        volatility: 11.3,
+        maxDrawdown: -8.2,
+        trades: 9,
+        winRate: 77.8,
+      },
     ],
     recommendations: [
       '샤프 비율이 우수합니다. 현재 전략을 유지하거나 포지션 크기를 늘려보세요.',
@@ -85,9 +113,7 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
             <Target className="h-5 w-5" />
             전략 분석 및 추천
           </CardTitle>
-          <CardDescription>
-            백테스트 결과를 바탕으로 한 개선 방안
-          </CardDescription>
+          <CardDescription>백테스트 결과를 바탕으로 한 개선 방안</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {analysis.recommendations.map((recommendation, index) => (
@@ -113,9 +139,7 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Value at Risk (VaR)</CardTitle>
-                <CardDescription>
-                  일일 손실 위험 추정치
-                </CardDescription>
+                <CardDescription>일일 손실 위험 추정치</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -125,12 +149,12 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                       {analysis.riskMetrics.valueAtRisk.var95.toFixed(2)}%
                     </span>
                   </div>
-                  <Progress 
-                    value={Math.abs(analysis.riskMetrics.valueAtRisk.var95) * 10} 
-                    className="h-2" 
+                  <Progress
+                    value={Math.abs(analysis.riskMetrics.valueAtRisk.var95) * 10}
+                    className="h-2"
                   />
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-sm">99% VaR</span>
@@ -138,9 +162,9 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                       {analysis.riskMetrics.valueAtRisk.var99.toFixed(2)}%
                     </span>
                   </div>
-                  <Progress 
-                    value={Math.abs(analysis.riskMetrics.valueAtRisk.var99) * 10} 
-                    className="h-2" 
+                  <Progress
+                    value={Math.abs(analysis.riskMetrics.valueAtRisk.var99) * 10}
+                    className="h-2"
                   />
                 </div>
 
@@ -158,9 +182,7 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
             <Card>
               <CardHeader>
                 <CardTitle>드로우다운 분석</CardTitle>
-                <CardDescription>
-                  최대 손실 기간 및 회복 시간
-                </CardDescription>
+                <CardDescription>최대 손실 기간 및 회복 시간</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex justify-between">
@@ -169,7 +191,7 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                     {analysis.riskMetrics.drawdownAnalysis.maxDrawdown.toFixed(2)}%
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="text-sm">지속 기간</span>
                   <span className="text-sm font-medium">
@@ -282,18 +304,20 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                     {analysis.tradeAnalysis.tradeTiming.worstTradingMonth}
                   </span>
                 </div>
-                
+
                 <div className="space-y-2">
                   <div className="text-sm font-medium">월별 승률</div>
-                  {Object.entries(analysis.tradeAnalysis.tradeTiming.monthlyWinRate).map(([month, rate]) => (
-                    <div key={month} className="space-y-1">
-                      <div className="flex justify-between text-xs">
-                        <span>{month}</span>
-                        <span>{rate.toFixed(1)}%</span>
+                  {Object.entries(analysis.tradeAnalysis.tradeTiming.monthlyWinRate).map(
+                    ([month, rate]) => (
+                      <div key={month} className="space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span>{month}</span>
+                          <span>{rate.toFixed(1)}%</span>
+                        </div>
+                        <Progress value={rate} className="h-1" />
                       </div>
-                      <Progress value={rate} className="h-1" />
-                    </div>
-                  ))}
+                    ),
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -312,10 +336,13 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                   <div key={index} className="p-4 border rounded-lg">
                     <div className="flex justify-between items-center mb-2">
                       <h4 className="font-medium">{period.period}</h4>
-                      <span className={`text-sm font-medium ${
-                        period.return >= 0 ? 'text-green-600' : 'text-red-600'
-                      }`}>
-                        {period.return >= 0 ? '+' : ''}{period.return.toFixed(2)}%
+                      <span
+                        className={`text-sm font-medium ${
+                          period.return >= 0 ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        {period.return >= 0 ? '+' : ''}
+                        {period.return.toFixed(2)}%
                       </span>
                     </div>
                     <div className="grid grid-cols-4 gap-4 text-sm">
@@ -325,7 +352,9 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                       </div>
                       <div>
                         <div className="text-muted-foreground">최대 손실</div>
-                        <div className="font-medium text-red-600">{period.maxDrawdown.toFixed(2)}%</div>
+                        <div className="font-medium text-red-600">
+                          {period.maxDrawdown.toFixed(2)}%
+                        </div>
                       </div>
                       <div>
                         <div className="text-muted-foreground">거래 수</div>
@@ -356,13 +385,18 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                     수익 거래: {analysis.tradeAnalysis.profitDistribution.profits.length}회
                   </div>
                   <div className="text-sm">
-                    평균 수익: +{(analysis.tradeAnalysis.profitDistribution.profits
-                      .reduce((sum, profit) => sum + profit, 0) / 
-                      analysis.tradeAnalysis.profitDistribution.profits.length
-                    ).toFixed(2)}%
+                    평균 수익: +
+                    {(
+                      analysis.tradeAnalysis.profitDistribution.profits.reduce(
+                        (sum, profit) => sum + profit,
+                        0,
+                      ) / analysis.tradeAnalysis.profitDistribution.profits.length
+                    ).toFixed(2)}
+                    %
                   </div>
                   <div className="text-sm">
-                    최대 수익: +{Math.max(...analysis.tradeAnalysis.profitDistribution.profits).toFixed(2)}%
+                    최대 수익: +
+                    {Math.max(...analysis.tradeAnalysis.profitDistribution.profits).toFixed(2)}%
                   </div>
                 </div>
               </CardContent>
@@ -378,13 +412,18 @@ export default function BacktestAnalysis({ result }: BacktestAnalysisProps) {
                     손실 거래: {analysis.tradeAnalysis.profitDistribution.losses.length}회
                   </div>
                   <div className="text-sm">
-                    평균 손실: {(analysis.tradeAnalysis.profitDistribution.losses
-                      .reduce((sum, loss) => sum + loss, 0) / 
-                      analysis.tradeAnalysis.profitDistribution.losses.length
-                    ).toFixed(2)}%
+                    평균 손실:{' '}
+                    {(
+                      analysis.tradeAnalysis.profitDistribution.losses.reduce(
+                        (sum, loss) => sum + loss,
+                        0,
+                      ) / analysis.tradeAnalysis.profitDistribution.losses.length
+                    ).toFixed(2)}
+                    %
                   </div>
                   <div className="text-sm">
-                    최대 손실: {Math.min(...analysis.tradeAnalysis.profitDistribution.losses).toFixed(2)}%
+                    최대 손실:{' '}
+                    {Math.min(...analysis.tradeAnalysis.profitDistribution.losses).toFixed(2)}%
                   </div>
                 </div>
               </CardContent>

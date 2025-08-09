@@ -5,14 +5,10 @@ export class BuyAndHoldStrategy extends BaseStrategy {
   private hasBought = false;
 
   constructor(parameters: { targetWeight?: number } = {}) {
-    super(
-      'Buy and Hold',
-      '초기에 자산을 매수하고 보유 기간 동안 보유하는 전략',
-      {
-        targetWeight: 1.0, // 100% 투자
-        ...parameters,
-      }
-    );
+    super('Buy and Hold', '초기에 자산을 매수하고 보유 기간 동안 보유하는 전략', {
+      targetWeight: 1.0, // 100% 투자
+      ...parameters,
+    });
   }
 
   generateSignals(data: MarketData[], holdings: Map<string, number>): Signal[] {
@@ -28,8 +24,8 @@ export class BuyAndHoldStrategy extends BaseStrategy {
             'buy',
             undefined, // 엔진에서 계산
             1.0,
-            'Buy and Hold 초기 매수'
-          )
+            'Buy and Hold 초기 매수',
+          ),
         );
       }
       this.hasBought = true;

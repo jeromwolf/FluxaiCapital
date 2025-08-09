@@ -4,30 +4,28 @@ import { MarketData, Signal } from '../types';
 export class RebalancingStrategy extends BaseStrategy {
   private lastRebalanceDate: Date | null = null;
 
-  constructor(parameters: {
-    rebalancePeriod?: 'monthly' | 'quarterly' | 'yearly';
-    targetWeights?: Record<string, number>;
-    threshold?: number;
-  } = {}) {
-    super(
-      'Rebalancing',
-      '정기적으로 목표 비중에 맞춰 리밸런싱하는 전략',
-      {
-        rebalancePeriod: 'monthly',
-        targetWeights: {},
-        threshold: 0.05, // 5% 이상 차이날 때 리밸런싱
-        ...parameters,
-      }
-    );
+  constructor(
+    parameters: {
+      rebalancePeriod?: 'monthly' | 'quarterly' | 'yearly';
+      targetWeights?: Record<string, number>;
+      threshold?: number;
+    } = {},
+  ) {
+    super('Rebalancing', '정기적으로 목표 비중에 맞춰 리밸런싱하는 전략', {
+      rebalancePeriod: 'monthly',
+      targetWeights: {},
+      threshold: 0.05, // 5% 이상 차이날 때 리밸런싱
+      ...parameters,
+    });
   }
 
   generateSignals(data: MarketData[], holdings: Map<string, number>): Signal[] {
     const signals: Signal[] = [];
-    
+
     if (data.length === 0) return signals;
 
     const currentDate = data[0].date;
-    
+
     // 리밸런싱 필요성 확인
     if (this.shouldRebalance(currentDate, data, holdings)) {
       const rebalanceSignals = this.calculateRebalanceSignals(data, holdings);
@@ -38,15 +36,21 @@ export class RebalancingStrategy extends BaseStrategy {
     return signals;
   }
 
-  private shouldRebalance(currentDate: Date, data: MarketData[], holdings: Map<string, number>): boolean {
+  private shouldRebalance(
+    currentDate: Date,
+    data: MarketData[],
+    holdings: Map<string, number>,
+  ): boolean {
     // 첫 거래일인 경우
     if (this.lastRebalanceDate === null) {
       return true;
     }
 
     // 정기 리밸런싱 확인
-    const daysDiff = Math.floor((currentDate.getTime() - this.lastRebalanceDate.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const daysDiff = Math.floor(
+      (currentDate.getTime() - this.lastRebalanceDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
     let rebalanceDays: number;
     switch (this.parameters.rebalancePeriod) {
       case 'monthly':
@@ -73,7 +77,7 @@ export class RebalancingStrategy extends BaseStrategy {
     for (const symbol of Object.keys(targetWeights)) {
       const currentWeight = currentWeights[symbol] || 0;
       const targetWeight = targetWeights[symbol] || 0;
-      
+
       if (Math.abs(currentWeight - targetWeight) > this.parameters.threshold) {
         return true;
       }
@@ -82,13 +86,16 @@ export class RebalancingStrategy extends BaseStrategy {
     return false;
   }
 
-  private calculateCurrentWeights(data: MarketData[], holdings: Map<string, number>): Record<string, number> {
+  private calculateCurrentWeights(
+    data: MarketData[],
+    holdings: Map<string, number>,
+  ): Record<string, number> {
     const weights: Record<string, number> = {};
     let totalValue = 0;
 
     // 각 자산의 현재 가치 계산
     const assetValues: Record<string, number> = {};
-    
+
     for (const marketData of data) {
       const quantity = holdings.get(marketData.symbol) || 0;
       const value = quantity * marketData.close;
@@ -131,7 +138,8 @@ export class RebalancingStrategy extends BaseStrategy {
       const targetWeight = targetWeights[symbol] || 0;
       const weightDiff = targetWeight - currentWeight;
 
-      if (Math.abs(weightDiff) > 0.001) { // 0.1% 이상 차이
+      if (Math.abs(weightDiff) > 0.001) {
+        // 0.1% 이상 차이
         const targetValue = totalValue * targetWeight;
         const currentQuantity = holdings.get(symbol) || 0;
         const targetQuantity = Math.floor(targetValue / marketData.close);
@@ -146,8 +154,8 @@ export class RebalancingStrategy extends BaseStrategy {
               'buy',
               quantityDiff,
               Math.abs(weightDiff),
-              `리밸런싱: ${(currentWeight * 100).toFixed(2)}% → ${(targetWeight * 100).toFixed(2)}%`
-            )
+              `리밸런싱: ${(currentWeight * 100).toFixed(2)}% → ${(targetWeight * 100).toFixed(2)}%`,
+            ),
           );
         } else if (quantityDiff < 0) {
           // 매도 시그널
@@ -158,8 +166,8 @@ export class RebalancingStrategy extends BaseStrategy {
               'sell',
               Math.abs(quantityDiff),
               Math.abs(weightDiff),
-              `리밸런싱: ${(currentWeight * 100).toFixed(2)}% → ${(targetWeight * 100).toFixed(2)}%`
-            )
+              `리밸런싱: ${(currentWeight * 100).toFixed(2)}% → ${(targetWeight * 100).toFixed(2)}%`,
+            ),
           );
         }
       }

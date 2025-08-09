@@ -39,10 +39,7 @@ export default function Header() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <nav className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="flex items-center gap-2 font-semibold"
-          >
+          <Link href="/" className="flex items-center gap-2 font-semibold">
             <TrendingUp className="h-6 w-6 text-primary" />
             <span className="hidden sm:inline-block">FLUX AI Capital</span>
             <span className="sm:hidden">FLUX</span>
@@ -55,9 +52,7 @@ export default function Header() {
                 href={item.href}
                 className={cn(
                   'text-sm font-medium transition-colors hover:text-primary',
-                  pathname === item.href
-                    ? 'text-foreground'
-                    : 'text-muted-foreground'
+                  pathname === item.href ? 'text-foreground' : 'text-muted-foreground',
                 )}
               >
                 {item.name}
@@ -80,7 +75,9 @@ export default function Header() {
               <DropdownMenuContent align="end">
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{session.user.name || t('common.user')}</p>
+                    <p className="text-sm font-medium leading-none">
+                      {session.user.name || t('common.user')}
+                    </p>
                     <p className="text-xs leading-none text-muted-foreground">
                       {session.user.email}
                     </p>
@@ -94,9 +91,7 @@ export default function Header() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings">
-                    {t('nav.settings')}
-                  </Link>
+                  <Link href="/settings">{t('nav.settings')}</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
@@ -122,11 +117,7 @@ export default function Header() {
             className="md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
-            {mobileMenuOpen ? (
-              <X className="h-5 w-5" />
-            ) : (
-              <Menu className="h-5 w-5" />
-            )}
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
       </nav>
@@ -143,7 +134,7 @@ export default function Header() {
                   'block px-3 py-2 text-base font-medium',
                   pathname === item.href
                     ? 'bg-primary text-primary-foreground'
-                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                 )}
                 onClick={() => setMobileMenuOpen(false)}
               >
@@ -163,8 +154,8 @@ export default function Header() {
                       {t('settings.profile')}
                     </Link>
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     className="w-full text-red-600"
                     onClick={() => signOut({ callbackUrl: '/login' })}
                   >

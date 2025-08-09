@@ -5,13 +5,13 @@ import { PortfolioReport } from '@/components/reports/PortfolioReport';
 import React from 'react';
 
 interface RouteParams {
-  params: Promise<{ portfolioId: string }>
+  params: Promise<{ portfolioId: string }>;
 }
 
 // GET /api/v1/portfolios/[portfolioId]/report
 export async function GET(_request: NextRequest, props: RouteParams) {
   const params = await props.params;
-  
+
   try {
     // Get portfolio data
     const portfolio = await prisma.portfolio.findUnique({
@@ -28,14 +28,11 @@ export async function GET(_request: NextRequest, props: RouteParams) {
     });
 
     if (!portfolio) {
-      return NextResponse.json(
-        { success: false, message: 'Portfolio not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ success: false, message: 'Portfolio not found' }, { status: 404 });
     }
 
     // Calculate summary
-    const holdings = portfolio.holdings.map(h => ({
+    const holdings = portfolio.holdings.map((h) => ({
       symbol: h.symbol,
       quantity: Number(h.quantity),
       averagePrice: Number(h.averagePrice),
@@ -46,12 +43,12 @@ export async function GET(_request: NextRequest, props: RouteParams) {
     }));
 
     const totalValue = holdings.reduce((sum, h) => sum + h.marketValue, 0);
-    const totalCost = holdings.reduce((sum, h) => sum + (h.quantity * h.averagePrice), 0);
+    const totalCost = holdings.reduce((sum, h) => sum + h.quantity * h.averagePrice, 0);
     const totalUnrealizedPnL = holdings.reduce((sum, h) => sum + h.unrealizedPnL, 0);
     const totalReturn = totalCost > 0 ? (totalUnrealizedPnL / totalCost) * 100 : 0;
 
     // Calculate weights
-    holdings.forEach(h => {
+    holdings.forEach((h) => {
       h.weight = totalValue > 0 ? (h.marketValue / totalValue) * 100 : 0;
     });
 
@@ -64,7 +61,7 @@ export async function GET(_request: NextRequest, props: RouteParams) {
     };
 
     // Format transactions
-    const transactions = portfolio.transactions.map(t => ({
+    const transactions = portfolio.transactions.map((t) => ({
       id: t.id,
       type: t.type,
       symbol: t.symbol || undefined,
@@ -76,21 +73,26 @@ export async function GET(_request: NextRequest, props: RouteParams) {
     }));
 
     // Generate PDF
+    const portfolioData = {
+      ...portfolio,
+      description: portfolio.description || undefined,
+      createdAt: portfolio.createdAt.toISOString(),
+      updatedAt: portfolio.updatedAt.toISOString(),
+    };
+
+    const reportProps = {
+      portfolio: portfolioData,
+      holdings,
+      summary,
+      transactions,
+    };
+
     const pdfBuffer = await renderToBuffer(
-      React.createElement(PortfolioReport, {
-        portfolio: {
-          ...portfolio,
-          createdAt: portfolio.createdAt.toISOString(),
-          updatedAt: portfolio.updatedAt.toISOString(),
-        },
-        holdings,
-        summary,
-        transactions,
-      })
+      React.createElement(PortfolioReport, reportProps) as any,
     );
 
     // Return PDF
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -100,12 +102,12 @@ export async function GET(_request: NextRequest, props: RouteParams) {
   } catch (error) {
     console.error('Error generating report:', error);
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         message: 'Failed to generate report',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : 'Unknown error',
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

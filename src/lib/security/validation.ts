@@ -22,9 +22,7 @@ export const portfolioNameSchema = z
   .min(1, '포트폴리오 이름을 입력해주세요')
   .max(100, '포트폴리오 이름은 100자를 초과할 수 없습니다');
 
-export const stockSymbolSchema = z
-  .string()
-  .regex(/^[A-Z0-9]+$/, '유효한 종목 코드를 입력해주세요');
+export const stockSymbolSchema = z.string().regex(/^[A-Z0-9]+$/, '유효한 종목 코드를 입력해주세요');
 
 export const amountSchema = z
   .number()
@@ -39,7 +37,7 @@ export const dateSchema = z
 export function sanitizeHTML(input: string): string {
   return DOMPurify.sanitize(input, {
     ALLOWED_TAGS: ['b', 'i', 'u', 'strong', 'em', 'p', 'br'],
-    ALLOWED_ATTR: []
+    ALLOWED_ATTR: [],
   });
 }
 
@@ -54,16 +52,26 @@ export function sanitizeInput(input: string): string {
 export function escapeSQLString(input: string): string {
   return input.replace(/['"\\\0\n\r\b\t\x1a]/g, (char) => {
     switch (char) {
-      case "'": return "\\'";
-      case '"': return '\\"';
-      case '\\': return '\\\\';
-      case '\0': return '\\0';
-      case '\n': return '\\n';
-      case '\r': return '\\r';
-      case '\b': return '\\b';
-      case '\t': return '\\t';
-      case '\x1a': return '\\Z';
-      default: return char;
+      case "'":
+        return "\\'";
+      case '"':
+        return '\\"';
+      case '\\':
+        return '\\\\';
+      case '\0':
+        return '\\0';
+      case '\n':
+        return '\\n';
+      case '\r':
+        return '\\r';
+      case '\b':
+        return '\\b';
+      case '\t':
+        return '\\t';
+      case '\x1a':
+        return '\\Z';
+      default:
+        return char;
     }
   });
 }
@@ -73,11 +81,11 @@ export function sanitizeJSONResponse(data: any): any {
   if (typeof data === 'string') {
     return sanitizeInput(data);
   }
-  
+
   if (Array.isArray(data)) {
     return data.map(sanitizeJSONResponse);
   }
-  
+
   if (typeof data === 'object' && data !== null) {
     const sanitized: any = {};
     for (const [key, value] of Object.entries(data)) {
@@ -85,20 +93,20 @@ export function sanitizeJSONResponse(data: any): any {
     }
     return sanitized;
   }
-  
+
   return data;
 }
 
 // Input validation wrapper
 export function validateInput<T>(
   schema: z.ZodType<T>,
-  data: unknown
+  data: unknown,
 ): { success: true; data: T } | { success: false; errors: z.ZodIssue[] } {
   const result = schema.safeParse(data);
-  
+
   if (result.success) {
     return { success: true, data: result.data };
   }
-  
+
   return { success: false, errors: result.error.issues };
 }

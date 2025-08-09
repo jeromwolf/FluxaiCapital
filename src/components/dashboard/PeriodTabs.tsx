@@ -22,7 +22,7 @@ const periodLabels: Record<Period, string> = {
   '3M': '3개월',
   '6M': '6개월',
   '1Y': '1년',
-  'ALL': '전체'
+  ALL: '전체',
 };
 
 export function PeriodTabs({
@@ -30,13 +30,10 @@ export function PeriodTabs({
   onChange,
   className,
   disabled = false,
-  periods = defaultPeriods
+  periods = defaultPeriods,
 }: PeriodTabsProps) {
   return (
-    <div className={cn(
-      'inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1',
-      className
-    )}>
+    <div className={cn('inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1', className)}>
       {periods.map((period) => (
         <button
           key={period}
@@ -48,7 +45,7 @@ export function PeriodTabs({
             selected === period
               ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm'
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100',
-            disabled && 'opacity-50 cursor-not-allowed'
+            disabled && 'opacity-50 cursor-not-allowed',
           )}
         >
           {periodLabels[period]}
@@ -64,13 +61,10 @@ export function CompactPeriodTabs({
   onChange,
   className,
   disabled = false,
-  periods = ['1D', '1W', '1M', '1Y'] as Period[]
+  periods = ['1D', '1W', '1M', '1Y'] as Period[],
 }: PeriodTabsProps) {
   return (
-    <div className={cn(
-      'inline-flex items-center space-x-1',
-      className
-    )}>
+    <div className={cn('inline-flex items-center space-x-1', className)}>
       {periods.map((period, index) => (
         <React.Fragment key={period}>
           <button
@@ -82,7 +76,7 @@ export function CompactPeriodTabs({
               selected === period
                 ? 'bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300'
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
-              disabled && 'opacity-50 cursor-not-allowed'
+              disabled && 'opacity-50 cursor-not-allowed',
             )}
           >
             {period}
@@ -102,7 +96,7 @@ export function MobilePeriodSelect({
   onChange,
   className,
   disabled = false,
-  periods = defaultPeriods
+  periods = defaultPeriods,
 }: PeriodTabsProps) {
   return (
     <select
@@ -115,7 +109,7 @@ export function MobilePeriodSelect({
         'rounded-md shadow-sm',
         'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
         'disabled:opacity-50 disabled:cursor-not-allowed',
-        className
+        className,
       )}
     >
       {periods.map((period) => (
@@ -135,7 +129,7 @@ export function ResponsivePeriodTabs(props: PeriodTabsProps) {
       <div className="hidden sm:block">
         <PeriodTabs {...props} />
       </div>
-      
+
       {/* Mobile: Show dropdown */}
       <div className="block sm:hidden">
         <MobilePeriodSelect {...props} />
@@ -147,13 +141,13 @@ export function ResponsivePeriodTabs(props: PeriodTabsProps) {
 // Hook to manage period state
 export function usePeriod(initialPeriod: Period = '1M') {
   const [period, setPeriod] = React.useState<Period>(initialPeriod);
-  
+
   const handlePeriodChange = React.useCallback((newPeriod: Period) => {
     setPeriod(newPeriod);
   }, []);
-  
+
   return {
     period,
-    setPeriod: handlePeriodChange
+    setPeriod: handlePeriodChange,
   };
 }

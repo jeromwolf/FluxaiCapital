@@ -79,9 +79,7 @@ export default function ReportsPage() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          리포트
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">리포트</h1>
         <p className="text-gray-600 dark:text-gray-400">
           포트폴리오 성과 리포트를 생성하고 관리하세요
         </p>
@@ -90,7 +88,7 @@ export default function ReportsPage() {
       {/* 리포트 생성 섹션 */}
       <ResponsiveCard className="p-6 mb-8">
         <h2 className="text-xl font-semibold mb-4">새 리포트 생성</h2>
-        
+
         <div className="grid gap-4 md:grid-cols-2 mb-6">
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -149,7 +147,7 @@ export default function ReportsPage() {
       {/* 과거 리포트 목록 */}
       <div>
         <h2 className="text-xl font-semibold mb-4">과거 리포트</h2>
-        
+
         <div className="grid gap-4">
           {pastReports.map((report) => (
             <ResponsiveCard key={report.id} className="p-4">
@@ -169,7 +167,7 @@ export default function ReportsPage() {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm">
                     <Download className="h-4 w-4" />
@@ -181,9 +179,7 @@ export default function ReportsPage() {
         </div>
 
         {pastReports.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
-            아직 생성된 리포트가 없습니다.
-          </div>
+          <div className="text-center py-12 text-gray-500">아직 생성된 리포트가 없습니다.</div>
         )}
       </div>
     </div>

@@ -3,19 +3,25 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  FileText, 
-  Download, 
-  Calendar, 
-  TrendingUp, 
+import {
+  FileText,
+  Download,
+  Calendar,
+  TrendingUp,
   Clock,
   AlertCircle,
   Settings,
   Mail,
-  Send
+  Send,
 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 
@@ -57,7 +63,7 @@ export default function ReportsPage() {
       // For demo, use test portfolio
       const portfolioId = 'test-portfolio-1';
       const response = await fetch(`/api/reports?portfolioId=${portfolioId}`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to load report data');
       }
@@ -121,7 +127,6 @@ export default function ReportsPage() {
         title: '성공',
         description: '리포트가 성공적으로 생성되었습니다.',
       });
-
     } catch (error) {
       console.error('Failed to generate report:', error);
       toast({
@@ -167,7 +172,6 @@ export default function ReportsPage() {
         title: '이메일 발송 완료',
         description: `${email}으로 리포트가 발송되었습니다.`,
       });
-
     } catch (error) {
       console.error('Failed to send email:', error);
       toast({
@@ -208,9 +212,7 @@ export default function ReportsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">리포트 관리</h1>
-          <p className="text-muted-foreground">
-            포트폴리오 성과 리포트를 생성하고 관리합니다
-          </p>
+          <p className="text-muted-foreground">포트폴리오 성과 리포트를 생성하고 관리합니다</p>
         </div>
         <Button variant="outline" size="sm">
           <Settings className="h-4 w-4 mr-2" />
@@ -246,7 +248,7 @@ export default function ReportsPage() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <label className="text-sm font-medium">리포트 유형</label>
               <Select value={selectedReportType} onValueChange={setSelectedReportType}>
@@ -266,8 +268,8 @@ export default function ReportsPage() {
 
           <div className="space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
-              <Button 
-                onClick={generateReport} 
+              <Button
+                onClick={generateReport}
                 disabled={isGenerating || !selectedPortfolio || !selectedReportType}
                 className="flex-1"
               >
@@ -285,7 +287,7 @@ export default function ReportsPage() {
                     placeholder="이메일 주소를 입력하세요"
                     className="flex-1 px-3 py-2 border border-input bg-background text-sm rounded-md"
                   />
-                  <Button 
+                  <Button
                     onClick={sendReportEmail}
                     disabled={isSendingEmail || !selectedPortfolio || !selectedReportType || !email}
                     variant="outline"
@@ -317,9 +319,7 @@ export default function ReportsPage() {
                     <h3 className="font-semibold">{type.name}</h3>
                     {getFrequencyBadge(type.frequency)}
                   </div>
-                  <p className="text-sm text-muted-foreground">
-                    {type.description}
-                  </p>
+                  <p className="text-sm text-muted-foreground">{type.description}</p>
                   <div className="flex items-center gap-4 text-xs text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-3 w-3" />
@@ -331,9 +331,7 @@ export default function ReportsPage() {
                     </div>
                   </div>
                 </div>
-                {index < reportData.reportTypes.length - 1 && (
-                  <Separator className="my-4" />
-                )}
+                {index < reportData.reportTypes.length - 1 && <Separator className="my-4" />}
               </div>
             ))}
           </div>
@@ -355,24 +353,24 @@ export default function ReportsPage() {
                 <div className="text-2xl font-bold">
                   {new Intl.NumberFormat('ko-KR', {
                     style: 'currency',
-                    currency: reportData.portfolio.currency
+                    currency: reportData.portfolio.currency,
                   }).format(Number(reportData.portfolio.totalValue))}
                 </div>
                 <div className="text-sm text-muted-foreground">총 자산</div>
               </div>
-              
+
               <div className="text-center p-3 border rounded-lg">
                 <div className="text-2xl font-bold">{reportData.portfolio.currency}</div>
                 <div className="text-sm text-muted-foreground">기준통화</div>
               </div>
-              
+
               <div className="text-center p-3 border rounded-lg">
                 <div className="text-2xl font-bold flex items-center justify-center gap-1">
                   <Clock className="h-5 w-5" />
                 </div>
                 <div className="text-sm text-muted-foreground">자동 업데이트</div>
               </div>
-              
+
               <div className="text-center p-3 border rounded-lg">
                 <div className="text-2xl font-bold flex items-center justify-center gap-1">
                   <Mail className="h-5 w-5" />
