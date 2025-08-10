@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { getMarketDataClient } from '@/lib/market/client';
 
 // GET /api/v1/market/prices?symbols=AAPL,MSFT,GOOGL
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const symbolsParam = searchParams.get('symbols');
 
     if (!symbolsParam) {

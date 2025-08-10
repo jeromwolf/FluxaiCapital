@@ -1,5 +1,6 @@
-import { BaseStrategy } from './base';
 import { MarketData, Signal } from '../types';
+
+import { BaseStrategy } from './base';
 
 export class BuyAndHoldStrategy extends BaseStrategy {
   private hasBought = false;

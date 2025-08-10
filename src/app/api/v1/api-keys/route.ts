@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+
 import { ApiKeyManager, API_PERMISSIONS } from '@/lib/api/api-key-manager';
+import { authOptions } from '@/lib/auth';
 import { AuditLogger } from '@/lib/security/audit';
 
 export async function GET() {

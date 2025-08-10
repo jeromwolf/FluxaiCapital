@@ -1,10 +1,11 @@
 'use client';
 
+import { Menu, X, TrendingUp, User, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, TrendingUp, User, LogOut } from 'lucide-react';
-import { useState } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -15,11 +16,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/lib/utils';
-import { SearchBar } from './SearchBar';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { LanguageToggle } from '@/components/ui/language-toggle';
-import { useTranslations } from 'next-intl';
+import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { cn } from '@/lib/utils';
+
+import { SearchBar } from './SearchBar';
 
 export default function Header() {
   const pathname = usePathname();

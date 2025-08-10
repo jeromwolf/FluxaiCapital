@@ -1,6 +1,7 @@
-import Link from 'next/link';
 import { TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 
+import SignupForm from '@/components/auth/SignupForm';
 import {
   Card,
   CardContent,
@@ -9,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import SignupForm from '@/components/auth/SignupForm';
 
 export default function SignupPage() {
   return (

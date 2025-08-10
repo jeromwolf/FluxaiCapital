@@ -1,5 +1,7 @@
 'use client';
 
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import React from 'react';
 import {
   ComposedChart,
@@ -12,10 +14,9 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { MarketCandle } from '@/lib/market/types';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+
 import { useChartTheme, ChartTheme } from '@/hooks/useChartTheme';
+import { MarketCandle } from '@/lib/market/types';
 import { cn } from '@/lib/utils';
 
 // Extend ChartTheme to include legacy properties

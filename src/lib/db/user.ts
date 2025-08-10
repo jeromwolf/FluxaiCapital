@@ -1,5 +1,6 @@
-import { prisma } from '@/lib/prisma';
 import { UserRole, ActivityType } from '@prisma/client';
+
+import { prisma } from '@/lib/prisma';
 
 export type CreateUserInput = {
   email: string;

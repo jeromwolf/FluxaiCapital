@@ -3,6 +3,12 @@
  * Integrates multiple market data providers
  */
 
+import { AlphaVantageProvider } from './providers/alpha-vantage';
+import { DartProvider, getDartProvider } from './providers/dart';
+import { FinnhubProvider } from './providers/finnhub';
+import { KoreanStockProvider } from './providers/korean-stocks';
+import { TwelveDataProvider } from './providers/twelve-data';
+import { YahooFinanceProvider } from './providers/yahoo-finance';
 import {
   MarketQuote,
   MarketCandle,
@@ -17,13 +23,6 @@ import {
   DartMajorShareholder,
   DartCompanyInfo,
 } from './types';
-
-import { AlphaVantageProvider } from './providers/alpha-vantage';
-import { FinnhubProvider } from './providers/finnhub';
-import { TwelveDataProvider } from './providers/twelve-data';
-import { YahooFinanceProvider } from './providers/yahoo-finance';
-import { KoreanStockProvider } from './providers/korean-stocks';
-import { DartProvider, getDartProvider } from './providers/dart';
 
 export class MarketDataService {
   private config: MarketDataConfig;

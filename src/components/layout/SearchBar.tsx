@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
 import { Search, X, TrendingUp, FileText, Briefcase } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import React, { useState, useRef, useEffect } from 'react';
+
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 

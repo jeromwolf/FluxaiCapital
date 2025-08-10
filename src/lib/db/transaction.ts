@@ -1,5 +1,6 @@
-import { prisma } from '@/lib/prisma';
 import { TransactionType, Prisma } from '@prisma/client';
+
+import { prisma } from '@/lib/prisma';
 
 export type CreateTransactionInput = {
   portfolioId: string;

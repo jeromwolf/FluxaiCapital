@@ -9,8 +9,10 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { ChartContainer } from './ChartContainer';
+
 import { chartTheme, pieChartConfig } from '@/config/chart-theme';
+
+import { ChartContainer } from './ChartContainer';
 
 interface PieChartData {
   name: string;

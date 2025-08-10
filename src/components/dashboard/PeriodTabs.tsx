@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+
 import { cn } from '@/lib/utils';
 
 export type Period = '1D' | '1W' | '1M' | '3M' | '6M' | '1Y' | 'ALL';

@@ -2,15 +2,16 @@
 
 export const dynamic = 'force-dynamic';
 
-import React from 'react';
+import { Loader2, Search } from 'lucide-react';
 import Link from 'next/link';
+import React from 'react';
+
 import { PriceTickerList } from '@/components/realtime/PriceTicker';
+import { Input } from '@/components/ui/input';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMarketPrices } from '@/hooks/useMarketData';
 import { cn } from '@/lib/utils';
-import { Loader2, Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
 
 // Popular stocks
 const STOCK_GROUPS = {

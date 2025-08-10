@@ -1,5 +1,6 @@
-import { Period } from '@/components/dashboard/PeriodTabs';
 import { differenceInDays, parseISO } from 'date-fns';
+
+import { Period } from '@/components/dashboard/PeriodTabs';
 
 export interface PriceData {
   date: string;

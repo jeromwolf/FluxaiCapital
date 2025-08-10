@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { ResponsivePeriodTabs, usePeriod } from '@/components/dashboard/PeriodTabs';
-import { usePeriodData } from '@/hooks/usePeriodData';
+
 import { MiniChart, PerformanceChart } from '@/components/charts';
-import { formatPeriodReturns, getPeriodLabel } from '@/lib/utils/period-filters';
-import { cn } from '@/lib/utils';
-import { useIsMobile, useIsTablet } from '@/hooks/useMediaQuery';
+import { ResponsivePeriodTabs, usePeriod } from '@/components/dashboard/PeriodTabs';
 import { ResponsiveCard } from '@/components/ui/responsive-card';
+import { useIsMobile, useIsTablet } from '@/hooks/useMediaQuery';
+import { usePeriodData } from '@/hooks/usePeriodData';
+import { cn } from '@/lib/utils';
+import { formatPeriodReturns, getPeriodLabel } from '@/lib/utils/period-filters';
 
 // Mock data generator for demo
 function generateMockPortfolioData() {

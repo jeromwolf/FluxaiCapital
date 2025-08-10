@@ -95,7 +95,7 @@ export class TwitterErrorHandler {
 
     // Parse HTTP errors
     if (error.response) {
-      const status = error.response.status;
+      const { status } = error.response;
       const message = error.response.data?.detail || error.response.statusText || 'Unknown error';
       return new TwitterApiError(message, status, error.response.data);
     }

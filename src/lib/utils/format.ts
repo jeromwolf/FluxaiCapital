@@ -13,7 +13,7 @@ export function formatCurrency(
 
   const formatter = new Intl.NumberFormat('ko-KR', {
     style: 'currency',
-    currency: currency,
+    currency,
     minimumFractionDigits: currency === 'KRW' ? 0 : 2,
     maximumFractionDigits: currency === 'KRW' ? 0 : 2,
   });

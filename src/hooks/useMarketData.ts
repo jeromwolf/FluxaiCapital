@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
-import { MarketPrice, MarketTicker } from '@/lib/market/types';
+
 import { getMarketDataClient } from '@/lib/market/client';
+import { MarketPrice, MarketTicker } from '@/lib/market/types';
 
 const fetcher = async (url: string) => {
   const response = await fetch(url);

@@ -1,7 +1,9 @@
 'use client';
 
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
-import { MarketCandle } from '@/lib/market/types';
+
 import {
   ChartType,
   TimeFrame,
@@ -16,9 +18,8 @@ import {
   TimeFrameConverter,
   IndicatorConfig,
 } from '@/lib/charting/trading-view-chart';
+import { MarketCandle } from '@/lib/market/types';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
 
 interface TradingViewChartProps {
   data: MarketCandle[];
@@ -67,7 +68,7 @@ export function TradingViewChart({
 
   const [dimensions, setDimensions] = useState<ChartDimensions>({
     width: 800,
-    height: height,
+    height,
     margin: { top: 20, right: 80, bottom: 80, left: 20 },
     plotWidth: 700,
     plotHeight: 500,

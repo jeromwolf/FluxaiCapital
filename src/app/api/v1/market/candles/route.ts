@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { MarketCandle } from '@/lib/market/types';
+
 import { TimeFrame, TimeFrameConverter } from '@/lib/charting/trading-view-chart';
+import { MarketCandle } from '@/lib/market/types';
 
 // Mock data generator for development
 function generateMockCandles(
@@ -50,7 +51,7 @@ function generateMockCandles(
 
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const symbol = searchParams.get('symbol') || 'BTCUSDT';
     const timeframe = (searchParams.get('timeframe') || '1h') as TimeFrame;
     const fromParam = searchParams.get('from');
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
     const limit = limitParam ? parseInt(limitParam) : 500;
 
     let from = fromParam ? parseInt(fromParam) : now - intervalMs * limit;
-    let to = toParam ? parseInt(toParam) : now;
+    const to = toParam ? parseInt(toParam) : now;
 
     // Ensure we don't request too much data
     const maxCandles = 5000;

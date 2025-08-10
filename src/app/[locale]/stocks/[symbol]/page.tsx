@@ -1,14 +1,15 @@
 'use client';
 
-import React, { use } from 'react';
-import { useMarketPrice, useMarketCandles, useRealtimePrice } from '@/hooks/useMarketData';
-import { CandlestickChart, ReturnsChart } from '@/components/charts';
-import { PriceTicker } from '@/components/realtime/PriceTicker';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2, Star, StarOff } from 'lucide-react';
 import Link from 'next/link';
+import React, { use } from 'react';
+
+import { CandlestickChart, ReturnsChart } from '@/components/charts';
+import { PriceTicker } from '@/components/realtime/PriceTicker';
+import { Button } from '@/components/ui/button';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useMarketPrice, useMarketCandles, useRealtimePrice } from '@/hooks/useMarketData';
 import { cn } from '@/lib/utils';
 
 interface PageProps {

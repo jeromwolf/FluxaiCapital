@@ -1,5 +1,5 @@
-import { getTwitterClient, TwitterApiClient } from './twitter-api';
 import { SentimentAnalyzer } from './sentiment-analyzer';
+import { getTwitterClient, TwitterApiClient } from './twitter-api';
 
 interface StockSentiment {
   symbol: string;

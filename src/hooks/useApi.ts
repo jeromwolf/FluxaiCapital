@@ -1,4 +1,5 @@
 import useSWR, { SWRConfiguration } from 'swr';
+
 import apiClient from '@/lib/api/client';
 
 // Custom fetcher

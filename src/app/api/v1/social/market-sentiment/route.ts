@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import { SocialSentimentService } from '@/lib/social/social-sentiment-service';
 
 const sentimentService = new SocialSentimentService();

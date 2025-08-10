@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { prisma } from '@/lib/prisma';
 import { generatePDFReport } from '@/lib/reports/pdf-generator';
 import { convertPortfolioForReport } from '@/lib/utils/decimal-converter';

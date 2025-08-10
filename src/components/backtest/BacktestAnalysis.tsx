@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import { BarChart3, TrendingUp, AlertTriangle, CheckCircle, Calendar, Target } from 'lucide-react';
+import { useState } from 'react';
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface BacktestAnalysisProps {
   result: any; // TODO: BacktestResult 타입 사용

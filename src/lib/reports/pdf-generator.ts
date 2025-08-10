@@ -1,4 +1,5 @@
 import PDFDocument from 'pdfkit';
+
 import { getReportTemplate } from './template';
 
 interface PortfolioData {

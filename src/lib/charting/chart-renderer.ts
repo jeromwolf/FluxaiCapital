@@ -43,8 +43,8 @@ export class ChartRenderer {
     const { width, height } = this.canvas.getBoundingClientRect();
 
     // Set display size
-    this.canvas.style.width = width + 'px';
-    this.canvas.style.height = height + 'px';
+    this.canvas.style.width = `${width}px`;
+    this.canvas.style.height = `${height}px`;
 
     // Set actual size in memory (scaled for retina displays)
     this.canvas.width = width * this.devicePixelRatio;

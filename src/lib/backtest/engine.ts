@@ -1,3 +1,5 @@
+import { getMeanReversionSignal } from './strategies/meanReversion';
+import { calculateMomentumSignal } from './strategies/momentum';
 import {
   BacktestConfig,
   BacktestResult,
@@ -5,8 +7,6 @@ import {
   BacktestPosition,
   BacktestMetrics,
 } from './types';
-import { calculateMomentumSignal } from './strategies/momentum';
-import { getMeanReversionSignal } from './strategies/meanReversion';
 
 interface PriceData {
   date: Date;
@@ -191,7 +191,7 @@ export class BacktestEngine {
 
     const slippageAmount = price * (this.config.slippage / 100);
     const executionPrice = price - slippageAmount;
-    const quantity = position.quantity;
+    const { quantity } = position;
 
     const grossProceeds = quantity * executionPrice;
     const commissionAmount = grossProceeds * (this.config.commission / 100);
@@ -225,7 +225,7 @@ export class BacktestEngine {
   }
 
   private calculateMetrics(): BacktestMetrics {
-    const initialCapital = this.config.initialCapital;
+    const { initialCapital } = this.config;
     const finalValue = this.getPortfolioValue();
     const totalReturn = ((finalValue - initialCapital) / initialCapital) * 100;
 

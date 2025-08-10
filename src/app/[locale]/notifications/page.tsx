@@ -2,12 +2,13 @@
 
 export const dynamic = 'force-dynamic';
 
-import React, { useState } from 'react';
-import { Bell, Check, X, TrendingUp, TrendingDown, AlertCircle, Info } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { Bell, Check, X, TrendingUp, TrendingDown, AlertCircle, Info } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
 import { cn } from '@/lib/utils';
 
 type NotificationType = 'price' | 'portfolio' | 'news' | 'system';

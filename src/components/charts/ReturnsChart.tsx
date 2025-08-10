@@ -1,5 +1,7 @@
 'use client';
 
+import { format } from 'date-fns';
+import { ko } from 'date-fns/locale';
 import React from 'react';
 import {
   LineChart,
@@ -14,8 +16,7 @@ import {
   ReferenceLine,
   Legend,
 } from 'recharts';
-import { format } from 'date-fns';
-import { ko } from 'date-fns/locale';
+
 import { useChartTheme } from '@/hooks/useChartTheme';
 import { cn } from '@/lib/utils';
 

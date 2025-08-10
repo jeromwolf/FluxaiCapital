@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { Key, Copy, Trash2, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
+import React, { useState, useEffect } from 'react';
+
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
@@ -16,6 +15,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
 import {
   Select,
   SelectContent,
@@ -24,9 +26,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useToast } from '@/components/ui/use-toast';
-import { Key, Copy, Trash2, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { API_PERMISSIONS } from '@/lib/api/api-key-manager';
+import { cn } from '@/lib/utils';
 
 interface ApiKey {
   id: string;

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { ResponsiveContainer } from 'recharts';
+
 import { cn } from '@/lib/utils';
 
 interface ChartContainerProps {

@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
 import { User, Bell, Shield, Palette, Globe, Save } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ResponsiveCard } from '@/components/ui/responsive-card';
 import { Switch } from '@/components/ui/switch';
-import { useSession } from 'next-auth/react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function SettingsPage() {

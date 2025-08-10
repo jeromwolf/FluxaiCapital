@@ -1,13 +1,5 @@
 'use client';
 
-import React from 'react';
-import {
-  ChartType,
-  TimeFrame,
-  IndicatorType,
-  DrawingTool,
-} from '@/lib/charting/trading-view-chart';
-import { cn } from '@/lib/utils';
 import {
   TrendingUp,
   Minus,
@@ -20,6 +12,15 @@ import {
   Settings,
   Maximize2,
 } from 'lucide-react';
+import React from 'react';
+
+import {
+  ChartType,
+  TimeFrame,
+  IndicatorType,
+  DrawingTool,
+} from '@/lib/charting/trading-view-chart';
+import { cn } from '@/lib/utils';
 
 interface ChartToolbarProps {
   chartType: ChartType;

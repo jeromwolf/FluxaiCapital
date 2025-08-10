@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useRef } from 'react';
+
 import { getWebSocketClient, WebSocketClient } from '@/lib/websocket/client';
 import { ConnectionStatus, PriceUpdate, PortfolioUpdate, Alert } from '@/lib/websocket/types';
 

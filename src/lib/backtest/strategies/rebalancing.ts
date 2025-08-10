@@ -1,5 +1,6 @@
-import { BaseStrategy } from './base';
 import { MarketData, Signal } from '../types';
+
+import { BaseStrategy } from './base';
 
 export class RebalancingStrategy extends BaseStrategy {
   private lastRebalanceDate: Date | null = null;
@@ -72,7 +73,7 @@ export class RebalancingStrategy extends BaseStrategy {
 
     // 임계치 기반 리밸런싱 확인
     const currentWeights = this.calculateCurrentWeights(data, holdings);
-    const targetWeights = this.parameters.targetWeights;
+    const { targetWeights } = this.parameters;
 
     for (const symbol of Object.keys(targetWeights)) {
       const currentWeight = currentWeights[symbol] || 0;
@@ -114,7 +115,7 @@ export class RebalancingStrategy extends BaseStrategy {
   private calculateRebalanceSignals(data: MarketData[], holdings: Map<string, number>): Signal[] {
     const signals: Signal[] = [];
     const currentWeights = this.calculateCurrentWeights(data, holdings);
-    const targetWeights = this.parameters.targetWeights;
+    const { targetWeights } = this.parameters;
 
     // 목표 가중치가 설정되지 않은 경우 동일 가중치로 설정
     if (Object.keys(targetWeights).length === 0) {
@@ -133,7 +134,7 @@ export class RebalancingStrategy extends BaseStrategy {
 
     // 각 자산별 리밸런싱 시그널 생성
     for (const marketData of data) {
-      const symbol = marketData.symbol;
+      const { symbol } = marketData;
       const currentWeight = currentWeights[symbol] || 0;
       const targetWeight = targetWeights[symbol] || 0;
       const weightDiff = targetWeight - currentWeight;

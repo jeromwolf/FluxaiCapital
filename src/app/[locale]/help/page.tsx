@@ -1,6 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
   HelpCircle,
   Book,
@@ -11,6 +10,8 @@ import {
   ChevronUp,
   Search,
 } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ResponsiveCard } from '@/components/ui/responsive-card';

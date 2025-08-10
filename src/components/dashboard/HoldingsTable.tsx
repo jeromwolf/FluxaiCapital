@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+
 import { TrendMiniChart, SparklineChart } from '@/components/charts';
+import { cn } from '@/lib/utils';
 import { formatReturns } from '@/lib/utils/returns-calculator';
 
 export interface HoldingData {

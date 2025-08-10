@@ -1,7 +1,7 @@
 // Market data client
 
-import { MarketPrice, MarketTicker, MarketCandle, MarketDataProvider } from './types';
 import * as mockProvider from './providers/mock';
+import { MarketPrice, MarketTicker, MarketCandle, MarketDataProvider } from './types';
 
 export class MarketDataClient {
   private provider: MarketDataProvider;

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+
 import { TradingViewChart } from '@/components/charts/TradingViewChart';
 import { useChartData } from '@/hooks/useChartData';
 import { TimeFrame } from '@/lib/charting/trading-view-chart';

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { SocialSentimentService } from '@/lib/social/social-sentiment-service';
 
 const sentimentService = new SocialSentimentService();
@@ -12,7 +13,7 @@ export async function GET(request: NextRequest, { params }: { params: { symbol: 
     }
 
     // Get company name from query params if provided
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const companyName = searchParams.get('company');
 
     // Fetch sentiment data

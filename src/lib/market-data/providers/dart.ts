@@ -132,7 +132,7 @@ export class DartProvider {
     pageNo?: number;
     pageCount?: number;
   }): Promise<DartDisclosure[]> {
-    let corpCode = params.corpCode;
+    let { corpCode } = params;
 
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {
@@ -174,7 +174,7 @@ export class DartProvider {
     reportCode: string; // 11011: 사업보고서, 11012: 반기보고서, 11013: 1분기보고서, 11014: 3분기보고서
     fsDiv?: 'CFS' | 'OFS'; // CFS: 연결재무제표, OFS: 개별재무제표
   }): Promise<DartFinancialStatement[]> {
-    let corpCode = params.corpCode;
+    let { corpCode } = params;
 
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {
@@ -212,7 +212,7 @@ export class DartProvider {
     corpCode?: string;
     stockCode?: string;
   }): Promise<DartMajorShareholder[]> {
-    let corpCode = params.corpCode;
+    let { corpCode } = params;
 
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {
@@ -263,7 +263,7 @@ export class DartProvider {
     corpCode?: string;
     stockCode?: string;
   }): Promise<DartCompanyInfo | null> {
-    let corpCode = params.corpCode;
+    let { corpCode } = params;
 
     // Convert stock code to corp code if needed
     if (!corpCode && params.stockCode) {

@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime/library';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
 import { getMarketDataClient } from '@/lib/market/client';
+import prisma from '@/lib/prisma';
 
 const createTransactionSchema = z.object({
   type: z.enum(['BUY', 'SELL', 'DEPOSIT', 'WITHDRAWAL', 'FEE', 'DIVIDEND']),
@@ -23,7 +24,7 @@ interface RouteParams {
 export async function GET(request: NextRequest, props: RouteParams) {
   const params = await props.params;
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const type = searchParams.get('type');
     const symbol = searchParams.get('symbol');
     const limit = parseInt(searchParams.get('limit') || '50');
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest, props: RouteParams) {
     }
 
     // Calculate amount if not provided
-    let amount = validatedData.amount;
+    let { amount } = validatedData;
     if (!amount && validatedData.quantity && validatedData.price) {
       amount = validatedData.quantity * validatedData.price;
     }

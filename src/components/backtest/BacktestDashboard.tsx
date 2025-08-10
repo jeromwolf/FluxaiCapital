@@ -1,14 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import { Play, Settings, BarChart3, TrendingUp } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 import BacktestConfig from './BacktestConfig';
-import BacktestResults from './BacktestResults';
 import BacktestHistory from './BacktestHistory';
+import BacktestResults from './BacktestResults';
 
 interface BacktestDashboardProps {
   userId: string;

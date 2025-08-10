@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
-import { FileText, Download, Send, Calendar, Filter } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
-import { useSession } from 'next-auth/react';
-import { usePortfolios } from '@/hooks/useApi';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
+import { FileText, Download, Send, Calendar, Filter } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
+import { usePortfolios } from '@/hooks/useApi';
 
 type ReportType = 'monthly' | 'quarterly' | 'annual' | 'custom';
 
@@ -33,7 +34,7 @@ export default function ReportsPage() {
         },
         body: JSON.stringify({
           type: reportType,
-          format: format,
+          format,
           email: format === 'email' ? session?.user?.email : undefined,
         }),
       });

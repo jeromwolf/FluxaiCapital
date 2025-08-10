@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
-import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import React from 'react';
+
 import { useRealtimePrice, useMarketPrice } from '@/hooks/useMarketData';
+import { cn } from '@/lib/utils';
 
 interface PriceTickerProps {
   symbol: string;

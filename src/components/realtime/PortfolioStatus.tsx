@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
-import { cn } from '@/lib/utils';
 import { TrendingUp, TrendingDown, Activity, AlertCircle } from 'lucide-react';
-import { usePortfolioSubscription } from '@/hooks/useWebSocket';
-import { PortfolioUpdate } from '@/lib/websocket/types';
+import React from 'react';
+
 import { SparklineChart } from '@/components/charts';
+import { usePortfolioSubscription } from '@/hooks/useWebSocket';
+import { cn } from '@/lib/utils';
+import { PortfolioUpdate } from '@/lib/websocket/types';
 
 interface PortfolioStatusProps {
   className?: string;

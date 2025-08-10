@@ -1,9 +1,11 @@
 import type { Metadata } from 'next';
 import { Inter, Noto_Sans_KR } from 'next/font/google';
+
 import './globals.css';
+import { Toaster } from 'sonner';
+
 import AuthProvider from '@/components/providers/AuthProvider';
 import { ThemeProvider } from '@/components/providers/theme-provider';
-import { Toaster } from 'sonner';
 
 const inter = Inter({
   subsets: ['latin'],

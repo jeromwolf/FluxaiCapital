@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
 import bcrypt from 'bcryptjs';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+
+import prisma from '@/lib/prisma';
 
 const signupSchema = z.object({
   email: z.string().email('유효한 이메일을 입력해주세요.'),

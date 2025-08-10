@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import { Clock, TrendingUp, TrendingDown, Eye, Trash2, Download } from 'lucide-react';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

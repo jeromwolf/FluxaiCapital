@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { getMarketDataClient } from '@/lib/market/client';
 
 interface RouteParams {
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest, props: RouteParams) {
   const params = await props.params;
   try {
     const symbol = params.symbol.toUpperCase();
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const interval = (searchParams.get('interval') as '1m' | '5m' | '1h' | '1d') || '1h';
     const count = Math.min(parseInt(searchParams.get('count') || '100'), 500);
 

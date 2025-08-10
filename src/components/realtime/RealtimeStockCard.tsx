@@ -1,10 +1,11 @@
 'use client';
 
-import React from 'react';
 import { TrendingUp, TrendingDown } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useRealtimeQuote } from '@/hooks/useRealtimeQuotes';
+import React from 'react';
+
 import { Skeleton } from '@/components/ui/skeleton';
+import { useRealtimeQuote } from '@/hooks/useRealtimeQuotes';
+import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/utils/format';
 
 interface RealtimeStockCardProps {

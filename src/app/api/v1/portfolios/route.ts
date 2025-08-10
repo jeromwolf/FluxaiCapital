@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { z } from 'zod';
-import { withApiMiddleware } from '@/lib/api/middleware';
 import { getServerSession } from 'next-auth';
+import { z } from 'zod';
+
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { withApiMiddleware } from '@/lib/api/middleware';
+import prisma from '@/lib/prisma';
 
 // Validation schema
 const createPortfolioSchema = z.object({
@@ -22,7 +23,7 @@ export const GET = withApiMiddleware(
       if (!session) {
         return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
       }
-      const searchParams = request.nextUrl.searchParams;
+      const { searchParams } = request.nextUrl;
       const userId = searchParams.get('userId');
       const isActive = searchParams.get('isActive');
 

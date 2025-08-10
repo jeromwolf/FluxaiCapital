@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { createMarketDataService } from '@/lib/market-data/service';
 
 export async function GET(request: NextRequest) {

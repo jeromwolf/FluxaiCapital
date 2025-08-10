@@ -11,10 +11,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { cn } from '@/lib/utils';
+
+import { ChartContainer } from '@/components/charts';
 import { chartTheme } from '@/config/chart-theme';
 import { usePriceSubscription } from '@/hooks/useWebSocket';
-import { ChartContainer } from '@/components/charts';
+import { cn } from '@/lib/utils';
 
 interface RealtimeChartProps {
   symbol: string;

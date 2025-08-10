@@ -1,10 +1,5 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 import {
   Home,
   PieChart,
@@ -19,6 +14,12 @@ import {
   Activity,
   Newspaper,
 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import React from 'react';
+
+import { cn } from '@/lib/utils';
 
 interface NavItem {
   titleKey: string;

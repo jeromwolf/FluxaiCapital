@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
 import { z } from 'zod';
+
+import prisma from '@/lib/prisma';
 
 // Validation schema
 const createUserSchema = z.object({
@@ -12,7 +13,7 @@ const createUserSchema = z.object({
 // GET /api/v1/users
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const email = searchParams.get('email');
 
     if (email) {

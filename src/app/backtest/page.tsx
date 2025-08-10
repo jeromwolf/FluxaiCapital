@@ -1,19 +1,16 @@
 'use client';
 
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import { format } from 'date-fns';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
+  Play,
+  Download,
+  TrendingUp,
+  TrendingDown,
+  Activity,
+  BarChart3,
+  Loader2,
+} from 'lucide-react';
+import React from 'react';
 import {
   LineChart,
   Line,
@@ -27,17 +24,21 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import {
-  Play,
-  Download,
-  TrendingUp,
-  TrendingDown,
-  Activity,
-  BarChart3,
-  Loader2,
-} from 'lucide-react';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 
 interface BacktestResult {

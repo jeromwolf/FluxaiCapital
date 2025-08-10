@@ -1,13 +1,14 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { ExternalLink, TrendingUp, Calendar, RefreshCw } from 'lucide-react';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
+import React, { useEffect, useState } from 'react';
+
 import { Button } from '@/components/ui/button';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { marketData, MarketNews } from '@/lib/market-data';
-import { formatRelativeTime } from '@/lib/utils/format';
 import { cn } from '@/lib/utils';
+import { formatRelativeTime } from '@/lib/utils/format';
 
 interface MarketNewsWidgetProps {
   category?: 'general' | 'forex' | 'crypto' | 'merger';

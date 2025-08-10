@@ -1,17 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
   FileText,
   Download,
@@ -23,6 +11,19 @@ import {
   Mail,
   Send,
 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/use-toast';
 
 interface Portfolio {
@@ -160,7 +161,7 @@ export default function ReportsPage() {
         body: JSON.stringify({
           portfolioId: selectedPortfolio,
           reportType: selectedReportType,
-          email: email,
+          email,
         }),
       });
 

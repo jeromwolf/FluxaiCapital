@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { marketData, MarketQuote } from '@/lib/market-data';
+
 import { useToast } from '@/components/ui/use-toast';
+import { marketData, MarketQuote } from '@/lib/market-data';
 
 interface UseRealtimeQuotesOptions {
   symbols: string[];

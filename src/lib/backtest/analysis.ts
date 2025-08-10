@@ -206,7 +206,7 @@ export class BacktestAnalyzer {
   }
 
   private analyzeDrawdowns() {
-    const equity = this.equity;
+    const { equity } = this;
     const drawdowns: number[] = [];
     const drawdownDurations: number[] = [];
 
@@ -215,7 +215,7 @@ export class BacktestAnalyzer {
     let peak = this.result.config.initialCapital;
 
     for (let i = 0; i < equity.length; i++) {
-      const value = equity[i].value;
+      const { value } = equity[i];
 
       if (value > peak) {
         // 새로운 고점
@@ -291,8 +291,8 @@ export class BacktestAnalyzer {
     let consecutiveLosses = 0;
     let maxConsecutiveWins = 0;
     let maxConsecutiveLosses = 0;
-    let winStreaks: number[] = [];
-    let lossStreaks: number[] = [];
+    const winStreaks: number[] = [];
+    const lossStreaks: number[] = [];
 
     for (const trade of trades) {
       if (trade.pnl && trade.pnl > 0) {
@@ -385,7 +385,7 @@ export class BacktestAnalyzer {
 
   private analyzePeriods(): PeriodAnalysis[] {
     const periods: PeriodAnalysis[] = [];
-    const equity = this.equity;
+    const { equity } = this;
 
     // 분기별 분석
     const quarterStarts = this.getQuarterStarts();
@@ -444,7 +444,7 @@ export class BacktestAnalyzer {
 
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
-    const performance = this.performance;
+    const { performance } = this;
 
     // 수익률 기반 추천
     if (performance.totalReturn < 5) {

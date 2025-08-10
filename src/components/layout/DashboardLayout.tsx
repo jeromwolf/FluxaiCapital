@@ -1,11 +1,13 @@
 'use client';
 
-import React from 'react';
 import { usePathname } from 'next/navigation';
+import React from 'react';
+
+import { useIsMobile, useIsTablet } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
+
 import { MobileNav } from './MobileNav';
 import { Sidebar } from './Sidebar';
-import { useIsMobile, useIsTablet } from '@/hooks/useMediaQuery';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

@@ -111,7 +111,7 @@ export class FinnhubProvider {
       open: data.o[index],
       high: data.h[index],
       low: data.l[index],
-      close: close,
+      close,
       volume: data.v[index],
     }));
   }
@@ -131,7 +131,7 @@ export class FinnhubProvider {
         this.websocket?.send(
           JSON.stringify({
             type: 'subscribe',
-            symbol: symbol,
+            symbol,
           }),
         );
       });
@@ -155,7 +155,7 @@ export class FinnhubProvider {
           this.websocket?.send(
             JSON.stringify({
               type: 'unsubscribe',
-              symbol: symbol,
+              symbol,
             }),
           );
         });

@@ -213,7 +213,7 @@ export class AlphaVantageProvider {
     timePeriod: number = 20,
     seriesType: 'close' | 'open' | 'high' | 'low' = 'close',
   ) {
-    let url = `${ALPHA_VANTAGE_BASE_URL}?function=${indicator}&symbol=${symbol}&interval=${interval}&time_period=${timePeriod}&series_type=${seriesType}&apikey=${this.apiKey}`;
+    const url = `${ALPHA_VANTAGE_BASE_URL}?function=${indicator}&symbol=${symbol}&interval=${interval}&time_period=${timePeriod}&series_type=${seriesType}&apikey=${this.apiKey}`;
 
     try {
       const response = await fetch(url);

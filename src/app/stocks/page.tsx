@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
 import { Search, TrendingUp, TrendingDown, Activity } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
 import Link from 'next/link';
+import React, { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
 import { useMarketPrices } from '@/hooks/useMarketData';
 
 // 인기 종목 리스트

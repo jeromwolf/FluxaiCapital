@@ -1,5 +1,6 @@
-import { BaseStrategy } from './base';
 import { MarketData, Signal } from '../types';
+
+import { BaseStrategy } from './base';
 
 export class MovingAverageStrategy extends BaseStrategy {
   private priceHistory: Map<string, number[]> = new Map();
@@ -23,7 +24,7 @@ export class MovingAverageStrategy extends BaseStrategy {
     const signals: Signal[] = [];
 
     for (const marketData of data) {
-      const symbol = marketData.symbol;
+      const { symbol } = marketData;
 
       // 가격 이력 업데이트
       if (!this.priceHistory.has(symbol)) {

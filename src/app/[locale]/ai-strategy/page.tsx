@@ -1,16 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
 import { Brain, TrendingUp, Shield, AlertCircle, ChevronRight } from 'lucide-react';
-import { ResponsiveCard } from '@/components/ui/responsive-card';
+import React, { useState } from 'react';
+
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ResponsiveCard } from '@/components/ui/responsive-card';
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/components/ui/use-toast';
-import { cn } from '@/lib/utils';
 import { aiStrategy, TradingStrategy, UserProfile } from '@/lib/ai/strategy-engine';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { cn } from '@/lib/utils';
 
 const riskLevels = [
   { value: 'conservative', label: '보수적', description: '원금 보존 중시' },

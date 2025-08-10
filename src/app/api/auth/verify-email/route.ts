@@ -1,7 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
 import crypto from 'crypto';
+
+import { NextRequest, NextResponse } from 'next/server';
+
 import { sendVerificationEmail } from '@/lib/email/verification';
+import prisma from '@/lib/prisma';
 
 // POST /api/auth/verify-email - Send verification email
 export async function POST(request: NextRequest) {
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
 // GET /api/auth/verify-email?token=xxx - Verify email with token
 export async function GET(request: NextRequest) {
   try {
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
     const token = searchParams.get('token');
 
     if (!token) {

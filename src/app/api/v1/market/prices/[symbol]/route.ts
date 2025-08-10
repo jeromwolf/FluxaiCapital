@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { getMarketDataClient } from '@/lib/market/client';
 
 interface RouteParams {

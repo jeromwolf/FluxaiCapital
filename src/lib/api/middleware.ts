@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateCSRFToken } from '@/lib/security/csrf';
 import { getServerSession } from 'next-auth';
+
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { validateCSRFToken } from '@/lib/security/csrf';
 
 export type ApiHandler = (req: NextRequest, context?: any) => Promise<NextResponse> | NextResponse;
 

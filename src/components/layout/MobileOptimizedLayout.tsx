@@ -1,12 +1,13 @@
 'use client';
 
-import React from 'react';
+import { Plus } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import React from 'react';
+
+import { FloatingActionButton } from '@/components/ui/mobile-optimized';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 import { cn } from '@/lib/utils';
 // import { MobileNavigation } from './MobileNavigation';
-import { useIsMobile } from '@/hooks/useMediaQuery';
-import { FloatingActionButton } from '@/components/ui/mobile-optimized';
-import { Plus } from 'lucide-react';
 
 interface MobileOptimizedLayoutProps {
   children: React.ReactNode;

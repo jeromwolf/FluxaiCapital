@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+import { emailService } from '@/lib/email/service';
 import { prisma } from '@/lib/prisma';
 import { generatePDFReport } from '@/lib/reports/pdf-generator';
-import { emailService } from '@/lib/email/service';
 import { convertPortfolioForReport } from '@/lib/utils/decimal-converter';
 
 export async function POST(req: NextRequest) {
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     if (!emailResult.success) {
       return NextResponse.json(
-        { error: 'Failed to send email: ' + emailResult.error },
+        { error: `Failed to send email: ${emailResult.error}` },
         { status: 500 },
       );
     }

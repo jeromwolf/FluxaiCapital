@@ -1,8 +1,9 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/lib/utils';
+
 import { useIsMobile, useIsTablet, useIsLargeDesktop } from '@/hooks/useMediaQuery';
+import { cn } from '@/lib/utils';
 
 interface DashboardGridProps {
   children: React.ReactNode;

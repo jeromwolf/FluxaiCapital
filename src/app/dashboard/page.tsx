@@ -1,18 +1,19 @@
 'use client';
 
+import { Loader2 } from 'lucide-react';
 import React from 'react';
-import { PortfolioOverview } from '@/components/dashboard/PortfolioOverview';
-import { HoldingsTable, HoldingData } from '@/components/dashboard/HoldingsTable';
+
 import { AssetAllocationPieChart } from '@/components/charts';
+import { HoldingsTable, HoldingData } from '@/components/dashboard/HoldingsTable';
+import { PortfolioOverview } from '@/components/dashboard/PortfolioOverview';
 import {
   ResponsiveCard,
   ResponsiveGrid,
   CollapsibleSection,
 } from '@/components/ui/responsive-card';
-import { useIsMobile } from '@/hooks/useMediaQuery';
 import { usePortfolios, useHoldings } from '@/hooks/useApi';
 import { useHoldingsWithPrices } from '@/hooks/useMarketData';
-import { Loader2 } from 'lucide-react';
+import { useIsMobile } from '@/hooks/useMediaQuery';
 
 // Convert API holdings to HoldingData format
 function convertToHoldingData(apiHoldings: any[]): HoldingData[] {

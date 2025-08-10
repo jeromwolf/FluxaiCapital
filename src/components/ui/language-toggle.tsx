@@ -1,15 +1,16 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { Languages } from 'lucide-react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useLocale } from 'next-intl';
+
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useLocale } from 'next-intl';
 
 export function LanguageToggle() {
   const router = useRouter();

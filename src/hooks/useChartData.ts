@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { MarketCandle } from '@/lib/market/types';
+
 import {
   TimeFrame,
   TimeFrameConverter,
   TechnicalIndicators,
 } from '@/lib/charting/trading-view-chart';
+import { MarketCandle } from '@/lib/market/types';
 import { getWebSocketClient } from '@/lib/websocket/client';
 
 interface ChartDataConfig {

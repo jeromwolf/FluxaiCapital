@@ -1,6 +1,7 @@
-import Link from 'next/link';
 import { TrendingUp } from 'lucide-react';
+import Link from 'next/link';
 
+import LoginForm from '@/components/auth/LoginForm';
 import {
   Card,
   CardContent,
@@ -9,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import LoginForm from '@/components/auth/LoginForm';
 
 export const dynamic = 'force-dynamic';
 

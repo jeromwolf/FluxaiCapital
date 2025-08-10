@@ -7,8 +7,8 @@ export { MovingAverageStrategy } from './movingAverage';
 
 import { BaseStrategy } from './base';
 import { BuyAndHoldStrategy } from './buyAndHold';
-import { RebalancingStrategy } from './rebalancing';
 import { MovingAverageStrategy } from './movingAverage';
+import { RebalancingStrategy } from './rebalancing';
 
 export interface StrategyConfig {
   id: string;

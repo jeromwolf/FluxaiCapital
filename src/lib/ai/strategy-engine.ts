@@ -224,7 +224,7 @@ export class AIStrategyEngine {
 
     // Adjust confidence based on market conditions
     filteredStrategies = filteredStrategies.map((strategy) => {
-      let confidence = strategy.confidence;
+      let { confidence } = strategy;
 
       // Adjust for market trend
       if (marketConditions.trend === 'bullish' && strategy.type === 'momentum') {

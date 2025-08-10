@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import { z } from 'zod';
 import { Decimal } from '@prisma/client/runtime/library';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
+import prisma from '@/lib/prisma';
 
 // Validation schema
 const createHoldingSchema = z.object({

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
+import { z } from 'zod';
+
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
-import { z } from 'zod';
 
 // Validation schema for creating a strategy
 const createStrategySchema = z.object({
@@ -20,7 +21,7 @@ const createStrategySchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
-    const searchParams = request.nextUrl.searchParams;
+    const { searchParams } = request.nextUrl;
 
     const userId = searchParams.get('userId');
     const isPublic = searchParams.get('public') === 'true';

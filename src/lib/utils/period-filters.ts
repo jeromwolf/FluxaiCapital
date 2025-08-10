@@ -1,5 +1,6 @@
-import { Period } from '@/components/dashboard/PeriodTabs';
 import { addDays, addWeeks, addMonths, addYears, isAfter, parseISO } from 'date-fns';
+
+import { Period } from '@/components/dashboard/PeriodTabs';
 
 export interface DataPoint {
   date: string;

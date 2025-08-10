@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { renderToBuffer } from '@react-pdf/renderer';
-import prisma from '@/lib/prisma';
-import { PortfolioReport } from '@/components/reports/PortfolioReport';
+import { NextRequest, NextResponse } from 'next/server';
 import React from 'react';
+
+import { PortfolioReport } from '@/components/reports/PortfolioReport';
+import prisma from '@/lib/prisma';
 
 interface RouteParams {
   params: Promise<{ portfolioId: string }>;

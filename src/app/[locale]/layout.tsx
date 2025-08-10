@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import { Inter, Noto_Sans_KR } from 'next/font/google';
+
 import '../globals.css';
-import AuthProvider from '@/components/providers/AuthProvider';
-import { ThemeProvider } from '@/components/providers/theme-provider';
-import { IntlProvider } from '@/components/providers/intl-provider';
-import { Toaster } from 'sonner';
 import { notFound } from 'next/navigation';
+import { Toaster } from 'sonner';
+
+import AuthProvider from '@/components/providers/AuthProvider';
+import { IntlProvider } from '@/components/providers/intl-provider';
+import { ThemeProvider } from '@/components/providers/theme-provider';
 import { locales } from '@/config/i18n';
 
 const inter = Inter({
